@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>김상무의 AI농협</title>
+<meta name="description" content="농협 직원을 위한 가상 교육 공간. 부서와 업무를 고르면 AI에게 보낼 질문과 엑셀 수식이 바로 나와요.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --ivory:#F6F6F1; --ivory2:#ECECE4; --ivory3:#E1E1D7;
+  --ink:#20251F; --ink2:#454B43; --ink3:#61665E;
+  --gold:#D8AA43; --goldt:#F6EDD6; --goldd:#8A6513;
+  --green:#173D27; --greent:#E3EBE4; --greenh:#D5E2D8;
+  --white:#FFFFFF; --line:#CDCEC4; --grid:#DADAD2; --head:#EEEEE8;
+  --font:"Pretendard Variable",Pretendard,"Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif;
+  --mono:Consolas,"D2Coding","Malgun Gothic",monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.6;letter-spacing:-.02em;word-break:keep-all;overflow-wrap:break-word}
+::selection{background:var(--greenh)}
+button,input,textarea,select{font:inherit;color:inherit;letter-spacing:inherit}
+:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+code,.mono{font-family:var(--mono);letter-spacing:0}
+a{color:var(--green);font-weight:700;text-underline-offset:3px}
+
+/* 머리 */
+.top{position:sticky;top:0;z-index:20;background:var(--ivory);border-bottom:1px solid var(--line)}
+.topin{max-width:1080px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand .mark{width:7px;height:28px;background:var(--gold)}
+.brand b{font-size:20px;font-weight:800;letter-spacing:-.03em}
+.brand small{font-size:12px;font-weight:700;color:var(--ink3);border:1px solid var(--line);padding:1px 8px;border-radius:999px;background:var(--white);letter-spacing:0}
+nav.tabs{display:flex;gap:4px;margin-left:auto;overflow-x:auto}
+nav.tabs a{white-space:nowrap;text-decoration:none;color:var(--ink2);font-weight:700;font-size:15.5px;padding:7px 12px;border-bottom:3px solid transparent}
+nav.tabs a[aria-current="page"]{color:var(--green);border-bottom-color:var(--green)}
+main{max-width:1080px;margin:0 auto;padding:26px 20px 110px}
+.foot{max-width:1080px;margin:0 auto;padding:0 20px 40px;font-size:13.5px;color:var(--ink3)}
+
+/* 공통 */
+h1{font-size:32px;line-height:1.2;margin:0 0 6px;font-weight:800;letter-spacing:-.035em}
+h2{font-size:24px;line-height:1.3;margin:0 0 6px;font-weight:800;letter-spacing:-.03em}
+h3{font-size:18px;margin:0 0 8px;font-weight:800}
+.now{display:flex;gap:10px;align-items:flex-start;background:var(--greent);border-left:5px solid var(--green);padding:10px 14px;margin:14px 0 18px;font-weight:600;font-size:16px}
+.now b{flex:none;background:var(--green);color:var(--white);font-size:13px;padding:1px 8px;margin-top:2px;letter-spacing:0}
+.muted{color:var(--ink3);font-size:15px}
+.crumb{font-size:14.5px;color:var(--ink3);margin-bottom:6px}
+.crumb a{font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid var(--green);background:var(--green);color:var(--white);font-weight:800;font-size:17px;padding:11px 20px;cursor:pointer;text-decoration:none}
+.btn:hover{background:#0F2D1C}
+.btn.sub{background:var(--white);color:var(--green)}
+.btn.sub:hover{background:var(--greent)}
+.btn.sm{font-size:15px;padding:7px 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:15.5px;font-weight:700;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--white);cursor:pointer}
+.chip:hover{border-color:var(--ink3)}
+.chip[aria-pressed="true"]{background:var(--green);color:var(--white);border-color:var(--green)}
+.tag{display:inline-block;font-size:12.5px;font-weight:800;padding:1px 8px;letter-spacing:0;vertical-align:2px}
+.tag.q{background:var(--greent);color:var(--green)}
+.tag.x{background:var(--goldt);color:var(--goldd)}
+
+/* 첫 화면 */
+.hello{font-size:17px;font-weight:700;color:var(--green);margin:0 0 4px}
+.search{display:flex;align-items:center;gap:10px;background:var(--white);border:2px solid var(--ink);padding:0 14px;margin:16px 0 6px}
+.search:focus-within{outline:3px solid var(--green)}
+.search svg{width:22px;height:22px;flex:none;fill:none;stroke:var(--ink3);stroke-width:2}
+.search input{border:0;outline:0;background:transparent;padding:14px 0;width:100%;font-size:18px}
+.results{list-style:none;margin:10px 0 0;padding:0;border:1px solid var(--line);background:var(--white)}
+.results li+li{border-top:1px solid var(--grid)}
+.results a{display:flex;gap:10px;align-items:center;padding:12px 14px;text-decoration:none;color:var(--ink);font-weight:700}
+.results a:hover{background:var(--greent)}
+.results small{font-weight:500;color:var(--ink3);margin-left:auto;font-size:14px;text-align:right}
+.sec{margin-top:26px}
+.sechead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sechead h2{font-size:20px;margin:0}
+.depts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.dept{text-align:left;background:var(--white);border:1px solid var(--line);padding:13px 14px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-height:82px}
+.dept:hover{border-color:var(--green)}
+.dept b{font-size:17px;font-weight:800}
+.dept span{font-size:14px;color:var(--ink3);line-height:1.4}
+.dept[aria-pressed="true"]{border:2px solid var(--green);background:var(--greent)}
+.dept.xl{border-color:var(--gold);background:var(--goldt)}
+.dept.xl:hover{border-color:var(--goldd)}
+.tasklist{margin-top:14px;background:var(--white);border:2px solid var(--green);padding:16px}
+.tasklist h3{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tasks{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin:10px 0 12px}
+.task{display:block;text-decoration:none;color:var(--ink);border:1px solid var(--line);padding:10px 12px;font-weight:700;background:var(--ivory)}
+.task:hover{border-color:var(--green);background:var(--greent)}
+.task small{display:block;font-weight:500;color:var(--ink3);font-size:13.5px}
+
+/* 질문 만들기 */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:22px;align-items:start}
+.field{margin-bottom:18px}
+.field>label,.field>.lab{display:flex;gap:8px;align-items:baseline;font-weight:800;font-size:17px;margin-bottom:8px}
+.n{flex:none;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--ink);color:var(--white);font-size:14px;font-weight:800;letter-spacing:0}
+.field .muted{font-weight:500}
+textarea,input.t{width:100%;border:1px solid var(--ink3);background:var(--white);padding:10px 12px;font-size:16.5px;line-height:1.55;border-radius:0}
+textarea{min-height:104px;resize:vertical}
+.warn{margin:8px 0 0;background:var(--goldt);border-left:4px solid var(--gold);padding:8px 12px;font-size:15px;font-weight:600}
+.panel{background:var(--white);border:2px solid var(--ink);position:sticky;top:76px}
+.panelhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--head)}
+.panelhead b{font-size:16px}
+.panelhead em{font-style:normal;font-size:13px;font-weight:800;color:var(--goldd);background:var(--goldt);padding:2px 8px;letter-spacing:0}
+pre.prompt{margin:0;padding:14px;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;font-family:var(--font);font-size:15.5px;line-height:1.65;max-height:52vh;overflow:auto}
+.panelfoot{padding:12px 14px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.done{font-weight:700;color:var(--green);font-size:15px}
+.after{margin-top:14px;border:1px solid var(--line);background:var(--white);padding:14px 16px}
+.after ol{margin:6px 0 0;padding-left:22px}
+.after li{margin:3px 0}
+.mbar{display:none}
+
+/* 엑셀 */
+.xcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.xcard{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink);background:var(--white);border:1px solid var(--line);padding:14px 16px;min-height:118px}
+.xcard:hover{border-color:var(--goldd)}
+.xcard q{font-weight:800;font-size:17px;quotes:none}
+.xcard span{font-size:14px;color:var(--ink3)}
+.xcard code{margin-top:auto;font-size:13.5px;color:var(--goldd);font-weight:700}
+.xcard.other{border-style:dashed;background:transparent}
+.scene{font-size:19px;font-weight:700;margin:2px 0 4px}
+.sheetwrap{overflow-x:auto;border:1px solid var(--grid);background:var(--white);max-width:100%}
+table.sheet{border-collapse:collapse;font-size:14.5px;min-width:100%}
+.sheet th,.sheet td{border:1px solid var(--grid);padding:4px 9px;white-space:nowrap;text-align:left}
+.sheet thead th,.sheet tbody th{background:var(--head);color:var(--ink3);font-weight:600;font-size:12.5px;text-align:center;letter-spacing:0}
+.sheet tbody th{width:34px}
+.sheet td.res{background:var(--goldt);font-weight:800}
+.sheet td.nr{text-align:right;font-family:var(--mono);letter-spacing:0}
+.sheet td.hd{font-weight:700;background:#F7F7F2}
+.swipe{font-size:13.5px;color:var(--ink3);margin:6px 0 0}
+.fit{background:var(--white);border:1px solid var(--line);padding:14px 16px}
+.fit .line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:6px 0;font-weight:600}
+.fit select,.fit input{border:1px solid var(--ink3);background:var(--white);padding:5px 6px;font-weight:800;font-size:16.5px;border-radius:0}
+.fit input{width:84px}
+.fit select{min-width:60px}
+.fit input.w{width:150px}
+.fit .hdr{margin:0 0 12px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.fit .hdr label{display:block;font-weight:700;margin-bottom:6px}
+.fit .hdr input{width:100%;font-weight:600}
+.fit .hdr p{margin:6px 0 0}
+.confirm{border:2px solid var(--goldd);background:var(--goldt);padding:12px 16px}
+.confirm ul{margin:8px 0;padding-left:20px}
+.confirm li{margin:3px 0}
+.confirm p{margin:6px 0 10px}
+.go2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 6px}
+.go{display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--ink);background:var(--white);border:2px solid var(--ink);padding:14px 16px}
+.go:hover{border-color:var(--green)}
+.go b{font-size:19px;font-weight:800}
+.go span{font-size:14.5px;color:var(--ink3)}
+.go.xl{border-color:var(--goldd);background:var(--goldt)}
+@media (max-width:600px){.go2{grid-template-columns:1fr}}
+.out{margin-top:14px;background:var(--white);border:2px solid var(--ink)}
+.formula{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px;background:var(--head);border-bottom:1px solid var(--line)}
+.formula code{font-size:17px;font-weight:700;overflow-wrap:anywhere;flex:1 1 280px}
+.how{margin:0;padding:12px 16px 4px 38px}
+.how li{margin:6px 0}
+.check{margin:4px 16px 14px;background:var(--greent);padding:10px 12px;font-size:15.5px}
+.check b{color:var(--green)}
+.err{padding:14px 16px;font-weight:700;background:var(--goldt);border-left:5px solid var(--gold)}
+details.more{margin-top:14px;border:1px solid var(--line);background:var(--white)}
+details.more summary{padding:12px 16px;font-weight:800;color:var(--green);cursor:pointer}
+details.more .in{padding:0 16px 16px}
+.alt{font-size:14.5px;margin:0 16px 14px;color:var(--ink2)}
+.alt code{font-size:14px;overflow-wrap:anywhere}
+
+/* 안내 */
+.about{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.box{background:var(--white);border:1px solid var(--line);padding:16px 18px}
+.box ul{margin:6px 0 0;padding-left:20px}
+.box li{margin:3px 0}
+.soon{color:var(--ink3)}
+
+@media (max-width:860px){
+  .two{grid-template-columns:1fr}
+  .panel{position:static}
+  pre.prompt{max-height:none}
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:var(--ivory);border-top:1px solid var(--line)}
+  .mbar .btn{flex:1;padding:11px 10px}
+  body.hasbar .foot{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width:520px){
+  h1{font-size:26px}
+  h2{font-size:21px}
+  main{padding-top:18px}
+  .topin{padding:8px 16px}
+  .brand small{display:none}
+  nav.tabs{margin-left:0;width:100%}
+  nav.tabs a{padding:6px 9px;font-size:15px}
+  .depts{grid-template-columns:1fr 1fr}
+  .dept{min-height:76px;padding:11px 12px}
+  .dept b{font-size:16px}
+  .dept span{font-size:13px}
+  .search input{font-size:17px}
+}
+</style>
+
+<header class="top">
+  <div class="topin">
+    <a class="brand" href="#/"><span class="mark"></span><b>김상무의 AI농협</b><small>가상 교육 공간</small></a>
+    <nav class="tabs" aria-label="메뉴">
+      <a href="#/" data-nav="home">처음</a>
+      <a href="#/ask" data-nav="ask">AI 질문 만들기</a>
+      <a href="#/xl" data-nav="xl">엑셀 수식</a>
+      <a href="#/about" data-nav="about">안내</a>
+    </nav>
+  </div>
+</header>
+<main id="app" tabindex="-1"></main>
+<p class="foot">농협의 공식 서비스가 아닌 개인 교육용 시안입니다. 실제 고객·조합원 이름, 전화번호, 계좌, 내부 숫자는 넣지 마세요. AI 답변과 수식 결과는 꼭 사람이 확인하세요.</p>
+<div class="mbar" id="mbar" hidden>
+  <button class="btn sub" id="mView" type="button">질문 보기 ↓</button>
+  <button class="btn" id="mCopy" type="button">질문 복사</button>
+</div>
+
+<script id="core">
+/* ===== 자료와 계산 (화면과 분리: 자동 시험에서 그대로 불러 씀) ===== */
+const DEPTS=[
+ {id:"common",n:"공통 업무",h:"회의록·공문·안내·민원"},
+ {id:"credit",n:"신용(금융)",h:"예금·대출·연체·공제·카드"},
+ {id:"mgmt",n:"경영관리",h:"총무·기획·인사·결산·조합원"},
+ {id:"input",n:"구매·영농자재",h:"비료·농약·자재 재고"},
+ {id:"sales",n:"판매·유통",h:"수매·출하·APC·RPC"},
+ {id:"mart",n:"하나로마트·로컬푸드",h:"매장·행사·출하 농가"},
+ {id:"farm",n:"농기계·육묘·방제·주유",h:"임대·공동방제·주유소"},
+ {id:"live",n:"축산",h:"사료·가축시장·방역·한우"},
+ {id:"guide",n:"지도·교육지원",h:"영농지도·교육·복지"},
+ {id:"audit",n:"감사·준법·리스크",h:"자체감사·소비자보호·자금세탁방지"}
+];
+const OUTS={
+ sms:{n:"안내 문자",how:"3~5문장. 인사 → 핵심 → 할 일 순서로, 휴대폰에서 읽기 쉽게"},
+ notice:{n:"공지·안내문",how:"제목, 핵심 내용, 일시·장소·준비물, 문의 순서로"},
+ report:{n:"보고서 초안",how:"제목, 현황, 문제점, 개선안, 건의 순서. 개조식(□ ○)으로 짧게"},
+ summary:{n:"요약",how:"핵심 3줄과 해야 할 일 목록(담당·기한 칸 포함)"},
+ check:{n:"체크리스트",how:"확인할 항목을 □ 표시로 10개 이내, 중요한 것부터"},
+ table:{n:"표",how:"항목 · 내용 · 담당 · 기한 열이 있는 표"},
+ script:{n:"응대 말씀",how:"직원이 그대로 읽을 수 있는 말 순서와, 예상 질문 3개와 답"},
+ edu:{n:"설명 자료",how:"처음 듣는 사람도 이해하도록 5단계 이내 설명과 쉬운 예시"}
+};
+const AUDS={
+ member:{n:"조합원·고객",how:"어르신도 이해하는 쉬운 말과 존댓말"},
+ staff:{n:"직원·동료",how:"업무 용어는 써도 되지만 짧고 분명하게"},
+ boss:{n:"상사·임원",how:"결론을 먼저, 근거는 짧게"},
+ ext:{n:"외부 기관·거래처",how:"정중한 공문 말투"}
+};
+/* c: 어떤 결과 모양이든 지킬 사실·안전 조건, f: 특정 결과 모양에만 붙는 형식 지시 */
+const T=(id,d,n,k,o,a,s,c,f)=>({id,d,n,k:k.split(","),o,a,s,c,f});
+const TASKS=[
+ T("c1","common","회의록 정리","회의,회의록,메모,정리","summary","staff","11월 직원 회의. 연말 행사 준비, 창구 대기 줄이기, 다음 달 교육 일정을 이야기함. 담당과 기한은 일부만 정해짐.","정해지지 않은 담당·기한은 [미정]으로 표시해 주세요."),
+ T("c2","common","업무연락·공문 초안","공문,시행문,업무연락,협조,문서","notice","ext","관내 초등학교에 농촌 체험 행사 협조를 요청하는 업무연락. 날짜와 인원은 아직 정하지 않음.","문서번호와 날짜는 비워 두세요.",{notice:"제목 → 관련 → 본문(1. 2. …) → 붙임 순서로 써 주세요."}),
+ T("c3","common","행사·교육 안내 문자","안내,문자,행사,교육,초대","sms","member","조합원 대상 디지털 금융 교육. 장소는 본점 2층 회의실, 날짜와 시간은 아직 정하지 않음.","정하지 않은 날짜와 시간은 [확인 필요]로 두세요.",{sms:"짧은 문자(90자 안팎) 하나와 긴 문자 하나, 두 가지로 주세요."}),
+ T("c4","common","민원·불만 응대","민원,불만,클레임,항의,응대","script","member","고객이 창구 대기 시간이 길다고 불만을 말함. 원인은 점심시간 근무 인원 부족.","변명처럼 들리지 않게 해 주세요. 지킬 수 없는 약속은 넣지 마세요.",{script:"사과 → 사정 설명 → 개선 약속 순서로 말해 주세요.",sms:"사과 → 사정 설명 → 개선 약속 순서로 써 주세요."}),
+ T("c5","common","긴 자료 요약","요약,정리,자료,보고","summary","boss","20쪽짜리 농업 지원사업 안내 자료를 요약해야 함. 자료 내용은 이 질문 아래에 따로 붙여 넣을 예정.","자료에 없는 내용은 덧붙이지 말고, 숫자는 자료에 적힌 그대로만 쓰세요."),
+ T("c6","common","인수인계서","인수인계,인계,휴가,부재","table","staff","2주 휴가 전에 매일 하는 일, 주 1회 하는 일, 급한 일이 생겼을 때 처리 순서를 정리해야 함.","개인 연락처는 넣지 말고 [연락처] 자리로 비워 두세요."),
+ T("r1","credit","예금·적금 상품 안내","예금,적금,상품,금리,만기,수신","script","member","정기적금 만기가 된 고객에게 재가입을 권하는 상황. 금리 숫자는 아직 확인하지 않음.","금리와 우대 조건은 지어내지 말고 [확인 필요]로 두세요. 원금이 무조건 보장된다고 단정하지 마세요."),
+ T("r2","credit","대출 상담 준비","대출,여신,상담,서류,농업인대출","check","staff","처음 농업인 대출을 상담하러 오는 조합원을 맞기 전에 물어볼 것과 준비 서류를 정리하고 싶음.","심사 기준·한도·금리는 말하지 말고, 내부 규정을 확인해야 하는 곳에 [규정 확인]을 붙여 주세요."),
+ T("r3","credit","연체 안내 문자","연체,독촉,상환,납부,이자","sms","member","대출 이자 납부일이 지난 고객에게 보내는 첫 안내. 금액과 날짜는 아직 확인하지 않음.","겁을 주거나 압박하는 표현 없이 정중하게 써 주세요. 법적 조치나 불이익을 지어내지 마세요."),
+ T("r4","credit","공제(보험) 만기 안내","공제,보험,만기,갱신,화재공제","sms","member","화재공제 만기 한 달 전 안내. 보장 내용과 공제료는 아직 확인하지 않음.","보장 내용을 단정하지 말고 '자세한 내용은 창구에서 안내'로 맺어 주세요."),
+ T("r5","credit","금융사기 예방 안내","보이스피싱,사기,피싱,예방,스미싱","notice","member","어르신 고객이 많은 지점 창구에 붙일 보이스피싱 예방 안내문.","실제처럼 꾸민 이름·번호는 넣지 마세요.",{notice:"큰 글씨로 붙일 수 있게 짧은 문장으로 써 주세요."}),
+ T("r6","credit","스마트뱅킹 사용법 안내","스마트뱅킹,앱,전자금융,인터넷뱅킹,카드,모바일","edu","member","처음 스마트폰 뱅킹을 쓰는 어르신에게 계좌 조회 방법을 알려 드림.","앱 메뉴 이름은 바뀔 수 있으니 [화면에서 확인]을 붙여 주세요. 직원이 비밀번호를 대신 입력해 준다는 내용은 넣지 마세요."),
+ T("m1","mgmt","이사회·대의원회 자료","이사회,대의원,총회,안건,회의자료","report","boss","다음 달 이사회에 '로컬푸드 직매장 영업시간 조정' 안건을 올릴 자료 초안.","찬반 의견을 지어내지 말고, 결정할 사항과 근거 자료가 필요한 곳을 표시해 주세요."),
+ T("m2","mgmt","사업계획 초안","사업계획,계획,목표,기획,예산","report","boss","내년 조합원 교육 사업계획의 뼈대. 예산과 목표 숫자는 아직 정하지 않음.","목표와 예산 숫자는 지어내지 말고 빈칸으로 두세요."),
+ T("m3","mgmt","신규 직원 교육 일정","직원교육,연수,교육계획,인사,신규","table","staff","신규 직원 3명의 첫 달 교육 일정표(창구, 마트, 사무 순환).","실제 이름 대신 '신규 직원 1·2·3'으로 써 주세요."),
+ T("m4","mgmt","결산·마감 일정 공지","결산,마감,회계,일정,연말","notice","staff","연말 결산 전에 부서별로 낼 자료와 마감일을 알리는 내부 공지.","마감일과 양식 이름은 [확인 필요]로 두세요."),
+ T("m5","mgmt","조합원 가입·출자 안내","조합원,가입,출자,배당,귀농","script","member","귀농한 분이 조합원 가입 방법을 물어봄.","가입 자격·출자금·배당은 정관과 규정을 따르므로 숫자를 지어내지 말고 [확인 필요]로 두세요."),
+ T("m6","mgmt","시설 안전점검 계획","안전,점검,시설,소방,겨울","check","staff","겨울철 본점과 창고 시설의 안전점검 항목 정리.","법으로 정한 점검 주기 같은 기준은 [확인 필요]로 표시해 주세요."),
+ T("i1","input","비료·농약 신청 안내","비료,농약,공급,신청,무기질비료","sms","member","봄철 무기질비료 신청 접수 시작 안내. 신청 기간과 가격은 아직 확인하지 않음.","지원금과 할인율은 지어내지 마세요."),
+ T("i2","input","자재 재고 점검표","재고,자재,창고,점검,실사","check","staff","월말 영농자재 창고 재고 실사 준비.","수량은 빈칸으로 두고 확인 방법만 적어 주세요."),
+ T("i3","input","농약 안전사용 안내","농약,안전,사용,보관","notice","member","농약 판매대 옆에 둘 안전사용·보관 안내문.","희석 배수와 사용량은 '제품 표시를 따르세요'로 안내하고 숫자를 지어내지 마세요."),
+ T("i4","input","자재 가격 변동 설명","가격,인상,변동,자재,비료값","script","member","조합원이 작년보다 비료값이 올랐다며 이유를 물음.","원인을 단정하지 말고, 확인된 사실과 추측을 나눠 주세요."),
+ T("s1","sales","벼 수매 안내","수매,벼,쌀,RPC,추곡","notice","member","올해 벼 수매 일정과 준비물 안내. 수매 가격과 일정은 아직 확인하지 않음.","수매 가격과 등급 기준은 지어내지 마세요."),
+ T("s2","sales","출하 일정 변경 안내","출하,APC,선별,공선,일정변경","sms","member","산지유통센터(APC) 사과 출하 일정이 바뀜. 바뀐 날짜는 아직 확인하지 않음.","바뀐 점이 맨 먼저 보이게 하고, 날짜는 [확인 필요]로 두세요."),
+ T("s3","sales","출하 품질 기준 설명","품질,등급,선별,규격,공동선별","edu","member","처음 공동선별에 참여하는 농가에게 선별 기준을 설명.","등급 기준 숫자는 [확인 필요]로 두세요."),
+ T("s4","sales","판로·납품 제안서","판로,납품,제안,학교급식,거래처","report","ext","지역 학교급식에 친환경 쌀을 납품하자고 제안하는 1쪽 자료.","생산량과 가격은 지어내지 말고 빈칸으로 두세요."),
+ T("s5","sales","RPC 건조·저장 안내","RPC,DSC,건조,저장,미곡","sms","member","벼 건조·저장 시설 이용 시간 안내.","운영 시간과 요금은 [확인 필요]로 두세요."),
+ T("h1","mart","행사 전단 문구","행사,전단,할인,마트,하나로마트","notice","member","하나로마트 주말 농산물 행사 전단의 제목과 짧은 소개 문구.","할인율·가격은 [가격] 자리로 두고, 과장 광고 표현은 피해 주세요."),
+ T("h2","mart","로컬푸드 출하 농가 공지","로컬푸드,직매장,출하농가,농가,라벨","sms","member","로컬푸드 직매장 출하 농가에게 포장·라벨 규칙이 바뀐다고 알림.","바뀌는 날짜는 [확인 필요]로 두세요."),
+ T("h3","mart","계산대 응대 매뉴얼","응대,계산대,고객,매뉴얼,환불","script","staff","신규 계산원이 환불 요청을 받았을 때 하는 말과 순서.","환불 기준은 '매장 기준을 따름'으로 두고 지어내지 마세요."),
+ T("h4","mart","신선식품 폐기 점검","폐기,유통기한,신선,재고,마감","check","staff","마감 전 신선식품 유통기한·폐기 점검 순서.","위생 기준 숫자는 [확인 필요]로 두세요."),
+ T("h5","mart","고객 후기 답글","후기,리뷰,답글,불만,온라인","script","member","매장 채소가 시들었다는 온라인 후기에 다는 답글.","고객을 탓하지 말고, 보상 약속은 넣지 마세요."),
+ T("f1","farm","농기계 임대 예약 안내","농기계,임대,예약,농기계은행","sms","member","봄철 농기계 임대 예약 접수 안내.","임대료와 기간은 [확인 필요]로 두세요."),
+ T("f2","farm","공동방제 일정 안내","방제,공동방제,드론,항공방제","sms","member","마을별 벼 공동방제 일정 안내. 날씨에 따라 바뀔 수 있음.","약제 이름과 사용량은 지어내지 말고, 날씨로 일정이 바뀔 수 있다는 점을 넣어 주세요."),
+ T("f3","farm","육묘 신청 안내","육묘,모종,모판,상토,신청","notice","member","벼 육묘장 모판 신청 안내.","신청 기간과 가격은 [확인 필요]로 두세요."),
+ T("f4","farm","주유소 안전점검표","주유소,주유,안전,유류","check","staff","농협 주유소 아침 개점 전 안전 점검.","법정 기준은 [확인 필요]로 표시해 주세요."),
+ T("f5","farm","농기계 안전교육 자료","농기계,안전,교육,사고,경운기","edu","member","고령 조합원 대상 경운기 안전 사용 교육 자료.","사고 통계 숫자는 지어내지 마세요."),
+ T("l1","live","가축시장 개장 안내","가축시장,송아지,경매,우시장","sms","member","이번 달 가축시장 개장 일정과 출장 준비 안내.","날짜와 수수료는 [확인 필요]로 두세요."),
+ T("l2","live","사료 주문 마감 안내","사료,배합사료,TMR,조사료,주문","sms","member","명절 연휴 전 사료 주문 마감 안내.","가격과 마감 시간은 [확인 필요]로 두세요."),
+ T("l3","live","방역 협조 문자","방역,구제역,소독,럼피스킨,가축전염병,AI","sms","member","겨울철 축사 소독과 외부인 출입 통제에 협조를 부탁하는 문자.","방역 기준과 발생 정보는 '정부·지자체 공식 안내를 따르세요'로 쓰고 지어내지 마세요."),
+ T("l4","live","한우 출하 상담 준비","한우,출하,도축,등급,비육","check","staff","한우 농가와 출하 시기를 상담하기 전에 확인할 항목.","시세와 등급 판정 기준을 단정하지 마세요."),
+ T("l5","live","컨설팅 방문 기록 정리","컨설팅,방문,농가,기록,축산","report","boss","한우 농가 방문 메모(사료 급여, 축사 환경, 농가 요청)를 보고서로 정리.","메모에 없는 내용은 덧붙이지 마세요."),
+ T("g1","guide","조합원 교육 모집 안내","조합원교육,교육,강좌,영농교육,모집","notice","member","겨울 영농 교육 3회 과정 모집 안내.","강사와 일정은 [확인 필요]로 두세요."),
+ T("g2","guide","영농 기술 자료 쉽게 풀기","영농,기술,재배,병해충,탄저병","edu","member","농업기술센터 자료의 고추 탄저병 예방 내용을 어르신이 읽기 쉽게 바꾸기.","자료에 없는 약제나 처방을 덧붙이지 마세요."),
+ T("g3","guide","복지사업 안내","복지,장학금,건강검진,경로","sms","member","조합원 자녀 장학금 신청 안내.","자격과 금액은 [확인 필요]로 두세요."),
+ T("g4","guide","봉사 행사 준비표","고향주부모임,청년,여성,봉사,김장,행사","table","staff","연말 김장 나눔 봉사 행사 준비표.","예산 숫자는 빈칸으로 두세요."),
+ T("g5","guide","현장 상담 기록 정리","상담,현장,농가,요청","summary","boss","농가 현장 방문에서 들은 요청 사항 메모를 정리.","메모에 없는 내용은 덧붙이지 마세요."),
+ T("a1","audit","자체감사 체크리스트","감사,자체감사,점검,감사준비","check","staff","분기 자체감사 전에 창구 업무에서 스스로 점검할 항목.","내부 규정 조항은 [규정 확인]으로 표시해 주세요."),
+ T("a2","audit","금융소비자보호 점검","금융소비자,설명의무,불완전판매,소비자보호","check","staff","상품을 팔 때 설명을 빠뜨리지 않았는지 점검하는 표.","법 조항을 지어내지 말고, 확인할 곳을 표시해 주세요."),
+ T("a3","audit","자금세탁방지 교육 자료","자금세탁,AML,고객확인,의심거래","edu","staff","신규 직원 대상 자금세탁방지 기초 교육 자료.","기준 금액과 보고 기한은 [확인 필요]로 두세요."),
+ T("a4","audit","개인정보 보호 점검","개인정보,보안,유출,정보보호","check","staff","사무실 개인정보 보호 자가 점검(책상, 출력물, 화면).","실제 개인정보처럼 보이는 예시를 만들지 마세요."),
+ T("a5","audit","금융사고 예방 공지","사고예방,금융사고,내부통제,시재","notice","staff","연말 금융사고 예방을 위한 직원 공지.","실제 사고 사례를 지어내지 마세요.")
+];
+
+/* 받침에 따라 을/를 */
+const eul=w=>{const c=(w||"").trim().slice(-1).charCodeAt(0);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28?"을":"를"};
+
+/* 개인정보로 보이는 것 찾기 (이름은 못 찾음) */
+/* 앞뒤가 숫자가 아닐 때만 잡는다(긴 금액 속 일부를 번호로 읽지 않게) */
+const okRRN=m=>{const d=m.replace(/\D/g,"");const mo=+d.slice(2,4),da=+d.slice(4,6);return mo>=1&&mo<=12&&da>=1&&da<=31};
+const PII=[
+ ["이메일",/[\w.+-]+@[\w-]+\.[\w.-]+/g],
+ ["주민등록번호",/(?<!\d)\d{6}\s*-?\s*[1-8]\d{6}(?!\d)/g,okRRN],
+ ["휴대폰 번호",/(?<!\d)01[016789]\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
+ ["전화번호",/(?<!\d)\(?0(?:2|[3-6][1-5]|70|80|50\d)\)?\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
+ ["계좌·카드 번호",/(?<!\d)\d{2,6}(?:-\d{2,6}){2,4}(?!\d)/g,m=>m.replace(/\D/g,"").length>=10], /* 날짜 2026-11-09 같은 것은 통과 */
+ ["계좌·카드 번호",/(?<=(?:계좌|카드|통장)(?:번호)?\s*[:：]?\s*)\d{10,16}(?!\d)/g]
+];
+function scrub(text){
+  const found=[];let t=text||"";
+  for(const [name,re,ok] of PII){
+    t=t.replace(re,m=>{
+      if(ok&&!ok(m)) return m;
+      if(!found.includes(name)) found.push(name); return "[지움]";
+    });
+  }
+  return {text:t,found};
+}
+
+function deptOf(id){return DEPTS.find(d=>d.id===id)}
+function taskOf(id){return TASKS.find(t=>t.id===id)}
+
+/* AI에게 보낼 질문 만들기
+   질문을 다 만든 뒤 전체를 한 번에 검사해 가린다 → 화면 경고와 실제 복사 내용이 항상 같다. */
+function askPrompt(o){const r=scrub(rawPrompt(o));return r}
+function makePrompt(o){return askPrompt(o).text}
+function rawPrompt(o){
+  /* o: {task, out, aud, sit, myDept, customName} */
+  const t=o.task, out=OUTS[o.out], aud=AUDS[o.aud];
+  const name=t?t.n:(o.customName||"").trim()||"[업무 이름]";
+  const dept=t?deptOf(t.d).n:"";
+  const sit=(o.sit||"").trim()||"[상황을 한두 줄로 적어 주세요]";
+  const my=(o.myDept||"").trim();
+  const rules=["위 상황에 없는 숫자·날짜·금리·규정·연락처·담당자는 지어내지 말고 [확인 필요]로 표시해 주세요."];
+  if(t&&t.c) rules.push(t.c);
+  if(t&&t.f&&t.f[o.out]) rules.push(t.f[o.out]); /* 결과 모양에 딸린 형식 지시는 그 모양을 골랐을 때만 */
+  rules.push("쉬운 말로 쓰고, 어려운 용어는 괄호 안에 풀어 주세요.");
+  rules.push("다 쓴 뒤 맨 끝에 '보내기 전에 사람이 확인할 점' 3가지를 적어 주세요.");
+  const work=[dept,name].filter(Boolean).join(" · ")+(my?` (우리 조합에서는 '${my}' 업무)`:"");
+  return `농협 직원입니다. 아래 업무로 ${out.n}${eul(out.n)} 만들어 주세요.
+
+[내 업무]
+${work}
+
+[상황 — 연습용 가상 사례]
+${sit}
+
+[결과 모양]
+${out.n}: ${out.how}
+읽는 사람: ${aud.n} — ${aud.how}
+
+[꼭 지킬 것]
+${rules.map((r,i)=>`${i+1}. ${r}`).join("\n")}
+
+이 내용은 교육용 가상 사례입니다. 실제 고객 정보나 내부 자료는 묻지 말아 주세요.`;
+}
+
+/* ===== 엑셀 ===== */
+const L=n=>{let s="";while(n>0){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s};
+const N=c=>c.split("").reduce((a,ch)=>a*26+ch.charCodeAt(0)-64,0);
+const nx=(c,k=1)=>L(N(c)+k);
+const ab=(c,r)=>`$${c}$${r}`;
+const rg=(c,f,l)=>`$${c}$${f}:$${c}$${l}`;
+const col=c=>`$${c}:$${c}`; /* 열 전체: 끝 행을 몰라도 되고 자료가 늘어도 그대로 */
+const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+const put=(cells,c,r,head,vals)=>{if(head!=null&&r>1)cells[c+(r-1)]=head;vals.forEach((v,i)=>{if(v!=="")cells[c+(r+i)]=v})};
+const MAXR=1048576;
+const isRow=v=>Number.isInteger(v)&&v>=1&&v<=MAXR;
+const rowsOK=p=>isRow(p.f)&&isRow(p.l)&&p.l>=p.f;
+const ROWERR="행 번호를 확인해 주세요. 1부터 1,048,576 사이 숫자로 적고, 끝 행은 첫 행과 같거나 커야 해요.";
+/* 결과가 두 칸 이상이라 아래로 채워야 하는지 (한 칸이면 끌어 내리기·다음 줄 확인 안내를 빼야 함) */
+const multi=(x,p)=>{if(x.single)return false;const u=x.out(p);return u.l>u.f};
+const headRow=f=>f>1?f-1:f; /* 제목 줄까지 포함한 표의 첫 행 */
+/* 같은 열에서 행 구간이 실제로 겹치는지 (같은 열이라도 위아래로 떨어져 있으면 괜찮음) */
+const hit=(c1,a1,b1,c2,a2,b2)=>c1===c2&&a1<=b2&&a2<=b1;
+/* COUNTIF는 셀 글자를 '조건'으로 읽는다: * ? ~ 는 와일드카드, 맨 앞 > < = 는 비교 조건.
+   ~ 덧붙이기로는 ~* ~? 조합이 실제 Excel에서 틀렸음(로시 재검토) → 이런 글자는 정확 일치(SUMPRODUCT)로 바꾼다. */
+const special=s=>/[*?~]/.test(String(s))||/^\s*[<>=]/.test(String(s));
+const ALT_EXACT="이름에 * ? ~ 가 들어 있거나 > < = 로 시작하면 (정확히 같은 글자만 세기)";
+
+const XL=[
+ {id:"dup",guess:{N:/이름|성명|신청자|조합원|고객/},resOK:/중복|확인|결과|비고/,scene:"같은 사람이 두 번 들어갔는지 찾고 싶어요",sub:"신청 명단에서 중복 표시",fn:"COUNTIF",
+  def:{N:"B",f:2,l:9,O:"C"},
+  lines:[["이름이 있는 열",{k:"N"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지"],["결과를 적을 열",{k:"O"}]],
+  data:["김하늘","이바다","박구름","김하늘","최들판","이바다","정냇물","한겨울"],
+  expect:["중복","중복","","중복","","중복","",""],
+  place(p){const c={};put(c,p.N,p.f,"성명",this.data);if(p.f>1)c[p.O+(p.f-1)]="중복 여부";return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:(p,r)=>`=IF(COUNTIF(${rg(p.N,p.f,p.l)},${p.N}${r})>1,"중복","")`,
+  altL:ALT_EXACT, alt:(p,r)=>`=IF(SUMPRODUCT(--(${rg(p.N,p.f,p.l)}=${p.N}${r}))>1,"중복","")`,
+  bad:p=>!rowsOK(p)?ROWERR:p.N===p.O?"이름 열과 결과 열이 같아요. 결과는 빈 열에 적어 주세요.":"",
+  check:p=>`이름 열(${p.N}${p.f}:${p.N}${p.l})만 선택하고 Ctrl+F → [옵션] → '전체 셀 내용 일치'를 켠 뒤, '중복'이 나온 이름 하나를 [모두 찾기] 하세요. 2건 이상이면 맞습니다. 빈칸으로 남은 이름도 하나 찾아 1건인지 보세요. 띄어쓰기가 다르면(김하늘 / 김 하늘) 다른 사람으로 봅니다.`},
+ {id:"sum",guess:{K:[/^(?!.*코드).*(품목|품명|항목|상품)/,/품목|품명|항목|상품/,/지점|부서|마을/],V:/금액|매출|판매액|액$/,S:{re:[/품목|품명|항목|상품|지점|부서|마을/],next:[/합계|계$/,""]}},resOK:/합계|계$|결과/,scene:"품목별(지점별) 합계를 내야 해요",sub:"판매 기록에서 항목별 합계",fn:"SUMIFS",
+  def:{K:"B",V:"C",f:2,l:8,S:"E",s:2,e:4},
+  lines:[["기록: 품목 열",{k:"K"},"· 금액 열",{k:"V"}],["합계표: 품목 이름 칸",{k:"S"},{k:"s",r:1},"행부터",{k:"e",r:1},"행까지 (합계는 바로 오른쪽 열)"]],
+  data:[["비료",120000],["농약",80000],["비료",45000],["상토",60000],["비료",150000],["농약",30000],["상토",25000]],
+  names:["비료","농약","상토"], expect:["315000","110000","85000"],
+  place(p){const c={};put(c,p.K,p.f,"품목",this.data.map(d=>d[0]));put(c,p.V,p.f,"금액",this.data.map(d=>d[1]));put(c,p.S,p.s,"품목",this.names);if(p.s>1)c[nx(p.S)+(p.s-1)]="합계";return c},
+  r0:p=>p.s, out:p=>({c:nx(p.S),f:p.s,l:p.e}),
+  F:(p,r)=>`=SUMIFS(${col(p.V)},${col(p.K)},${p.S}${r})`,
+  bad:p=>{if(p.K===p.V)return "품목 열과 금액 열이 같아요. 서로 다른 열을 골라 주세요.";
+    if(!(isRow(p.s)&&isRow(p.e)&&p.e>=p.s))return "합계표 행 번호를 확인해 주세요. 끝 행은 시작 행과 같거나 커야 해요.";
+    if([p.K,p.V].includes(nx(p.S)))return `합계가 들어갈 ${nx(p.S)}열이 판매 기록 열(품목 ${p.K}·금액 ${p.V})과 같아요. 수식이 그 열 전체를 보므로 합계가 자기 자신을 더하게 됩니다. 합계표 품목 칸을 오른쪽에 빈 열이 있는 곳으로 옮겨 주세요.`;return ""},
+  check:p=>`합계 칸을 모두 더한 값이 금액 열 전체 합계(=SUM(${p.V}:${p.V}))와 같은지 보세요. 수식이 ${p.K}열·${p.V}열 전체를 보므로, 그 열 위·아래에 다른 금액 표가 있으면 함께 더해집니다(그때는 총합 대조도 같이 틀어져요). 다른 표가 섞여 있으면 '조금 다르면 AI에게 묻기'로 범위를 정해 물어보세요. 품목 하나는 필터(Ctrl+Shift+L)로 그 품목만 골라 금액 열을 선택했을 때 화면 아래 '합계'와도 맞춰 보세요. 다르면 품목 이름의 띄어쓰기·오타, 합계표에 빠진 품목이 있는지 확인하세요.`},
+ {id:"cnt",guess:{D:/상태|처리|진행|여부/},resOK:/건수|개수|결과|합계|수$/,scene:"'미완료'가 몇 건인지 세야 해요",sub:"조건에 맞는 건수 세기",fn:"COUNTIF",
+  def:{D:"D",f:2,l:9,w:"미완료",R:"F",r:2},
+  lines:[["상태가 적힌 열",{k:"D"}],["셀 글자",{k:"w",w:1},"· 결과 칸",{k:"R"},{k:"r",r:1},"행"]],
+  data:["완료","미완료","완료","미완료","보류","미완료","완료","완료"], expect:["3"], single:true,
+  extra:{B1:"신청 번호",B2:"가-01",B3:"가-02",B4:"가-03",B5:"가-04",B6:"가-05",B7:"가-06",B8:"가-07",B9:"가-08",E2:"미완료 건수"},
+  place(p){const c={};put(c,p.D,p.f,"처리 상태",this.data);return c},
+  r0:p=>p.r, out:p=>({c:p.R,f:p.r,l:p.r}),
+  F:p=>special(p.w)?`=SUMPRODUCT(--(${col(p.D)}=${q(p.w)}))`:`=COUNTIF(${col(p.D)},${q(p.w)})`,
+  note:p=>special(p.w||"")?"셀 글자에 * ? ~ 가 있거나 > < = 로 시작해요. COUNTIF는 이런 글자를 '조건'으로 읽어 다른 칸까지 셀 수 있어서, 글자가 정확히 같은 칸만 세는 SUMPRODUCT 수식으로 바꿨어요.":"",
+  bad:p=>{if(!String(p.w||"").trim())return "셀 글자를 적어 주세요. 예: 미완료";if(!isRow(p.r))return "결과 칸 행 번호를 확인해 주세요. 1부터 1,048,576 사이로 적어요.";if(p.R===p.D)return "결과 칸이 상태 열에 있어요. 수식이 그 열 전체를 세므로 다른 열의 빈 칸을 골라 주세요.";return ""},
+  check:p=>`필터(Ctrl+Shift+L)로 상태 열에서 '${p.w}'만 골라 보세요. 화면 아래쪽에 나오는 개수와 결과가 같으면 맞습니다. 칸 안에 띄어쓰기가 더 있으면 세지 않습니다. 수식이 ${p.D}열 전체를 세므로, 제목 칸 글자가 '${p.w}'와 같거나 그 열 아래에 다른 표가 있으면 수가 늘어납니다.`},
+ {id:"look",guess:{C:/코드/,H:{re:/코드/,last:1},O:{re:/품목명|품명|이름|명칭|단가|가격/,before:"H"},I:{sameAs:"O",afterOf:"H"}},scene:"코드로 품목 이름(단가)을 찾아와야 해요",sub:"기준표에서 찾아오기",fn:"XLOOKUP",
+  def:{C:"B",f:2,l:6,O:"C",H:"F",I:"G",hf:2,hl:6},
+  lines:[["내 표: 코드 열",{k:"C"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지 · 결과 열",{k:"O"}],["기준표: 코드 열",{k:"H"},"· 가져올 열",{k:"I"}]],
+  data:["A02","A05","A01","A09","A03"], ref:[["A01","요소비료"],["A02","복합비료"],["A03","상토"],["A04","살충제"],["A05","제초제"]],
+  expect:["복합비료","제초제","요소비료","없음","상토"],
+  place(p){const c={};put(c,p.C,p.f,"품목 코드",this.data);if(p.f>1)c[p.O+(p.f-1)]="품목 이름";put(c,p.H,p.hf,"코드",this.ref.map(x=>x[0]));put(c,p.I,p.hf,"품목 이름",this.ref.map(x=>x[1]));return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:(p,r)=>`=XLOOKUP(${p.C}${r},${col(p.H)},${col(p.I)},"없음")`,
+  altL:"엑셀 2019 이하라면", alt:(p,r)=>`=IFERROR(INDEX(${col(p.I)},MATCH(${p.C}${r},${col(p.H)},0)),"없음")`,
+  bad:p=>{if(!rowsOK(p))return ROWERR;if(p.H===p.I)return "기준표의 코드 열과 가져올 열이 같아요.";if(p.O===p.C)return "결과 열이 코드 열과 같아요. 빈 열을 골라 주세요.";
+    if([p.H,p.I].includes(p.O))return "결과 열이 기준표 열과 같아요. 수식이 기준표 열 전체를 보므로 기준표와 다른 빈 열을 골라 주세요.";
+    if([p.H,p.I].includes(p.C))return "내 표의 코드 열이 기준표 열과 같아요. 기준표에 없는 코드는 자기 자신을 찾아 '없음' 대신 엉뚱한 값이 나와요. 기준표는 다른 열에 두세요.";return ""},
+  check:p=>`'없음'이 나온 코드를 기준표에서 Ctrl+F로 찾아보세요. 정말 없으면 맞습니다. 있는데 '없음'이면 코드 앞뒤에 띄어쓰기가 있거나, 한쪽은 숫자·한쪽은 글자로 저장된 경우입니다. 정상으로 나온 코드도 하나 기준표에서 찾아 같은 이름인지 보세요(다른 열을 가져왔는지 확인). 수식이 ${p.H}열·${p.I}열 전체를 보므로 그 두 열에는 이 기준표만 있어야 해요. 위·아래에 다른 표가 있으면 먼저 나오는 값을 가져옵니다. 다른 표가 섞여 있으면 '조금 다르면 AI에게 묻기'로 범위를 정해 물어보세요.`},
+ {id:"rate",guess:{G:/목표|계획/,A:/실적/,O:/달성률|비율/},resOK:/달성|률|비율|결과/,scene:"목표 대비 달성률을 내야 해요",sub:"실적 ÷ 목표, 백분율",fn:"IF · IFERROR",
+  def:{G:"B",A:"C",f:2,l:6,O:"D"},
+  lines:[["목표 열",{k:"G"},"· 실적 열",{k:"A"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지"],["결과를 적을 열",{k:"O"}]],
+  data:[[100,95],[80,90],[120,120],[0,10],[50,""]], expect:["95%","113%","100%","입력 확인",""], fmt:"0%",
+  extra:{A1:"지점",A2:"본점",A3:"가지점",A4:"나지점",A5:"다지점",A6:"라지점"},
+  place(p){const c={};put(c,p.G,p.f,"목표",this.data.map(d=>d[0]));put(c,p.A,p.f,"실적",this.data.map(d=>d[1]));if(p.f>1)c[p.O+(p.f-1)]="달성률";return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:(p,r)=>`=IF(${p.A}${r}="","",IFERROR(${p.A}${r}/${p.G}${r},"입력 확인"))`,
+  bad:p=>!rowsOK(p)?ROWERR:p.G===p.A?"목표 열과 실적 열이 같아요.":[p.G,p.A].includes(p.O)?"결과 열이 목표·실적 열과 겹쳐요.":"",
+  check:p=>`결과 칸을 모두 고른 뒤 [홈] 탭의 [%] 단추를 누르세요(113%는 112.5%를 반올림해 보여 주는 것, 소수점까지 보려면 [자릿수 늘림]). 한 줄만 계산기로 실적÷목표×100을 해서 같은지 보세요. 실적이 빈칸이면 빈칸, 목표가 0이거나 숫자가 아닌 글자(예: 미정)가 있으면 '입력 확인'이 나옵니다.`},
+ {id:"blank",resOK:/누락|확인|결과|비고/,scene:"빠진 칸(누락)이 있는 줄을 찾아야 해요",sub:"여러 열 중 빈칸 있는 줄 표시",fn:"COUNTBLANK",
+  def:{a:"B",b:"D",f:2,l:7,O:"E"},
+  lines:[["살펴볼 열",{k:"a"},"부터",{k:"b"},"까지 ·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지"],["결과를 적을 열",{k:"O"}]],
+  data:[["가-01","가동",3],["가-02","",2],["가-03","나동",""],["가-04","다동",5],["","라동",1],["가-06","마동",4]],
+  expect:["","누락 있음","누락 있음","","누락 있음",""],
+  place(p){const c={};const cols=[p.a,nx(p.a),nx(p.a,2)];const hd=["신청 번호","마을","신청 수량"];cols.forEach((col,j)=>put(c,col,p.f,hd[j],this.data.map(d=>d[j])));if(p.f>1)c[p.O+(p.f-1)]="확인";return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:(p,r)=>`=IF(COUNTBLANK(${p.a}${r}:${p.b}${r})>0,"누락 있음","")`,
+  bad:p=>{if(!rowsOK(p))return ROWERR;if(N(p.a)>N(p.b))return "살펴볼 열의 앞뒤가 바뀌었어요. 왼쪽 열을 먼저 골라 주세요.";if(N(p.O)>=N(p.a)&&N(p.O)<=N(p.b))return "결과 열이 살펴볼 열 안에 있어요. 오른쪽 빈 열을 골라 주세요.";return ""},
+  check:p=>`'누락 있음'이 나온 줄을 눈으로 확인하세요. 칸에 띄어쓰기만 들어 있으면 엑셀은 빈칸으로 보지 않아 놓칠 수 있습니다.`},
+ {id:"cmp",guess:{P:/이름|성명|신청자|명단/,M:{re:/이름|성명|명단|지급|대상/,last:1}},resOK:/확인|결과|비고|여부|없음/,scene:"두 명단을 비교해서 빠진 사람을 찾고 싶어요",sub:"신청 명단 중 지급 명단에 없는 사람",fn:"COUNTIF",
+  def:{P:"B",f:2,l:8,M:"E",mf:2,ml:6,O:"C"},
+  lines:[["내 명단 열",{k:"P"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지 · 결과 열",{k:"O"}],["비교할 명단 열",{k:"M"}]],
+  data:["김하늘","이바다","박구름","최들판","정냇물","한겨울","오솔길"], other:["이바다","최들판","한겨울","김하늘","윤시내"],
+  expect:["","","명단에 없음","","명단에 없음","","명단에 없음"],
+  place(p){const c={};put(c,p.P,p.f,"신청자",this.data);if(p.f>1)c[p.O+(p.f-1)]="확인";put(c,p.M,p.mf,"지급 명단",this.other);return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:(p,r)=>`=IF(COUNTIF(${col(p.M)},${p.P}${r})=0,"명단에 없음","")`,
+  altL:ALT_EXACT, alt:(p,r)=>`=IF(ISNA(XMATCH(${p.P}${r},${col(p.M)})),"명단에 없음","")`,
+  bad:p=>{if(!rowsOK(p))return ROWERR;if(p.O===p.P)return "결과 열이 내 명단 열과 같아요. 빈 열을 골라 주세요.";
+    if(p.P===p.M)return "내 명단과 비교할 명단이 같은 열이에요. 이름이 늘 자기 자신을 찾아 '명단에 없음'이 나오지 않아요. 두 명단을 서로 다른 열에 두세요.";
+    if(p.O===p.M)return "결과 열이 비교할 명단 열과 같아요. 빈 열을 골라 주세요.";return ""},
+  check:p=>`비교할 명단 열(${p.M}열)만 선택하고 Ctrl+F → [옵션] → '전체 셀 내용 일치'를 켠 뒤, '명단에 없음'이 나온 이름 하나를 찾아보세요. 없으면 맞습니다. 빈칸으로 남은 이름도 하나 찾아 있는지 보세요. 거꾸로(지급 명단에만 있는 사람)는 열을 바꿔서 한 번 더 하세요. 수식이 ${p.M}열 전체를 보므로 그 열에는 비교할 명단만 있어야 해요. 위·아래에 다른 명단이 있으면 그 이름도 '있음'으로 칩니다.`},
+ {id:"rank",guess:{V:/실적|점수|금액|매출|건수/,O:/순위|등수/},resOK:/순위|등수|결과/,scene:"실적 순위를 매겨야 해요",sub:"큰 값이 1등",fn:"RANK.EQ",
+  def:{V:"C",f:2,l:7,O:"D"},
+  lines:[["실적 열",{k:"V"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지"],["결과를 적을 열",{k:"O"}]],
+  data:[320,150,480,150,90,275], expect:["2","4","1","4","6","3"],
+  extra:{B1:"담당",B2:"1팀",B3:"2팀",B4:"3팀",B5:"4팀",B6:"5팀",B7:"6팀"},
+  place(p){const c={};put(c,p.V,p.f,"실적",this.data);if(p.f>1)c[p.O+(p.f-1)]="순위";return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:(p,r)=>`=RANK.EQ(${p.V}${r},${rg(p.V,p.f,p.l)})`,
+  bad:p=>!rowsOK(p)?ROWERR:p.V===p.O?"실적 열과 결과 열이 같아요.":"",
+  check:p=>`실적 열을 큰 순서로 정렬해 보면 순위와 같아야 합니다. 같은 값은 같은 순위가 되고 다음 순위는 건너뜁니다(4, 4, 6).`},
+ {id:"days",guess:{D:/만기|마감|기한/,O:/남은|일수/},resOK:/남은|일수|D-|결과/,scene:"만기(마감)까지 며칠 남았는지 알고 싶어요",sub:"기준일부터 남은 일수",fn:"DAYS",
+  def:{D:"C",f:2,l:6,O:"D",B:"G",b:1},
+  lines:[["만기일 열",{k:"D"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지 · 결과 열",{k:"O"}],["기준일을 적은 칸",{k:"B"},{k:"b",r:1},"행"]],
+  data:["2026-11-20","2026-12-31","2026-11-09","","2026-11-01"], expect:["11","52","0","","-8"],
+  extra:{B1:"상품",B2:"정기적금",B3:"정기예금",B4:"화재공제",B5:"자유적금",B6:"정기예금",F1:"기준일"},
+  place(p){const c={};put(c,p.D,p.f,"만기일",this.data);if(p.f>1)c[p.O+(p.f-1)]="남은 일수";c[p.B+p.b]="2026-11-09";return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:(p,r)=>`=IF(${p.D}${r}="","",DAYS(${p.D}${r},${ab(p.B,p.b)}))`,
+  bad:p=>{if(!rowsOK(p))return ROWERR;if(!isRow(p.b))return "기준일 행 번호를 확인해 주세요. 1부터 1,048,576 사이로 적어요.";if(p.D===p.O)return "만기일 열과 결과 열이 같아요.";if(hit(p.B,p.b,p.b,p.D,headRow(p.f),p.l)||hit(p.B,p.b,p.b,p.O,headRow(p.f),p.l))return "기준일 칸이 표 안에 있어요. 표 밖의 빈 칸을 골라 주세요.";return ""},
+  check:p=>`한 줄만 달력으로 세어 보세요. 마이너스는 이미 지난 날입니다. 결과가 1900-01-11처럼 날짜로 보이거나 ####로 나오면 결과 칸을 고른 뒤 [홈] → 표시 형식을 [일반]으로 바꾸세요. 오늘 기준으로 보려면 기준일 칸에 =TODAY()를 넣으면 되지만, 파일을 여는 날마다 결과가 바뀝니다.`}
+];
+function xlOf(id){return XL.find(x=>x.id===id)}
+/* 엑셀에서 복사한 제목 줄(탭으로 구분) → ["판매일","지점",…] (A열부터, 최대 26칸) */
+function parseHdr(t){const line=String(t||"").split(/\r?\n/).find(s=>s.trim())||"";
+  const parts=line.includes("\t")?line.split("\t"):line.includes(",")?line.split(","):line.trim().split(/\s+/);
+  const a=parts.slice(0,26).map(s=>s.trim());while(a.length&&!a[a.length-1])a.pop();return a}
+/* 제목 이름으로 열 찾기: 앞에서 정한 열은 다시 쓰지 않음, last는 맨 뒤에서, after는 정한 열의 바로 오른쪽 */
+function guessCols(x,hdr){const out={},used=new Set();if(!x.guess||!hdr||!hdr.length)return out;
+  const H=i=>(hdr[i]||"").trim();
+  for(const [k,g] of Object.entries(x.guess)){
+    if(g.sameAs){ /* 기준표에서 결과 열과 같은 제목의 열 (없으면 코드 바로 오른쪽) */
+      if(!out[g.afterOf])continue;const from=N(out[g.afterOf]);const want=out[g.sameAs]?H(N(out[g.sameAs])-1):"";
+      let i=want?hdr.findIndex((s,j)=>j>=from&&H(j)===want&&!used.has(L(j+1))):-1;
+      if(i<0&&H(from)&&!used.has(L(from+1)))i=from;if(i>=0){out[k]=L(i+1);used.add(L(i+1))}continue}
+    const res=Array.isArray(g)?g:g.re?(Array.isArray(g.re)?g.re:[g.re]):[g];
+    const lim=g.before&&out[g.before]?N(out[g.before])-1:Infinity;
+    let idx=[];for(const re of res){idx=hdr.map((s,i)=>i).filter(i=>i<lim&&H(i)&&re.test(H(i))&&!used.has(L(i+1)));if(idx.length)break}
+    if(g.next){ /* 바로 오른쪽 열(결과가 들어갈 열)이 '합계' 같은 제목이거나 빈 열인 것만 */
+      let pick=[];for(const nr of g.next){pick=idx.filter(i=>nr===""?!H(i+1):nr.test(H(i+1)));if(pick.length)break}idx=pick}
+    if(!idx.length)continue;const i=g.last?idx[idx.length-1]:idx[0];out[k]=L(i+1);used.add(L(i+1))}
+  return out}
+/* 결과가 들어갈 열에 이미 다른 자료 제목이 있으면 경고 (덮어쓰기 방지) */
+function outConflict(x,p,hdr){if(!hdr||!hdr.length)return "";const u=x.out(p);const nm=(hdr[N(u.c)-1]||"").trim();if(!nm)return "";
+  if(x.id==="look"){const t=(hdr[N(p.I)-1]||"").trim();if(t&&(nm.includes(t)||t.includes(nm)))return ""}
+  else if(x.resOK&&x.resOK.test(nm))return "";
+  return `결과를 넣을 ${u.c}열의 제목이 '${nm}'이에요. 이미 자료가 들어 있는 열이면 수식이 그 자료를 덮어씁니다. 결과는 빈 열에 넣도록 2번에서 다시 골라 주세요.`}
+
+/* 엑셀 질문(AI에게) — 완성된 질문 전체를 한 번에 검사해 가린다(수식 속 셀 글자 포함) */
+function xlAsk(o){return scrub(xlRaw(o))}
+function xlPrompt(o){return xlAsk(o).text}
+function xlRaw(o){
+  const d=(o.diff||"").trim()||"[다른 점을 한 줄로 적어 주세요]";
+  if(o.x){
+    const x=o.x,p=o.p,u=x.out(p);
+    return `엑셀 수식을 도와주세요. (엑셀 2021 이상, Windows)
+
+[지금 하는 일]
+${x.scene}
+지금 쓰는 수식: ${x.F(p,x.r0(p))}${o.hdr&&o.hdr.some(Boolean)?`\n내 표 제목: ${o.hdr.map((s,i)=>s?`${L(i+1)} ${s}`:"").filter(Boolean).join(" · ")}`:""}
+넣은 칸: ${u.c}${u.f}${multi(x,p)?` (아래로 ${u.c}${u.l}까지 채움)`:""}
+
+[다른 점]
+${d}
+
+[부탁]
+1. 바꾼 수식 하나
+2. 넣을 칸과 채우는 방법
+3. 결과가 맞는지 확인하는 방법
+을 쉬운 말로 알려 주세요. 실제 자료는 보내지 않았으니 열 위치로만 설명해 주세요.`;
+  }
+  const w=(o.want||"").trim()||"[하고 싶은 일]";
+  const cols=(o.cols||"").trim()||"[열 제목만 적기. 예: B열 성명, C열 금액]";
+  return `엑셀 수식을 도와주세요. (엑셀 2021 이상, Windows)
+
+[하고 싶은 일]
+${w}
+
+[내 표 모양 — 열 제목만, 실제 자료 없음]
+${cols}
+
+[원하는 결과]
+${d}
+
+[부탁]
+1. 수식 하나와 넣을 칸
+2. 아래로 채우는 방법
+3. 결과가 맞는지 확인하는 방법
+을 쉬운 말로 알려 주세요. 실제 자료는 보내지 않았으니 열 위치로만 설명해 주세요.`;
+}
+</script>
+
+<script>
+/* ===== 화면 ===== */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const S={dept:null,q:"",ask:{},xl:{},hdrText:"",hdr:[]};
+
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);return true}catch(e){
+    const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
+    let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();return ok}
+}
+function flash(el,msg){el.textContent=msg;el.hidden=false}
+
+function setNav(k){
+  document.querySelectorAll("nav.tabs a").forEach(a=>{if(a.dataset.nav===k)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")})}
+
+function route(){
+  const h=location.hash.replace(/^#\/?/,"");const [a,b]=h.split("/");
+  $("#mbar").hidden=true;document.body.classList.remove("hasbar");
+  if(a==="ask"&&b) viewAsk(b);
+  else if(a==="ask") viewAskList();
+  else if(a==="xl"&&b) viewXl(b);
+  else if(a==="xl") viewXlList();
+  else if(a==="about") viewAbout();
+  else viewHome();
+  window.scrollTo(0,0);
+}
+addEventListener("hashchange",route);
+
+/* --- 검색 --- */
+function findAll(q){
+  q=q.trim().toLowerCase();if(!q)return [];
+  const words=q.split(/\s+/);
+  const hit=hay=>words.every(w=>hay.includes(w));
+  const r=[];
+  for(const t of TASKS){const hay=[t.n,deptOf(t.d).n,...t.k].join(" ").toLowerCase();if(hit(hay))r.push({href:"#/ask/"+t.id,tag:"q",name:t.n,sub:deptOf(t.d).n})}
+  for(const x of XL){const hay=[x.scene,x.sub,x.fn,"엑셀 수식 "+x.id].join(" ").toLowerCase();if(hit(hay))r.push({href:"#/xl/"+x.id,tag:"x",name:x.scene,sub:"엑셀 · "+x.fn})}
+  return r;
+}
+function resultsHTML(list,q){
+  if(!q.trim())return "";
+  if(!list.length)return `<p class="muted" style="margin-top:10px">'${esc(q)}'에 맞는 업무가 없어요. <a href="#/ask/custom">업무를 직접 적어서 질문 만들기 →</a></p>`;
+  return `<ul class="results">${list.slice(0,12).map(r=>`<li><a href="${r.href}"><span class="tag ${r.tag}">${r.tag==="q"?"질문":"엑셀"}</span>${esc(r.name)}<small>${esc(r.sub)}</small></a></li>`).join("")}</ul>`;
+}
+
+/* --- 처음 --- */
+function viewHome(){
+  setNav("home");
+  app.innerHTML=`
+  <p class="hello">어서 오세요. 여기는 김상무의 AI농협입니다.</p>
+  <h1>무엇을 하시겠어요?</h1>
+  <div class="go2">
+    <a class="go xl" href="#/xl"><b>엑셀 수식 바로 받기 →</b><span>합계·건수·찾아오기 등 9가지. AI 없이 내 표에 맞는 수식이 바로 나와요.</span></a>
+    <a class="go" href="#/ask"><b>AI에게 물을 질문 만들기 →</b><span>부서·업무를 고르면 질문이 만들어져요. 복사해서 AI에 붙여 넣으세요.</span></a>
+  </div>
+  <label class="search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+    <input id="q" type="search" placeholder="업무 이름 (예: 연체, 방역, 중복)" value="${esc(S.q)}" aria-label="업무 이름으로 찾기" autocomplete="off"></label>
+  <div id="res">${resultsHTML(findAll(S.q),S.q)}</div>
+  <div class="now"><b>지금</b><span>위 두 가지 중 하나를 누르거나, 업무 이름을 적거나, 아래 부서를 누르세요. 고르면 바로 질문이나 수식이 나와요.</span></div>
+  <section class="sec">
+    <div class="sechead"><h2>부서로 고르기</h2><span class="muted">흔한 묶음입니다. 조합마다 부서 이름과 겸임 업무가 달라요.</span></div>
+    <div class="depts">
+      ${DEPTS.map(d=>`<button class="dept" type="button" data-d="${d.id}" aria-pressed="${S.dept===d.id}"><b>${d.n}</b><span>${d.h}</span></button>`).join("")}
+      <a class="dept xl" href="#/xl" style="text-decoration:none;color:inherit"><b>엑셀 수식 →</b><span>중복·합계·찾아오기 등 9가지, 모든 부서</span></a>
+    </div>
+    <div id="tl"></div>
+    <p class="muted" style="margin-top:12px">목록에 없는 업무는 <a href="#/ask/custom">직접 적어서 질문 만들기</a>로 하세요.</p>
+  </section>`;
+  const qi=$("#q");
+  qi.addEventListener("input",()=>{S.q=qi.value;$("#res").innerHTML=resultsHTML(findAll(S.q),S.q)});
+  qi.addEventListener("keydown",e=>{if(e.key==="Enter"){const f=$("#res a");if(f)location.hash=f.getAttribute("href")}});
+  app.querySelectorAll(".dept[data-d]").forEach(b=>b.addEventListener("click",()=>{
+    S.dept=S.dept===b.dataset.d?null:b.dataset.d;
+    app.querySelectorAll(".dept[data-d]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.d===S.dept));
+    drawTasks(true);
+  }));
+  drawTasks(false);
+}
+function drawTasks(scroll){
+  const box=$("#tl");if(!box)return;
+  if(!S.dept){box.innerHTML="";return}
+  const d=deptOf(S.dept);const list=TASKS.filter(t=>t.d===S.dept);
+  box.innerHTML=`<div class="tasklist" id="tlbox"><h3>${d.n}<span class="muted">· 업무를 고르면 질문이 바로 만들어져요</span></h3>
+   <div class="tasks">${list.map(t=>`<a class="task" href="#/ask/${t.id}">${t.n}<small>${OUTS[t.o].n} · ${AUDS[t.a].n}에게</small></a>`).join("")}
+   <a class="task" href="#/ask/custom?d=${d.id}" style="border-style:dashed;background:var(--white)">직접 적기<small>${d.n}의 다른 업무</small></a></div>
+   <p class="muted" style="margin:0">표 정리가 필요하면 <a href="#/xl">엑셀 수식</a>으로 가세요.</p></div>`;
+  if(scroll){const el=$("#tlbox");const top=el.getBoundingClientRect().top;
+    if(top>innerHeight*.6){const head=$(".top").offsetHeight;window.scrollTo({top:scrollY+top-head-10,behavior:"auto"})}}
+}
+
+/* --- 질문 목록 --- */
+function viewAskList(){
+  setNav("ask");
+  app.innerHTML=`<h1>AI 질문 만들기</h1>
+  <p class="muted" style="margin:0">업무를 고르면 AI 대화창에 붙여 넣을 질문이 바로 만들어져요. 이 앱이 AI에게 직접 보내지는 않아요.</p>
+  <div class="now"><b>지금</b><span>내 부서의 업무 하나를 누르세요.</span></div>
+  ${DEPTS.map(d=>`<section class="sec"><div class="sechead"><h2>${d.n}</h2><span class="muted">${d.h}</span></div>
+    <div class="tasks">${TASKS.filter(t=>t.d===d.id).map(t=>`<a class="task" href="#/ask/${t.id}">${t.n}<small>${OUTS[t.o].n} · ${AUDS[t.a].n}에게</small></a>`).join("")}</div></section>`).join("")}
+  <section class="sec"><div class="sechead"><h2>목록에 없는 업무</h2></div><a class="btn sub" href="#/ask/custom">업무를 직접 적어서 만들기</a></section>`;
+}
+
+/* --- 질문 만들기 --- */
+function viewAsk(idq){
+  setNav("ask");
+  const [id,qs]=idq.split("?");const custom=id==="custom";
+  const t=custom?null:taskOf(id);
+  if(!custom&&!t){location.hash="#/ask";return}
+  const pre=custom?new URLSearchParams(qs||"").get("d"):null;
+  const st=S.ask[id]||(S.ask[id]={out:t?t.o:"notice",aud:t?t.a:"member",sit:t?t.s:"",my:"",name:pre&&deptOf(pre)?deptOf(pre).n+" · ":""});
+  const crumb=custom?`<a href="#/">처음</a> › 직접 적기`:`<a href="#/">처음</a> › ${deptOf(t.d).n} › ${t.n}`;
+  app.innerHTML=`<div class="crumb">${crumb}</div>
+  <h1>${custom?"내 업무로 질문 만들기":esc(t.n)}</h1>
+  <div class="now"><b>지금</b><span>${custom?"1번에 업무 이름만 적으면 질문이 만들어져요. ":"질문은 이미 만들어졌어요. "}바꾸고 싶은 것만 고친 뒤 <strong>[질문 복사]</strong>를 누르세요.</span></div>
+  <div class="two">
+    <div>
+      ${custom?`<div class="field"><label for="nm"><span class="n">1</span>무슨 업무인가요? <span class="muted">부서 · 업무</span></label>
+        <input class="t" id="nm" value="${esc(st.name)}" placeholder="예: 경제과 · 영농자재 배송 일정 안내"></div>`:""}
+      <div class="field"><div class="lab"><span class="n">${custom?"2":"1"}</span>무엇을 받을까요?</div>
+        <div class="chips" id="outs">${Object.entries(OUTS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.out===k}">${v.n}</button>`).join("")}</div></div>
+      <div class="field"><div class="lab"><span class="n">${custom?"3":"2"}</span>누가 읽나요?</div>
+        <div class="chips" id="auds">${Object.entries(AUDS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.aud===k}">${v.n}</button>`).join("")}</div></div>
+      <div class="field"><label for="sit"><span class="n">${custom?"4":"3"}</span>어떤 상황인가요? <span class="muted">가상으로 한두 줄</span></label>
+        <textarea id="sit" placeholder="예: 다음 주 화요일 배송이 하루 늦어짐. 이유는 차량 정비.">${esc(st.sit)}</textarea>
+        <div class="warn" id="pii" hidden></div>
+        <p class="muted" style="margin:6px 0 0">실제 이름·전화번호·계좌·금액은 쓰지 마세요. 전화·주민·계좌번호나 이메일로 보이는 것은 앱이 [지움]으로 바꾸지만 모든 경우를 찾지는 못하고, <b>사람 이름은 찾지 못해요.</b></p></div>
+      ${custom?"":`<details class="more"><summary>우리 조합에서는 부서 이름이 달라요 (선택)</summary><div class="in">
+        <input class="t" id="my" value="${esc(st.my)}" placeholder="예: 경제과 자재계"></div></details>`}
+    </div>
+    <div>
+      <div class="panel" id="panel">
+        <div class="panelhead"><b>AI에게 보낼 질문</b><em>아직 AI의 답이 아니에요</em></div>
+        <pre class="prompt" id="pr"></pre>
+        <div class="panelfoot"><button class="btn" id="cp" type="button">질문 복사</button><span class="done" id="ok" hidden></span></div>
+      </div>
+      <div class="after"><h3>복사한 다음</h3><ol>
+        <li>ChatGPT 같은 AI 대화창을 열고 <b>Ctrl+V</b>로 붙여 넣기 <span class="muted">(휴대폰은 입력칸을 길게 눌러 [붙여넣기], 다 쓰면 이 화면으로 돌아오기)</span></li>
+        <li>답을 받으면 숫자·날짜·규정이 맞는지, <b>[확인 필요]</b> 자리를 채웠는지 사람이 확인</li>
+        <li>마음에 안 들면 같은 대화창에 "더 짧게", "더 정중하게"처럼 한마디 더 하기</li></ol></div>
+    </div>
+  </div>`;
+  const draw=()=>{
+    /* 화면에 보이는 질문 = 복사되는 질문 = 경고의 근거 (한 번 만든 결과를 같이 씀) */
+    const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name});
+    $("#pr").textContent=r.text;
+    const f=r.found;
+    const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요. 오른쪽 질문에서 확인하고, 실제 정보는 빼고 가상으로 적어 주세요.`;
+    $("#ok").hidden=true;
+  };
+  const chipGroup=(sel,key)=>$(sel).addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st[key]=b.dataset.k;$(sel).querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));draw()});
+  chipGroup("#outs","out");chipGroup("#auds","aud");
+  $("#sit").addEventListener("input",e=>{st.sit=e.target.value;draw()});
+  if($("#my"))$("#my").addEventListener("input",e=>{st.my=e.target.value;draw()});
+  if($("#nm"))$("#nm").addEventListener("input",e=>{st.name=e.target.value;draw()});
+  const doCopy=async()=>{const ok=await copyText($("#pr").textContent);flash($("#ok"),ok?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.");return ok};
+  $("#cp").addEventListener("click",doCopy);
+  draw();
+  mobileBar(doCopy);
+}
+function mobileBar(doCopy){
+  const bar=$("#mbar");bar.hidden=false;document.body.classList.add("hasbar");
+  const v=$("#mView"),c=$("#mCopy");
+  v.onclick=()=>{const el=$("#panel");const head=$(".top").offsetHeight;window.scrollTo({top:scrollY+el.getBoundingClientRect().top-head-8,behavior:"auto"})};
+  c.onclick=async()=>{const ok=await doCopy();c.textContent=ok?"복사했어요 ✓":"복사 안 됨 — 길게 눌러 복사";setTimeout(()=>c.textContent="질문 복사",2200)};
+}
+
+/* --- 엑셀 목록 --- */
+function viewXlList(){
+  setNav("xl");
+  app.innerHTML=`<h1>엑셀 수식</h1>
+  <p class="muted" style="margin:0">엑셀 2021 이상(Windows) 기준. AI를 거치지 않고 바로 씁니다. 고르면 예시 표와 수식이 나오고, 내 표의 열을 맞추면 수식이 바뀌어요(제목 줄을 붙여 넣으면 열을 찾아 드려요).</p>
+  <div class="now"><b>지금</b><span>"이런 경우 있으시죠?" 중에서 지금 하려는 일을 누르세요.</span></div>
+  <div class="xcards">
+   ${XL.map(x=>`<a class="xcard" href="#/xl/${x.id}"><q>${x.scene}</q><span>${x.sub}</span><code>${x.fn}</code></a>`).join("")}
+   <a class="xcard other" href="#/xl/ask"><q>여기에 없는 엑셀 일</q><span>열 제목만 적으면 AI에게 물을 질문을 만들어 드려요</span><code>AI 질문</code></a>
+  </div>`;
+}
+
+/* --- 예시 표 --- */
+function sheetHTML(x){
+  const p=x.def;const cells={...x.place(p),...(x.extra||{})};const u=x.out(p);
+  const res={};for(let r=u.f;r<=u.l;r++)res[u.c+r]=x.expect[r-u.f];
+  const all={...cells,...res};
+  let mc=1,mr=1;for(const k of Object.keys(all)){const m=k.match(/^([A-Z]+)(\d+)$/);mc=Math.max(mc,N(m[1]));mr=Math.max(mr,+m[2])}
+  let h=`<table class="sheet"><thead><tr><th></th>${Array.from({length:mc},(_,i)=>`<th>${L(i+1)}</th>`).join("")}</tr></thead><tbody>`;
+  for(let r=1;r<=mr;r++){h+=`<tr><th>${r}</th>`;for(let c=1;c<=mc;c++){const k=L(c)+r;const isR=k in res;const v=isR?res[k]:(cells[k]??"");
+    const num=typeof v==="number"||/^-?\d+(%|)$/.test(String(v));const hd=!isR&&typeof v==="string"&&r===1&&v!=="";
+    h+=`<td class="${isR?"res ":""}${num?"nr ":""}${hd?"hd":""}">${esc(v)}</td>`}h+="</tr>"}
+  return h+"</tbody></table>";
+}
+function tsv(x){
+  const cells={...x.place(x.def),...(x.extra||{})};let mc=1,mr=1;
+  for(const k of Object.keys(cells)){const m=k.match(/^([A-Z]+)(\d+)$/);mc=Math.max(mc,N(m[1]));mr=Math.max(mr,+m[2])}
+  const rows=[];for(let r=1;r<=mr;r++){const a=[];for(let c=1;c<=mc;c++)a.push(cells[L(c)+r]??"");rows.push(a.join("\t"))}
+  return rows.join("\n");
+}
+
+/* 표 밀기 안내: 화면에 표가 있을 때만 (화면을 떠난 뒤에도 남는 이벤트 오류 방지) */
+function swipeHint(){const sw=$("#sw"),s=$("#swipe");if(sw&&s)s.hidden=sw.scrollWidth<=sw.clientWidth+2}
+addEventListener("resize",swipeHint);
+
+/* --- 엑셀 한 가지 --- */
+function viewXl(id){
+  setNav("xl");
+  if(id==="ask")return viewXlAsk();
+  const x=xlOf(id);if(!x){location.hash="#/xl";return}
+  let p=S.xl[id];if(!p){p=S.xl[id]={...x.def};const g0=guessCols(x,S.hdr);Object.assign(p,g0);if(Object.keys(g0).length)p._pend=true}
+  const COLS=Array.from({length:26},(_,i)=>L(i+1));
+  const fieldHTML=tok=>{if(typeof tok==="string")return `<span>${tok}</span>`;const v=p[tok.k];
+    if(tok.r)return `<input type="number" inputmode="numeric" min="1" max="1048576" data-k="${tok.k}" data-n="1" value="${v}" aria-label="${tok.k} 행">`;
+    if(tok.w)return `<input class="w" data-k="${tok.k}" value="${esc(v)}" aria-label="셀 글자">`;
+    return `<select data-k="${tok.k}" aria-label="${tok.k} 열">${opts(v)}</select><span>열</span>`};
+  const opts=v=>COLS.map((c,i)=>{const nm=S.hdr[i];return `<option value="${c}"${c===v?" selected":""}>${c}${nm?" · "+esc(nm.length>8?nm.slice(0,8)+"…":nm):""}</option>`}).join("");
+  const labelOf=k=>{for(const l of x.lines){const i=l.findIndex(t=>typeof t==="object"&&t.k===k);if(i>0&&typeof l[i-1]==="string")return l[i-1].replace(/^[·\s]+/,"").replace(/^(기록|합계표|내 표|기준표):\s*/,"")}return k};
+  app.innerHTML=`<div class="crumb"><a href="#/">처음</a> › <a href="#/xl">엑셀 수식</a> › ${x.fn}</div>
+  <p class="muted" style="margin:0">이런 경우 있으시죠?</p>
+  <h1>${x.scene}</h1>
+  <div class="now"><b>지금</b><span>아래 예시처럼 결과(금색 칸)가 나와요. 내 표가 다르면 2번 문장만 고치세요. 수식은 바로 바뀌어요.</span></div>
+  <h3><span class="n">1</span> 예시 표</h3>
+  <div class="sheetwrap" id="sw">${sheetHTML(x)}</div>
+  <p class="swipe" id="swipe" hidden>표가 화면보다 넓어요. 옆으로 밀어서 보세요 →</p>
+  <p style="margin:8px 0 18px"><button class="btn sub sm" id="cpTsv" type="button">예시 표 복사</button> <span class="muted">엑셀 A1 칸에 붙여 넣고 연습해 보세요. 예시 표로 연습할 때는 2번을 [예시대로 되돌리기] 상태로 두세요.</span> <span class="done" id="okT" hidden></span></p>
+  <h3><span class="n">2</span> 내 표에 맞추기</h3>
+  <div class="fit">${x.guess?`<div class="hdr"><label for="hdr">내 표의 제목 줄을 붙여 넣으면 열을 찾아 드려요 <span class="muted">(선택) 엑셀에서 제목 칸들을 드래그해 복사(Ctrl+C) → 여기에 붙여넣기(Ctrl+V). A열부터 복사하세요.</span></label><input id="hdr" class="t" placeholder="예: 판매일  지점  품목  수량  금액" value="${esc(S.hdrText)}" autocomplete="off"><p class="muted" id="hdrMsg" aria-live="polite"></p></div>`:""}${x.lines.map(l=>`<div class="line">${l.map(fieldHTML).join("")}</div>`).join("")}
+    <p class="muted" style="margin:6px 0 0"><button class="chip" id="reset" type="button" style="font-size:14px;padding:3px 12px">예시대로 되돌리기</button></p></div>
+  <h3 style="margin-top:18px"><span class="n">3</span> 수식과 넣는 방법</h3>
+  <div class="out" id="out"></div>
+  <details class="more"><summary>조금 다르면 AI에게 묻기</summary><div class="in">
+    <label for="diff" style="font-weight:700;display:block;margin-bottom:6px">무엇이 다른가요? <span class="muted">열 위치와 조건만, 실제 자료는 빼고</span></label>
+    <input class="t" id="diff" placeholder="예: 금액이 아니라 수량(D열)을 더하고 싶어요">
+    <div class="warn" id="pii" hidden></div>
+    <pre class="prompt" id="xp" style="border:1px solid var(--line);margin-top:10px;max-height:260px"></pre>
+    <p style="margin:10px 0 0"><button class="btn sm" id="cpX" type="button">질문 복사</button> <span class="done" id="okX" hidden></span></p>
+  </div></details>`;
+  swipeHint();
+  $("#cpTsv").onclick=async()=>{const ok=await copyText(tsv(x));flash($("#okT"),ok?"복사했어요. 엑셀 A1에 붙여 넣으세요.":"복사가 안 됐어요.")};
+  const draw=()=>{
+    const e=x.bad(p);const box=$("#out");
+    if(e){box.innerHTML=`<div class="err">${esc(e)}</div>`;drawX();return}
+    const nm=c=>{const s=(S.hdr[N(c)-1]||"").trim();return s?`'${esc(s)}'`:"제목 없음"};
+    const uu=x.out(p);const where=`${uu.c}${uu.f}${multi(x,p)?`~${uu.c}${uu.l}`:""}`;
+    if(p._pend){const ks=[];for(const l of x.lines)for(const t of l)if(typeof t==="object"&&!t.r&&!t.w)ks.push(t.k);
+      box.innerHTML=`<div class="confirm"><b>제목 줄로 열을 골랐어요. 맞는지 확인해 주세요.</b><ul>${ks.map(k=>`<li>${esc(labelOf(k))}: <b>${p[k]}열</b> ${nm(p[k])}</li>`).join("")}<li>결과가 들어갈 곳: <b>${where}</b> ${nm(uu.c)}</li></ul>
+        <p class="muted">틀린 곳은 2번에서 고친 뒤 누르세요. 결과 칸에는 기존 자료가 없어야 해요.</p><button class="btn sm" id="okMap" type="button">맞아요, 수식 보기</button></div>`;
+      $("#okMap").onclick=()=>{p._pend=false;draw()};drawX();return}
+    const cf=outConflict(x,p,S.hdr);
+    if(cf&&p._ok!==uu.c){box.innerHTML=`<div class="err">${esc(cf)}<p style="margin:8px 0 0"><button class="chip" id="okCol" type="button">${uu.c}열은 비어 있어요, 계속</button> <button class="chip" id="clrHdr" type="button">붙인 제목 줄 지우기</button></p><p class="muted" style="margin:6px 0 0">다른 표에서 붙여 둔 제목 줄이면 [붙인 제목 줄 지우기]를 누르세요.</p></div>`;
+      $("#okCol").onclick=()=>{p._ok=uu.c;draw()};$("#clrHdr").onclick=()=>{S.hdr=[];S.hdrText="";viewXl(id)};drawX();return}
+    const u=x.out(p);const r0=x.r0(p);const f=x.F(p,r0);const first=u.c+u.f;
+    const many=multi(x,p);const next=many?x.F(p,r0+1):"";
+    box.innerHTML=`<div class="formula"><code id="fx">${esc(f)}</code><button class="btn sm" id="cpF" type="button">수식 복사</button><span class="done" id="okF" hidden></span></div>
+     <ol class="how">
+      <li><b>${first}</b> 칸을 누르고 수식을 붙여 넣은 뒤 <b>Enter</b></li>
+      ${!many?"":`<li>${first} 칸을 다시 누르고, 오른쪽 아래 작은 네모를 <b>${u.c}${u.l}</b>까지 끌어 내리기 (작은 네모를 두 번 눌러도 됩니다)</li>
+      <li>${u.c}${u.f+1} 칸을 눌러 수식이 <code>${esc(next)}</code> 로 바뀌었는지 보기. <span class="muted">$ 붙은 범위는 그대로, 칸 이름만 한 줄씩 내려가면 맞아요.</span></li>`}
+     </ol>
+     ${x.note&&x.note(p)?`<div class="warn" style="margin:0 16px 12px">${esc(x.note(p))}</div>`:""}
+     <div class="check"><b>맞는지 확인</b> — ${esc(x.check(p))}</div>
+     ${x.alt?`<p class="alt">${esc(x.altL)}: <code>${esc(x.alt(p,r0))}</code></p>`:""}`;
+    $("#cpF").onclick=async()=>{const ok=await copyText(f);flash($("#okF"),ok?"복사했어요":"복사가 안 됐어요")};
+    drawX();
+  };
+  const drawX=()=>{const d=$("#diff").value;const e=x.bad(p);
+    const r=e?{text:"먼저 2번 내 표에 맞추기의 안내를 고쳐 주세요.",found:[]}:xlAsk({x,p,diff:d,hdr:S.hdr});
+    $("#xp").textContent=r.text;
+    const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요(수식 속 셀 글자 포함). 엑셀에 넣을 수식은 그대로입니다.`};
+  $(".fit").addEventListener("input",e=>{const el=e.target.closest("[data-k]");if(!el)return;p[el.dataset.k]=el.dataset.n?parseInt(el.value,10):el.value;draw()});
+  $("#reset").onclick=()=>{Object.assign(p,x.def);delete p._pend;delete p._ok;viewXl(id)};
+  const hi=$("#hdr");if(hi){const apply=()=>{S.hdrText=hi.value;S.hdr=parseHdr(hi.value);const g=guessCols(x,S.hdr);Object.assign(p,g);p._pend=Object.keys(g).length>0;delete p._ok;
+      app.querySelectorAll(".fit select[data-k]").forEach(s=>{s.innerHTML=opts(p[s.dataset.k])});
+      const ks=Object.keys(x.guess),got=ks.filter(k=>g[k]),miss=ks.filter(k=>!g[k]);
+      $("#hdrMsg").textContent=!S.hdr.length?"":got.length?`${got.length}칸을 골랐어요. 아래 3번에서 맞는지 확인해 주세요.${miss.length?" 못 찾은 칸은 직접 골라 주세요.":""}`:"제목에서 맞는 열을 못 찾았어요. 아래에서 직접 골라 주세요.";draw()};
+    hi.addEventListener("input",apply);if(S.hdr.length)$("#hdrMsg").textContent="붙여 둔 제목 줄로 열 이름을 함께 보여 드려요.";}
+  $("#diff").addEventListener("input",drawX);
+  $("#cpX").onclick=async()=>{const ok=await copyText($("#xp").textContent);flash($("#okX"),ok?"복사했어요. AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요.")};
+  draw();
+}
+function viewXlAsk(){
+  const st=S.xl.ask||(S.xl.ask={want:"",cols:"",diff:""});
+  app.innerHTML=`<div class="crumb"><a href="#/">처음</a> › <a href="#/xl">엑셀 수식</a> › 여기에 없는 일</div>
+  <h1>엑셀 질문 만들기</h1>
+  <div class="now"><b>지금</b><span>세 칸을 채우고 [질문 복사]를 누른 뒤 AI 대화창에 붙여 넣으세요. 표 내용은 보내지 말고 열 제목만 적어요.</span></div>
+  <div class="two"><div>
+    <div class="field"><label for="w1"><span class="n">1</span>하고 싶은 일</label><input class="t" id="w1" value="${esc(st.want)}" placeholder="예: 마을별로 신청 수량 평균 내기"></div>
+    <div class="field"><label for="w2"><span class="n">2</span>내 표의 열 제목</label><textarea id="w2" placeholder="예: A열 마을, B열 신청 번호, C열 신청 수량 / 2행부터 120행까지">${esc(st.cols)}</textarea></div>
+    <div class="field"><label for="w3"><span class="n">3</span>원하는 결과</label><input class="t" id="w3" value="${esc(st.diff)}" placeholder="예: E열에 마을 이름, F열에 평균"></div>
+    <div class="warn" id="pii" hidden></div>
+  </div><div><div class="panel" id="panel"><div class="panelhead"><b>AI에게 보낼 질문</b><em>아직 AI의 답이 아니에요</em></div>
+    <pre class="prompt" id="pr"></pre><div class="panelfoot"><button class="btn" id="cp" type="button">질문 복사</button><span class="done" id="ok" hidden></span></div></div>
+    <div class="after"><h3>답을 받으면</h3><ol><li>수식을 한 칸에 먼저 넣고 결과 하나를 손으로 계산해 맞춰 보기</li><li>맞으면 아래로 채우기</li><li>안 되면 오류 메시지를 그대로 같은 대화창에 붙여 넣기</li></ol></div></div></div>`;
+  const draw=()=>{const r=xlAsk({want:st.want,cols:st.cols,diff:st.diff});$("#pr").textContent=r.text;
+    const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요.`;$("#ok").hidden=true};
+  [["#w1","want"],["#w2","cols"],["#w3","diff"]].forEach(([s,k])=>$(s).addEventListener("input",e=>{st[k]=e.target.value;draw()}));
+  const doCopy=async()=>{const ok=await copyText($("#pr").textContent);flash($("#ok"),ok?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.");return ok};
+  $("#cp").onclick=doCopy;draw();mobileBar(doCopy);
+}
+
+/* --- 안내 --- */
+function viewAbout(){
+  setNav("about");
+  app.innerHTML=`<h1>안내</h1>
+  <p class="muted" style="margin:0 0 16px">김상무의 AI농협은 농협 직원이 AI와 엑셀을 처음 연습하는 <b>가상 교육 공간</b>입니다. 농협의 공식 서비스가 아닙니다.</p>
+  <div class="about">
+   <div class="box"><h3>지금 되는 것</h3><ul>
+     <li>AI 질문 만들기: ${DEPTS.length}개 부서 묶음, ${TASKS.length}개 업무, 직접 적기</li>
+     <li>업무 이름 검색 (예: 연체, 방역, RPC, 로컬푸드)</li>
+     <li>엑셀 수식 ${XL.length}가지: 예시 표, 내 표에 맞춘 수식, 넣을 칸, 채우는 방법, 확인 방법</li>
+     <li>목록에 없는 엑셀 일 → AI 질문 만들기</li>
+     <li>완성된 질문 전체를 검사해 전화번호·주민등록번호·계좌·이메일로 보이는 것을 [지움]으로 바꾸기 (모든 형태를 찾지는 못함, 사람 이름은 못 찾음)</li></ul></div>
+   <div class="box"><h3 class="soon">준비 중 (아직 없음)</h3><ul class="soon">
+     <li>AI에 직접 연결해 답 받기 — 지금은 복사해서 붙여 넣기</li>
+     <li>연습용 엑셀 파일 내려받기 — 지금은 '예시 표 복사'</li>
+     <li>우리 조합 부서 이름 저장</li>
+     <li>부서별 질문 사례를 현업 담당자가 다듬는 일</li></ul></div>
+   <div class="box"><h3>엑셀 지원 범위</h3><ul>
+     <li>기준: <b>엑셀 2021 이상, Windows</b></li>
+     <li>XLOOKUP은 2021부터 됩니다. 2019 이하용 INDEX·MATCH 수식을 함께 보여 줍니다.</li>
+     <li>나머지(COUNTIF·SUMIFS·COUNTBLANK·RANK.EQ·DAYS·IFERROR)는 2013 이후 버전에서도 됩니다.</li>
+     <li>열은 A~Z, 행은 1~1,048,576까지 고를 수 있어요. Z열 너머의 표는 '조금 다르면 AI에게 묻기'를 쓰세요.</li>
+     <li>합계·건수·찾아오기·명단 비교는 열 전체(예: $E:$E)를 보는 수식이라 끝 행을 적지 않아도 되고, 자료가 아래로 늘어도 그대로 맞아요. 대신 결과 칸은 그 열들과 다른 열에 두고, 그 열 아래쪽에 다른 표를 붙여 두지 마세요.</li>
+     <li>엑셀의 제목 줄을 복사해 붙여 넣으면 제목 이름으로 열을 찾아 드려요. 찾은 열이 맞는지는 꼭 눈으로 확인하세요. 붙여 넣은 제목은 이 화면 안에서만 쓰이고 어디로도 보내지 않아요.</li>
+     <li>COUNTIF는 * ? ~ 와 맨 앞의 > < = 를 '조건'으로 읽습니다. 건수 세기에서는 이런 셀 글자를 적으면 자동으로 '정확히 같은 글자만' 세는 수식으로 바뀌고, 중복·명단 비교에서는 화면에 함께 나오는 수식을 쓰세요.</li>
+     <li>휴대폰 엑셀·Mac·구글 시트는 확인하지 않았습니다.</li></ul></div>
+   <div class="box"><h3>검증 현황</h3><ul>
+     <li>엑셀 수식: 이 PC의 실제 Microsoft Excel(버전 16)에서 앱이 만든 수식을 그대로 넣어 계산했습니다(예시 위치와 옮긴 위치).</li>
+     <li>엑셀 2021 영구판 자체에서는 확인하지 않았습니다.</li>
+     <li>질문: ${TASKS.length}개 업무 × 결과 8가지 × 읽는 사람 4가지 조합을 자동으로 점검했습니다.</li>
+     <li>실제 직원 사용, 실제 휴대폰, AI의 실제 답변은 아직 확인하지 않았습니다.</li></ul></div>
+   <div class="box"><h3>안전하게 쓰기</h3><ul>
+     <li>실제 고객·조합원 이름, 전화번호, 계좌, 내부 숫자, 업무 파일은 넣지 마세요.</li>
+     <li>앱은 <b>사람 이름을 찾지 못합니다.</b> 직접 빼 주세요.</li>
+     <li>AI 답변과 수식 결과는 사람이 확인한 뒤에 쓰세요.</li>
+     <li>부서 묶음은 흔한 예시일 뿐 전국 공통 조직도가 아닙니다.</li></ul></div>
+  </div>`;
+}
+
+window.__AI={DEPTS,TASKS,OUTS,AUDS,XL,makePrompt,askPrompt,xlPrompt,xlAsk,scrub,findAll,tsv};
+route();
+</script>
