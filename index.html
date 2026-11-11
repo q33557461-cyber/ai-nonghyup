@@ -163,6 +163,13 @@ details.more{margin-top:14px;border:1px solid var(--line);background:var(--white
 details.more summary{padding:12px 16px;font-weight:800;color:var(--green);cursor:pointer}
 details.more .in{padding:0 16px 16px}
 .alt{font-size:14.5px;margin:0 16px 14px;color:var(--ink2)}
+.sheet td.anc{outline:2px solid var(--ink);outline-offset:-2px}
+.sheet i.sp{font-style:normal;color:var(--goldd);font-weight:800}
+.xgroup{font-size:19px;margin:26px 0 4px}.xgroup .muted{font-size:14.5px;font-weight:600;margin-left:6px}
+.nhopt{display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:700;font-size:15.5px;cursor:pointer}.nhopt input{width:20px;height:20px;accent-color:var(--green)}
+.recent{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 0;padding:10px 12px;background:var(--white);border:1px solid var(--line)}
+.recent>b{font-size:14.5px;margin-right:4px}.recent a{text-decoration:none;color:var(--ink);font-weight:700;font-size:15px;border:1px solid var(--line);padding:4px 10px;background:var(--ivory)}
+.recent a .tag{margin-right:6px}.recent small{flex-basis:100%;font-size:13px}
 .alt code{font-size:14px;overflow-wrap:anywhere}
 
 /* 안내 */
@@ -238,6 +245,8 @@ const OUTS={
  script:{n:"응대 말씀",how:"직원이 그대로 읽을 수 있는 말 순서와, 예상 질문 3개와 답"},
  edu:{n:"설명 자료",how:"처음 듣는 사람도 이해하도록 5단계 이내 설명과 쉬운 예시"}
 };
+/* 농협 문서 기호(1. → □ → ○ → ※)를 고를 수 있는 결과 모양 */
+const NH_OUTS=["notice","report"];
 const AUDS={
  member:{n:"조합원·고객",how:"어르신도 이해하는 쉬운 말과 존댓말"},
  staff:{n:"직원·동료",how:"업무 용어는 써도 되지만 짧고 분명하게"},
@@ -307,6 +316,16 @@ const eul=w=>{const c=(w||"").trim().slice(-1).charCodeAt(0);return c>=0xAC00&&c
 /* 개인정보로 보이는 것 찾기 (이름은 못 찾음) */
 /* 앞뒤가 숫자가 아닐 때만 잡는다(긴 금액 속 일부를 번호로 읽지 않게) */
 const okRRN=m=>{const d=m.replace(/\D/g,"");const mo=+d.slice(2,4),da=+d.slice(4,6);return mo>=1&&mo<=12&&da>=1&&da<=31};
+/* 주소 가리기에서 빼는 말: 시·군·구·읍·면으로 끝나지만 지명이 아닌 말, '로·길'로 끝나지만 도로가 아닌 말(앞으로·전화로…), 리로 끝나는 보통 낱말 */
+/* 시: '교육시·점검시(~할 때)'와 구별하려고 실제 시 이름만 (2026 기준 행정 시 + 특별·광역시 줄임) */
+const CITY="(?:서울특별|부산광역|대구광역|인천광역|광주광역|대전광역|울산광역|세종특별자치|서울|부산|대구|인천|광주|대전|울산|세종|수원|성남|의정부|안양|부천|광명|평택|동두천|안산|고양|과천|구리|남양주|오산|시흥|군포|의왕|하남|용인|파주|이천|안성|김포|화성|양주|포천|여주|춘천|원주|강릉|동해|태백|속초|삼척|청주|충주|제천|천안|공주|보령|아산|서산|논산|계룡|당진|전주|군산|익산|정읍|남원|김제|목포|여수|순천|나주|광양|포항|경주|김천|안동|구미|영주|영천|상주|문경|경산|창원|진주|통영|사천|김해|밀양|거제|양산|제주|서귀포)시";
+/* 면: '신청하면·필요하면'처럼 말끝 '~면'은 지명이 아님 */
+const IF_END=/(?:하|되|으|려|다|라|않|었|았|겠|해|봐|와|져|러)면$/;
+const ADDR_STOP=/^(?:시|군|구|읍|면|대면|비대면|측면|전면|이면|화면|반면|방면|표면|국면|정면|장면|단면|내면|외면|지면|서면|당면|직면|체면|평면|일면|양면|안면|지시|표시|동시|수시|즉시|다시|혹시|역시|당시|임시|일시|개시|게시|상시|무시|제시|감시|도시|요구|연구|도구|친구|입구|출구|창구|가구|기구|지구|항구|전구|문구|용구|축구|야구|농구|배구|탁구|장군|아군|적군|대군)$/;
+const ROAD_STOP=/으로$|위주로$|중심으로$|별로$|식으로$|^(?:앞|뒤|새|따|주|서|별|도|홀|실|위|옆|밖|안|길|이|그|저)로$|(?:그|이|저|제|멋|마음|순서|뜻|생각|예정|계획|규정|원래|지시|요청|안내|평소|기준|절차|말)대로$|^(?:이|그|저|가는|오는|먼|빠른|지름|갈|뒷|앞|첫|외|산|눈|빗|퇴근|출근|귀갓|등굣|하굣)길$/;
+const RI_STOP=/^(?:거리|우리|관리|처리|정리|수리|요리|무리|머리|소리|자리|다리|고리|유리|원리|논리|의리|이리|저리|그리|오리|도리|진리|경리|총리|대리|심리|물리|조리|미리|빨리|멀리|널리|부리|꼬리|마리|권리|윤리|승리|분리|섭리|합리|추리|기리)$/;
+/* 번호 바로 뒤가 시·명·회 같은 단위면 주소가 아님 (3시, 2번, 5명, 45농가, 120포 — 제미나이 검토 반영) */
+const ADDR_END="(?!\\d|\\s?(?:시간|시|분|명|개월|개|일|회|번(?!길)|부(?!근)|건|층|석|원|년|월|주|차|곳|대|장|권|통|세대|세|살|마리|톤|평|배|농가|가구|호|인|포|상자|박스|필지|마지기|단계|차례|가지|쪽|페이지|문항|항목|개소|회차|조|팀|반|등|위|ha|㎡|km|kg|m|%))";
 const PII=[
  ["이메일",/[\w.+-]+@[\w-]+\.[\w.-]+/g],
  ["주민등록번호",/(?<!\d)\d{6}\s*-?\s*[1-8]\d{6}(?!\d)/g,okRRN],
@@ -315,13 +334,18 @@ const PII=[
  ["전화번호",/(?<!\d)\(?0(?:2|[3-6][1-5]|70|80|50\d)\)?\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
  ["계좌·카드 번호",/(?<!\d)\d{2,6}(?:-\d{2,6}){2,4}(?!\d)/g,m=>m.replace(/\D/g,"").length>=10], /* 날짜 2026-11-09 같은 것은 통과 */
  ["계좌·카드 번호",/(?<=(?:계좌|카드|통장)(?:번호)?\s*[:：]?\s*)\d{10,16}(?!\d)/g],
- ["계좌·카드 번호",/(?<![\d.,])\d{2,6}(?: \d{2,6}){2,4}(?![\d.,])/g,m=>{const d=m.replace(/\D/g,"").length;return d>=10&&d<=19}] /* 띄어 쓴 번호 */
+ ["계좌·카드 번호",/(?<![\d.,])\d{2,6}(?: \d{2,6}){2,4}(?![\d.,])/g,m=>{const d=m.replace(/\D/g,"").length;return d>=10&&d<=19}], /* 띄어 쓴 번호 */
+ /* 주소(v03): 오작동을 줄이려고 '시·군·구·읍·면 + 도로명 + 번호', '읍·면 + ○○리 + 번지', '○○번길 번호', '…번지'만 잡는다. 이름 가리기는 보류 */
+ ["주소",new RegExp("(?<![가-힣])("+CITY+"|[가-힣]{1,8}(?:군|구|읍|면))\\s+(?:([가-힣]{1,8}(?:구|읍|면|동))\\s+)?([가-힣0-9]{1,12}(?:로|길))\\s?\\d{1,4}(?:-\\d{1,4})?"+ADDR_END,"g"),(m,a,b,r)=>!ADDR_STOP.test(a)&&!IF_END.test(a)&&!(b&&(ADDR_STOP.test(b)||IF_END.test(b)))&&!ROAD_STOP.test(r)],
+ ["주소",new RegExp("(?<![가-힣])[가-힣0-9]{1,12}(?:로|길)\\s?\\d{1,4}번?길\\s?\\d{1,4}(?:-\\d{1,4})?(?!\\d)","g")],
+ ["주소",new RegExp("(?<![가-힣])([가-힣]{1,8}(?:읍|면))\\s*([가-힣]{1,6}리)\\s*(?:산\\s?)?\\d{1,5}(?:-\\d{1,5})?"+ADDR_END,"g"),(m,a,r)=>!ADDR_STOP.test(a)&&!IF_END.test(a)&&!RI_STOP.test(r)],
+ ["주소",new RegExp("(?<![가-힣])[가-힣]{1,8}(?:리|동|가)\\s*(?:산\\s?)?\\d{1,5}(?:-\\d{1,5})?\\s?번지","g")]
 ];
 function scrub(text){
   const found=[];let t=text||"";
   for(const [name,re,ok] of PII){
-    t=t.replace(re,m=>{
-      if(ok&&!ok(m)) return m;
+    t=t.replace(re,(...a)=>{const m=a[0];
+      if(ok&&!ok(...a)) return m;
       if(!found.includes(name)) found.push(name); return "[지움]";
     });
   }
@@ -349,6 +373,7 @@ function rawPrompt(o){
   const soft=r=>!own||keep.test(r)?r:r.replace(/(숫자를 )?(지어내지 말고 )?(\[[^\]]+\](?: 자리)?로|빈칸으로|비워) (두세요|두고|표시해 주세요)/g,(m,a,b,p,v)=>`${a?"숫자는 ":""}상황에 적혀 있으면 그대로 쓰고, 없으면 ${b||""}${p} ${v}`);
   if(t&&t.c) rules.push(soft(t.c));
   if(t&&t.f&&t.f[o.out]) rules.push(soft(t.f[o.out])); /* 결과 모양에 딸린 형식 지시는 그 모양을 골랐을 때만 */
+  if(o.nh&&NH_OUTS.includes(o.out)) rules.push("농협 문서 기호로 써 주세요. 큰 항목은 1. 2. 3., 그 아래는 □, 그 아래는 ○, 주의·참고는 ※. 순서대로 하는 절차는 ① ② ③."+(o.aud==="staff"?" 문장 끝은 '~함', '~임', '~음'처럼 짧게 끊어 주세요.":" 읽는 사람이 직원이 아니니 문장은 존댓말로 써 주세요."));
   rules.push("쉬운 말로 쓰고, 어려운 용어는 괄호 안에 풀어 주세요.");
   rules.push("다 쓴 뒤 맨 끝에 '보내기 전에 사람이 확인할 점' 3가지를 적어 주세요.");
   const work=[dept,name].filter(Boolean).join(" · ")+(my?` (우리 조합에서는 '${my}' 업무)`:"");
@@ -376,6 +401,7 @@ const N=c=>c.split("").reduce((a,ch)=>a*26+ch.charCodeAt(0)-64,0);
 const nx=(c,k=1)=>L(N(c)+k);
 const ab=(c,r)=>`$${c}$${r}`;
 const rg=(c,f,l)=>`$${c}$${f}:$${c}$${l}`;
+const rr=(a,f,b,l)=>`$${a}$${f}:$${b}$${l}`; /* 여러 열 범위 */
 const col=c=>`$${c}:$${c}`; /* 열 전체: 끝 행을 몰라도 되고 자료가 늘어도 그대로 */
 const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
 const put=(cells,c,r,head,vals)=>{if(head!=null&&r>1)cells[c+(r-1)]=head;vals.forEach((v,i)=>{if(v!=="")cells[c+(r+i)]=v})};
@@ -384,7 +410,7 @@ const isRow=v=>Number.isInteger(v)&&v>=1&&v<=MAXR;
 const rowsOK=p=>isRow(p.f)&&isRow(p.l)&&p.l>=p.f;
 const ROWERR="행 번호를 확인해 주세요. 1부터 1,048,576 사이의 소수점 없는 숫자로 적고, 끝 행은 첫 행과 같거나 커야 해요.";
 /* 결과가 두 칸 이상이라 아래로 채워야 하는지 (한 칸이면 끌어 내리기·다음 줄 확인 안내를 빼야 함) */
-const multi=(x,p)=>{if(x.single)return false;const u=x.out(p);return u.l>u.f};
+const multi=(x,p)=>{if(x.single||x.spill)return false; /* 펼쳐지는 수식은 첫 칸 하나만 */const u=x.out(p);return u.l>u.f};
 const headRow=f=>f>1?f-1:f; /* 제목 줄까지 포함한 표의 첫 행 */
 /* 같은 열에서 행 구간이 실제로 겹치는지 (같은 열이라도 위아래로 떨어져 있으면 괜찮음) */
 const hit=(c1,a1,b1,c2,a2,b2)=>c1===c2&&a1<=b2&&a2<=b1;
@@ -438,7 +464,6 @@ const XL=[
   place(p){const c={};put(c,p.C,p.f,"품목 코드",this.data);if(p.f>1)c[p.O+(p.f-1)]="품목 이름";put(c,p.H,p.hf,"코드",this.ref.map(x=>x[0]));put(c,p.I,p.hf,"품목 이름",this.ref.map(x=>x[1]));return c},
   r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
   F:(p,r)=>`=XLOOKUP(${p.C}${r},${col(p.H)},${col(p.I)},"없음")`,
-  altL:"엑셀 2019 이하라면 (코드에 * ? ~ 가 들어 있으면 다른 코드를 찾을 수 있어요)", alt:(p,r)=>`=IFERROR(INDEX(${col(p.I)},MATCH(${p.C}${r},${col(p.H)},0)),"없음")`,
   bad:p=>{if(!rowsOK(p))return ROWERR;if(p.H===p.I)return "기준표의 코드 열과 가져올 열이 같아요.";if(p.O===p.C)return "결과 열이 코드 열과 같아요. 빈 열을 골라 주세요.";
     if([p.H,p.I].includes(p.O))return "결과 열이 기준표 열과 같아요. 수식이 기준표 열 전체를 보므로 기준표와 다른 빈 열을 골라 주세요.";
     if([p.H,p.I].includes(p.C))return "내 표의 코드 열이 기준표 열과 같아요. 기준표에 없는 코드는 자기 자신을 찾아 '없음' 대신 엉뚱한 값이 나와요. 기준표는 다른 열에 두세요.";return ""},
@@ -495,7 +520,74 @@ const XL=[
   r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
   F:(p,r)=>`=IF(${p.D}${r}="","",DAYS(${p.D}${r},${ab(p.B,p.b)}))`,
   bad:p=>{if(!rowsOK(p))return ROWERR;if(!isRow(p.b))return "기준일 행 번호를 확인해 주세요. 1부터 1,048,576 사이로 적어요.";if(p.D===p.O)return "만기일 열과 결과 열이 같아요.";if(hit(p.B,p.b,p.b,p.D,headRow(p.f),p.l)||hit(p.B,p.b,p.b,p.O,headRow(p.f),p.l))return "기준일 칸이 표 안에 있어요. 표 밖의 빈 칸을 골라 주세요.";return ""},
-  check:p=>`한 줄만 달력으로 세어 보세요. 마이너스는 이미 지난 날입니다. 결과가 1900-01-11처럼 날짜로 보이거나 ####로 나오면 결과 칸을 고른 뒤 [홈] → 표시 형식을 [일반]으로 바꾸세요. 오늘 기준으로 보려면 기준일 칸에 =TODAY()를 넣으면 되지만, 파일을 여는 날마다 결과가 바뀝니다.`}
+  check:p=>`한 줄만 달력으로 세어 보세요. 마이너스는 이미 지난 날입니다. 결과가 1900-01-11처럼 날짜로 보이거나 ####로 나오면 결과 칸을 고른 뒤 [홈] → 표시 형식을 [일반]으로 바꾸세요. 오늘 기준으로 보려면 기준일 칸에 =TODAY()를 넣으면 되지만, 파일을 여는 날마다 결과가 바뀝니다.`},
+ /* ---- v03: 첫 칸 하나에만 넣으면 아래로 저절로 펼쳐지는 수식 (동적 배열, 엑셀 2021·2024) ---- */
+ {id:"pick",spill:true,guess:{D:/상태|구분|여부|처리|결과/},resOK:/결과|추출|목록|뽑|성명|이름/,scene:"'연체'인 줄만 따로 뽑아 보고 싶어요",sub:"조건에 맞는 줄만 다른 곳에 모으기",fn:"FILTER",
+  def:{a:"B",b:"D",f:2,l:9,D:"D",w:"연체",O:"F",o:2},
+  lines:[["뽑을 표",{k:"a",aria:"뽑을 표 첫 열"},"부터",{k:"b",aria:"뽑을 표 마지막 열"},"까지 ·",{k:"f",r:1,aria:"표 시작 행"},"행부터",{k:"l",r:1,aria:"표 끝 행"},"행까지"],["조건 열",{k:"D"},"· 셀 글자",{k:"w",w:1}],["결과를 놓을 첫 칸",{k:"O"},{k:"o",r:1,aria:"결과 첫 칸 행"},"행"]],
+  data:[["김하늘",3500000,"정상"],["이바다",1200000,"연체"],["박구름",800000,"정상"],["최들판",2700000,"연체"],["정냇물",500000,"정상"],["한겨울",4100000,"정상"],["오솔길",950000,"연체"],["윤시내",1800000,"정상"]],
+  expect:[["이바다","1200000","연체"],["최들판","2700000","연체"],["오솔길","950000","연체"]],
+  head:["성명","대출 잔액","상태"],
+  place(p){const c={};[p.a,nx(p.a),nx(p.a,2)].forEach((cc,j)=>put(c,cc,p.f,this.head[j],this.data.map(d=>d[j])));if(p.o>1)this.head.forEach((h,j)=>c[nx(p.O,j)+(p.o-1)]=h);return c},
+  r0:p=>p.o, out:p=>({c:p.O,f:p.o,l:p.o+2}),
+  F:p=>`=FILTER(${rr(p.a,p.f,p.b,p.l)},${rg(p.D,p.f,p.l)}=${q(p.w)},"해당 없음")`,
+  bad:p=>{if(!rowsOK(p))return ROWERR;if(!isRow(p.o))return "결과 첫 칸의 행 번호를 확인해 주세요. 1부터 1,048,576 사이로 적어요.";
+    if(N(p.a)>N(p.b))return "뽑을 표의 앞뒤 열이 바뀌었어요. 왼쪽 열을 먼저 골라 주세요.";
+    if(!String(p.w||"").trim())return "셀 글자를 적어 주세요. 예: 연체";
+    if(p.o+(p.l-p.f)>MAXR)return "결과가 많으면 시트 끝(1,048,576행)을 넘을 수 있어요. 결과 첫 칸을 더 위쪽으로 골라 주세요.";
+    const w=N(p.b)-N(p.a)+1,o1=N(p.O),o2=o1+w-1,rows=p.o<=p.l&&p.o+(p.l-p.f)>=headRow(p.f);
+    if(rows&&((o1<=N(p.b)&&o2>=N(p.a))||(N(p.D)>=o1&&N(p.D)<=o2)))return `결과는 ${p.O}${p.o}부터 오른쪽으로 ${w}칸, 아래로 여러 줄 펼쳐져요. 그 자리가 뽑을 표와 겹치니 표 오른쪽의 빈 열을 골라 주세요.`;return ""},
+  spillW:p=>N(p.b)-N(p.a)+1,
+  check:p=>`필터(Ctrl+Shift+L)로 ${p.D}열에서 '${p.w}'만 골라 보세요. 보이는 줄 수와 결과 줄 수가 같으면 맞습니다. 조건 글자는 띄어쓰기까지 똑같아야 해요('연체 '는 다른 글자). 맞는 줄이 없으면 '해당 없음'이 나옵니다. 원래 표를 고치면 결과도 저절로 바뀌고, 결과 칸은 하나씩 지우거나 고칠 수 없어요. 다른 파일에 붙일 때는 결과를 복사해 [값 붙여넣기] 하세요.`},
+ {id:"uniq",spill:true,guess:{K:/마을|거래처|품목|품명|지점|부서|사무소|작목/},resOK:/목록|결과|마을|품목|거래처|이름/,scene:"이름을 겹치지 않게 한 번씩만 뽑고 싶어요",sub:"중복 없는 목록, 가나다순 (합계표 만들 때)",fn:"UNIQUE · SORT",
+  def:{K:"B",f:2,l:10,O:"E",o:2},
+  lines:[["뽑을 열",{k:"K"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지"],["결과를 놓을 첫 칸",{k:"O"},{k:"o",r:1,aria:"결과 첫 칸 행"},"행"]],
+  data:["다동","가동","나동","가동","","다동","라동","가동","나동"],
+  expect:["가동","나동","다동","라동"],
+  extra:{C1:"신청 수량",C2:3,C3:5,C4:2,C5:4,C7:1,C8:6,C9:2,C10:3},
+  place(p){const c={};put(c,p.K,p.f,"마을",this.data);if(p.o>1)c[p.O+(p.o-1)]="마을 목록";return c},
+  r0:p=>p.o, out:p=>({c:p.O,f:p.o,l:p.o+3}),
+  F:p=>`=SORT(UNIQUE(FILTER(${rg(p.K,p.f,p.l)},${rg(p.K,p.f,p.l)}<>"","자료 없음")))`,
+  bad:p=>{if(!rowsOK(p))return ROWERR;if(!isRow(p.o))return "결과 첫 칸의 행 번호를 확인해 주세요. 1부터 1,048,576 사이로 적어요.";
+    if(p.O===p.K&&p.o<=p.l)return "결과를 놓을 칸이 뽑을 열 안에 있어요. 오른쪽의 빈 열을 골라 주세요.";
+    if(p.o+(p.l-p.f)>MAXR)return "결과가 많으면 시트 끝(1,048,576행)을 넘을 수 있어요. 결과 첫 칸을 더 위쪽으로 골라 주세요.";return ""},
+  check:p=>`결과가 몇 개인지는 빈 칸에 =COUNTA(${p.O}${p.o}#) 를 넣어 보세요(# 은 펼쳐진 결과 전체). 원래 열에서 이름 하나를 필터로 골라, 결과에는 한 번만 있는지 보세요. 빈칸은 빼고 뽑아요. 뽑을 이름이 하나도 없으면 '자료 없음'이 나와요(이때 COUNTA는 1). '가동'과 '가동 '(뒤에 띄어쓰기)은 다른 이름으로 치니, 이상하면 '띄어쓰기 정리'를 먼저 하세요. 이 목록 옆 칸에 '품목별 합계'의 SUMIFS를 쓰면 합계표가 됩니다.`},
+ {id:"split",spill:true,guess:{T:/사업장|지점|사무소|이름|명칭|거래처|품목|품명/},resOK:/결과|앞|뒤|분리|나눔|이름|지점/,scene:"'가지점(하나로마트)'에서 괄호 앞 글자만 떼어 내고 싶어요",sub:"기준 글자 앞·뒤로 나누기",fn:"TEXTBEFORE · 2024 전용",v24:true,
+  def:{T:"B",f:2,l:7,w:"(",O:"C",X:"D"},
+  lines:[["나눌 글자가 있는 열",{k:"T"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지"],["기준 글자",{k:"w",w:1},"· 결과 열",{k:"O"}],["뒤쪽(괄호 안) 글자를 놓을 열",{k:"X",aria:"뒤쪽 글자 결과 열"},"<small class=\"muted\">쓸 때만</small>"]],
+  data:["본점(신용)","가지점 (하나로마트)","나지점","다지점(경제)","","라지점(유통)"],
+  expect:["본점","가지점","나지점","다지점","","라지점"],
+  altExpect:["신용","하나로마트","","경제","","유통"],
+  place(p){const c={};put(c,p.T,p.f,"사업장",this.data);if(p.f>1)c[p.O+(p.f-1)]="앞쪽 글자";return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:p=>`=IFERROR(TRIM(TEXTBEFORE(${rg(p.T,p.f,p.l)},${q(p.w)})),TRIM(${rg(p.T,p.f,p.l)}))`,
+  altL:p=>p.w==="("?`괄호 안 글자를 꺼내려면 (빈 열 ${p.X}${p.f} 칸 하나에)`:`'${p.w}' 뒤쪽 글자를 꺼내려면 (빈 열 ${p.X}${p.f} 칸 하나에)`,
+  altBad:p=>p.X===p.T?`${p.X}열은 나눌 글자가 있는 원래 자료 열이에요. 붙여 넣으면 원래 자료를 덮어쓰니, 2번에서 뒤쪽 글자를 놓을 열을 비어 있는 다른 열로 골라 주세요.`:p.X===p.O?`${p.X}열은 앞쪽 글자 결과가 펼쳐질 열이에요. 2번에서 뒤쪽 글자를 놓을 열을 다른 빈 열로 골라 주세요.`:"",
+  alt:p=>p.w==="("?`=IFERROR(TEXTBEFORE(TEXTAFTER(${rg(p.T,p.f,p.l)},"("),")",,,1),"")`:`=IFERROR(TRIM(TEXTAFTER(${rg(p.T,p.f,p.l)},${q(p.w)})),"")`,
+  bad:p=>{if(!rowsOK(p))return ROWERR;if(!String(p.w||""))return "기준 글자를 적어 주세요. 예: (";if(p.O===p.T)return "결과 열이 나눌 글자가 있는 열과 같아요. 오른쪽의 빈 열을 골라 주세요.";return ""},
+  check:p=>`결과 한두 줄을 원래 글자와 눈으로 비교하세요. 기준 글자 '${p.w}'가 없는 칸은 원래 글자가 그대로 나오고, 두 번 있으면 첫 번째 것 앞까지만 잘라요. 앞뒤 띄어쓰기는 지워 줍니다. 이 수식은 엑셀 2024에 새로 생긴 TEXTBEFORE·TEXTAFTER를 써서, 엑셀 2021 이하에서는 #NAME? 오류가 나요.`},
+ {id:"date8",spill:true,guess:{D:/일자|날짜|접수일|신청일|거래일|처리일|기준일/},resOK:/날짜|일자|결과|변환/,scene:"20261109처럼 숫자로 적힌 날짜를 진짜 날짜로 바꾸고 싶어요",sub:"8자리 숫자 → 날짜 (정렬·기간 계산이 되게)",fn:"DATE · LET",
+  def:{D:"B",f:2,l:8,O:"C"},
+  lines:[["8자리 날짜가 있는 열",{k:"D"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지"],["결과 열",{k:"O"}]],
+  data:[20261109,"20261231"," 20260105 ","","2026119","20261341",20270301],
+  expect:["2026-11-09","2026-12-31","2026-01-05","","형식 확인","형식 확인","2027-03-01"], fmt:"yyyy-mm-dd",
+  place(p){const c={};put(c,p.D,p.f,"접수일",this.data);if(p.f>1)c[p.O+(p.f-1)]="날짜";return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:p=>`=LET(t,TRIM(${rg(p.D,p.f,p.l)}),d,IFERROR(DATE(LEFT(t,4),MID(t,5,2),RIGHT(t,2)),0),IF(t="","",IF(TEXT(d,"yyyymmdd")=t,d,"형식 확인")))`,
+  step:p=>`결과는 처음에 46335처럼 숫자로 나와요(엑셀이 날짜를 세는 번호). ${p.O}${p.f}~${p.O}${p.l} 칸을 고른 뒤 [홈] 탭의 표시 형식 목록에서 <b>[간단한 날짜]</b>를 고르면 2026-11-09처럼 보여요.`,
+  bad:p=>!rowsOK(p)?ROWERR:p.O===p.D?"결과 열이 날짜 열과 같아요. 오른쪽의 빈 열을 골라 주세요.":"",
+  check:p=>`한 줄을 원래 숫자와 비교하세요. '형식 확인'이 나온 칸은 8자리가 아니거나(2026119), 13월·41일처럼 없는 날짜예요. 원래 칸을 직접 고치면 결과도 바로 바뀝니다. 앞뒤 띄어쓰기는 지우고 읽어요. 다 맞으면 결과를 복사해 원래 열에 [값 붙여넣기] 하면 수식 없이 날짜만 남습니다.`},
+ {id:"clean",spill:true,vis:true,guess:{T:/이름|성명|거래처|품목|품명|명칭|마을/},resOK:/정리|결과|이름|성명/,scene:"복사해 온 이름에 띄어쓰기가 섞여 찾기·합계가 안 맞아요",sub:"앞뒤·겹친 띄어쓰기, 보이지 않는 글자 지우기",fn:"TRIM · CLEAN",
+  def:{T:"B",f:2,l:7,O:"C"},
+  lines:[["정리할 열",{k:"T"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지"],["결과 열",{k:"O"}]],
+  data:[" 김하늘","이바다  ","박  구름","최들판\u00a0","\u00a0정냇물","한겨울"],
+  expect:["김하늘","이바다","박 구름","최들판","정냇물","한겨울"],
+  legend:"예시 표의 가운데 점(·)은 눈에 안 보이는 띄어쓰기를 보이게 표시한 것이에요. [예시 표 복사]를 하면 진짜 띄어쓰기로 들어갑니다.",
+  place(p){const c={};put(c,p.T,p.f,"성명(복사해 옴)",this.data);if(p.f>1)c[p.O+(p.f-1)]="정리한 이름";return c},
+  r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
+  F:p=>`=TRIM(CLEAN(SUBSTITUTE(${rg(p.T,p.f,p.l)},UNICHAR(160)," ")))`, /* 한국어 Windows 엑셀에서 CHAR(160)은 웹 띄어쓰기가 아님(실제 엑셀 2024 확인) → UNICHAR */
+  bad:p=>!rowsOK(p)?ROWERR:p.O===p.T?"결과 열이 정리할 열과 같아요. 오른쪽의 빈 열을 골라 주세요.":"",
+  check:p=>`원래 칸과 결과 칸의 글자 수를 비교해 보세요(=LEN(${p.T}${p.f}) 와 =LEN(${p.O}${p.f})). 앞뒤 띄어쓰기와 웹에서 복사할 때 섞이는 보이지 않는 띄어쓰기, 줄바꿈을 지우고, 가운데 띄어쓰기는 하나만 남겨요(박  구름 → 박 구름). 원래 열을 정리한 이름으로 바꾸려면 결과를 복사해 원래 열에 [값 붙여넣기] 하세요.`}
 ];
 function xlOf(id){return XL.find(x=>x.id===id)}
 /* 엑셀에서 복사한 제목 줄(탭으로 구분) → ["판매일","지점",…] (A열부터, 최대 26칸) */
@@ -536,7 +628,7 @@ function xlRaw(o){
 [지금 하는 일]
 ${x.scene}
 지금 쓰는 수식: ${x.F(p,x.r0(p))}${o.hdr&&o.hdr.some(Boolean)?`\n내 표 제목: ${o.hdr.map((s,i)=>s?`${L(i+1)} ${s}`:"").filter(Boolean).join(" · ")}`:""}
-넣은 칸: ${u.c}${u.f}${multi(x,p)?` (지금은 아래로 ${u.c}${u.l}까지 채워 씀)`:""}
+넣은 칸: ${u.c}${u.f}${x.spill?" (이 칸 하나에만 넣으면 아래로 저절로 펼쳐지는 수식)":multi(x,p)?` (지금은 아래로 ${u.c}${u.l}까지 채워 씀)`:""}
 
 [다른 점]
 ${d}
@@ -580,6 +672,18 @@ async function copyText(t){
     const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
     let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();return ok}
 }
+/* --- 이 기기에만 기억 (부서·우리 조합 부서 이름·최근 화면). 질문·상황 글은 저장하지 않음 --- */
+const MEMKEY="kimsangmu-ai-nh";
+const mem={get(){try{const o=JSON.parse(localStorage.getItem(MEMKEY)||"{}");return o&&typeof o==="object"?o:{}}catch(e){return {}}},
+  set(o){try{localStorage.setItem(MEMKEY,JSON.stringify(o))}catch(e){}},
+  put(k,v){const o=mem.get();o[k]=v;mem.set(o)},
+  clear(){try{localStorage.removeItem(MEMKEY)}catch(e){}}};
+function remember(href){const o=mem.get();o.recent=[href,...(Array.isArray(o.recent)?o.recent:[]).filter(h=>h!==href)].slice(0,3);mem.set(o)}
+function recentHTML(){const o=mem.get();const list=(Array.isArray(o.recent)?o.recent:[]).map(h=>{const m=String(h).match(/^#\/(ask|xl)\/([\w-]+)$/);if(!m)return null;
+    const it=m[1]==="ask"?taskOf(m[2]):xlOf(m[2]);if(!it)return null;return {h,tag:m[1]==="ask"?"q":"x",name:m[1]==="ask"?it.n:it.scene}}).filter(Boolean);
+  if(!list.length)return "";
+  return `<div class="recent"><b>최근에 쓴 것</b>${list.map(r=>`<a href="${r.h}"><span class="tag ${r.tag}">${r.tag==="q"?"질문":"엑셀"}</span>${esc(r.name)}</a>`).join("")}<button class="chip" id="memClr" type="button">기록 지우기</button><small class="muted">이 기기 브라우저에만 남아요. 질문·상황 글은 저장하지 않아요.</small></div>`}
+{const o=mem.get();if(o.dept&&deptOf(o.dept))S.dept=o.dept}
 function flash(el,msg){el.textContent=msg;el.hidden=false;el.classList.remove("stale")}
 /* 질문 글을 바꿀 때: 이미 복사한 뒤에 바뀌었으면 다시 복사하라고 알림 (클립보드는 옛 질문) */
 function setQ(el,ok,t){if(!el||el.textContent===t)return;const had=el.textContent!=="";el.textContent=t;if(had&&ok&&!ok.hidden&&/복사했어요/.test(ok.textContent)){ok.textContent="질문이 바뀌었어요. 다시 [질문 복사]를 눌러 주세요.";ok.classList.add("stale")}}
@@ -602,7 +706,7 @@ addEventListener("hashchange",route);
 
 /* --- 검색 --- */
 /* 엑셀 화면을 현장에서 부르는 말 */
-const XKW={sum:"합계 소계 집계 품목별 지점별 부서별 거래처별 사무소별 계정별 담당별 마을별 거래처 사무소 계정 sumif",cnt:"건수 개수 몇 건 몇 명 세기 countif",look:"찾아오기 찾기 코드 단가 품목명 vlookup 브이룩업",dup:"중복 두 번 겹침",cmp:"명단 비교 대조 빠진 사람 미참석 미제출",rate:"달성률 비율 퍼센트 진도율 목표 대비",blank:"누락 빈칸 빠진 칸 미기재",rank:"순위 등수 석차",days:"만기 만기일 마감일 기한 남은 날 디데이 d-day 경과일"};
+const XKW={sum:"합계 소계 집계 품목별 지점별 부서별 거래처별 사무소별 계정별 담당별 마을별 거래처 사무소 계정 sumif",cnt:"건수 개수 몇 건 몇 명 세기 countif",look:"찾아오기 찾기 코드 단가 품목명 vlookup 브이룩업",dup:"중복 두 번 겹침",cmp:"명단 비교 대조 빠진 사람 미참석 미제출",rate:"달성률 비율 퍼센트 진도율 목표 대비",blank:"누락 빈칸 빠진 칸 미기재",rank:"순위 등수 석차",days:"만기 만기일 마감일 기한 남은 날 디데이 d-day 경과일",pick:"뽑기 추출 골라내기 필터 filter 연체자 해당자 조건 줄만 따로 모으기",uniq:"목록 중복 없이 고유 한 번씩 unique 정렬 가나다 거래처 목록 품목 목록 마을 목록",split:"나누기 분리 괄호 괄호 앞 자르기 떼기 textbefore textafter 텍스트 나누기",date8:"날짜 변환 8자리 숫자 날짜 yyyymmdd 날짜 형식 date",clean:"띄어쓰기 공백 정리 trim clean 보이지 않는 글자 찾기 안 됨 공백 제거"};
 function findAll(q){
   q=q.trim().toLowerCase();if(!q)return [];
   const words=q.split(/\s+/);
@@ -627,18 +731,19 @@ function viewHome(){
   <p class="hello">어서 오세요. 여기는 김상무의 AI농협입니다.</p>
   <h1>무엇을 하시겠어요?</h1>
   <div class="go2">
-    <a class="go xl" href="#/xl"><b>엑셀 수식 바로 받기 →</b><span>합계·건수·찾아오기 등 9가지. AI 없이 내 표에 맞는 수식이 바로 나와요.</span></a>
+    <a class="go xl" href="#/xl"><b>엑셀 수식 바로 받기 →</b><span>합계·건수·찾아오기·줄 뽑기 등 ${XL.length}가지. AI 없이 내 표에 맞는 수식이 바로 나와요.</span></a>
     <a class="go" href="#/ask"><b>AI에게 물을 질문 만들기 →</b><span>부서·업무를 고르면 질문이 만들어져요. 복사해서 AI에 붙여 넣으세요.</span></a>
   </div>
   <label class="search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
     <input id="q" type="search" placeholder="업무 이름 (예: 연체, 방역, 중복)" value="${esc(S.q)}" aria-label="업무 이름으로 찾기" autocomplete="off"></label>
   <div id="res">${resultsHTML(findAll(S.q),S.q)}</div>
+  ${recentHTML()}
   <div class="now"><b>지금</b><span>위 두 가지 중 하나를 누르거나, 업무 이름을 적거나, 아래 부서를 누르세요. 고르면 바로 질문이나 수식이 나와요.</span></div>
   <section class="sec">
     <div class="sechead"><h2>부서로 고르기</h2><span class="muted">흔한 묶음입니다. 조합마다 부서 이름과 겸임 업무가 달라요.</span></div>
     <div class="depts">
       ${DEPTS.map(d=>`<button class="dept" type="button" data-d="${d.id}" aria-pressed="${S.dept===d.id}"><b>${d.n}</b><span>${d.h}</span></button>`).join("")}
-      <a class="dept xl" href="#/xl" style="text-decoration:none;color:inherit"><b>엑셀 수식 →</b><span>중복·합계·찾아오기 등 9가지, 모든 부서</span></a>
+      <a class="dept xl" href="#/xl" style="text-decoration:none;color:inherit"><b>엑셀 수식 →</b><span>중복·합계·찾아오기 등 ${XL.length}가지, 모든 부서</span></a>
     </div>
     <div id="tl"></div>
     <p class="muted" style="margin-top:12px">목록에 없는 업무는 <a href="#/ask/custom">직접 적어서 질문 만들기</a>로 하세요.</p>
@@ -647,10 +752,12 @@ function viewHome(){
   qi.addEventListener("input",()=>{S.q=qi.value;$("#res").innerHTML=resultsHTML(findAll(S.q),S.q)});
   qi.addEventListener("keydown",e=>{if(e.key==="Enter"){const f=$("#res a");if(f)location.hash=f.getAttribute("href")}});
   app.querySelectorAll(".dept[data-d]").forEach(b=>b.addEventListener("click",()=>{
-    S.dept=S.dept===b.dataset.d?null:b.dataset.d;
+    S.dept=S.dept===b.dataset.d?null:b.dataset.d;mem.put("dept",S.dept);
     app.querySelectorAll(".dept[data-d]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.d===S.dept));
     drawTasks(true);
   }));
+  if($("#memClr"))$("#memClr").onclick=()=>{mem.clear();S.dept=null;Object.values(S.ask).forEach(s=>{if(s)s.my=""});viewHome();
+    const n=$("#res");if(n)n.insertAdjacentHTML("afterend",`<p class="done" id="memDone" role="status" style="margin:10px 0 0">고른 부서, 우리 조합 부서 이름, 최근 화면 기록을 지웠어요.</p>`)};
   drawTasks(false);
 }
 function drawTasks(scroll){
@@ -688,7 +795,9 @@ function viewAsk(idq){
   const t=custom?null:taskOf(id);
   if(!custom&&!t){location.hash="#/ask";return}
   const pre=custom?new URLSearchParams(qs||"").get("d"):null;
-  const st=S.ask[id]||(S.ask[id]={out:t?t.o:"notice",aud:t?t.a:"member",sit:t?t.s:"",my:"",name:pre&&deptOf(pre)?deptOf(pre).n+" · ":""});
+  const myMem=(mem.get().my||{});
+  const st=S.ask[id]||(S.ask[id]={out:t?t.o:"notice",aud:t?t.a:"member",sit:t?t.s:"",my:t&&typeof myMem[t.d]==="string"?myMem[t.d]:"",name:pre&&deptOf(pre)?deptOf(pre).n+" · ":"",nh:false});
+  if(t)remember("#/ask/"+id);
   const crumb=custom?`<a href="#/">처음</a> › 직접 적기`:`<a href="#/">처음</a> › ${deptOf(t.d).n} › ${t.n}`;
   app.innerHTML=`<div class="crumb">${crumb}</div>
   <h1>${custom?"내 업무로 질문 만들기":esc(t.n)}</h1>
@@ -698,7 +807,8 @@ function viewAsk(idq){
       ${custom?`<div class="field"><label for="nm"><span class="n">1</span>무슨 업무인가요? <span class="muted">부서 · 업무</span></label>
         <input class="t" id="nm" value="${esc(st.name)}" placeholder="예: 경제과 · 영농자재 배송 일정 안내"></div>`:""}
       <div class="field"><div class="lab"><span class="n">${custom?"2":"1"}</span>무엇을 받을까요?</div>
-        <div class="chips" id="outs">${Object.entries(OUTS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.out===k}">${v.n}</button>`).join("")}</div></div>
+        <div class="chips" id="outs">${Object.entries(OUTS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.out===k}">${v.n}</button>`).join("")}</div>
+        <label class="nhopt" id="nhw"${NH_OUTS.includes(st.out)?"":" hidden"}><input type="checkbox" id="nh"${st.nh?" checked":""}> 농협 문서 기호로 쓰게 하기 <span class="muted">(1. → □ → ○ → ※, 절차는 ① ② ③)</span></label></div>
       <div class="field"><div class="lab"><span class="n">${custom?"3":"2"}</span>누가 읽나요?</div>
         <div class="chips" id="auds">${Object.entries(AUDS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.aud===k}">${v.n}</button>`).join("")}</div></div>
       <div class="field"><label for="sit"><span class="n">${custom?"4":"3"}</span>어떤 상황인가요? <span class="muted">가상으로 한두 줄</span></label>
@@ -722,16 +832,17 @@ function viewAsk(idq){
   </div>`;
   const draw=()=>{
     /* 화면에 보이는 질문 = 복사되는 질문 = 경고의 근거 (한 번 만든 결과를 같이 씀) */
-    const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name});
+    const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name,nh:st.nh});
     setQ($("#pr"),$("#ok"),r.text);
     const f=r.found;
     const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요. 사람 이름은 가려지지 않으니 오른쪽 질문에서 직접 확인하고, 실제 정보는 빼고 가상으로 적어 주세요.`;
-    $("#ok").hidden=true;
+    $("#nhw").hidden=!NH_OUTS.includes(st.out);
   };
   const chipGroup=(sel,key)=>$(sel).addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st[key]=b.dataset.k;$(sel).querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));draw()});
   chipGroup("#outs","out");chipGroup("#auds","aud");
   $("#sit").addEventListener("input",e=>{st.sit=e.target.value;draw()});
-  if($("#my"))$("#my").addEventListener("input",e=>{st.my=e.target.value;draw()});
+  if($("#my"))$("#my").addEventListener("input",e=>{st.my=e.target.value;if(t){const o=mem.get();const my=o.my&&typeof o.my==="object"?o.my:{};if(st.my.trim())my[t.d]=st.my.trim();else delete my[t.d];o.my=my;mem.set(o)}draw()});
+  $("#nh").addEventListener("change",e=>{st.nh=e.target.checked;draw()});
   if($("#nm"))$("#nm").addEventListener("input",e=>{st.name=e.target.value;draw()});
   const doCopy=async()=>{const ok=await copyText($("#pr").textContent);flash($("#ok"),ok?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.");return ok};
   $("#cp").addEventListener("click",doCopy);
@@ -748,11 +859,16 @@ function mobileBar(doCopy){
 /* --- 엑셀 목록 --- */
 function viewXlList(){
   setNav("xl");
+  const card=x=>`<a class="xcard" href="#/xl/${x.id}"><q>${x.scene}</q><span>${x.sub}</span><code>${x.fn}</code></a>`;
   app.innerHTML=`<h1>엑셀 수식</h1>
-  <p class="muted" style="margin:0">엑셀 2024(Windows) 기준. 2021에도 있는 함수만 쓰고, 실제 계산은 2024에서 확인했어요. AI를 거치지 않고 바로 씁니다. 고르면 예시 표와 수식이 나오고, 내 표의 열을 맞추면 수식이 바뀌어요(제목 줄을 붙여 넣으면 열을 찾아 드려요).</p>
+  <p class="muted" style="margin:0">엑셀 2024(Windows) 기준이고, 실제 계산은 2024에서 확인했어요. '2024 전용' 표시가 있는 것 말고는 2021에도 있는 함수예요. AI를 거치지 않고 바로 씁니다. 고르면 예시 표와 수식이 나오고, 내 표의 열을 맞추면 수식이 바뀌어요(제목 줄을 붙여 넣으면 열을 찾아 드려요).</p>
   <div class="now"><b>지금</b><span>"이런 경우 있으시죠?" 중에서 지금 하려는 일을 누르세요.</span></div>
   <div class="xcards">
-   ${XL.map(x=>`<a class="xcard" href="#/xl/${x.id}"><q>${x.scene}</q><span>${x.sub}</span><code>${x.fn}</code></a>`).join("")}
+   ${XL.filter(x=>!x.spill).map(card).join("")}
+  </div>
+  <h2 class="xgroup">첫 칸 하나에만 넣는 수식 <span class="muted">아래로 저절로 펼쳐져요. 끌어 내리지 않아요.</span></h2>
+  <div class="xcards">
+   ${XL.filter(x=>x.spill).map(card).join("")}
    <a class="xcard other" href="#/xl/ask"><q>여기에 없는 엑셀 일</q><span>열 제목만 적으면 AI에게 물을 질문을 만들어 드려요</span><code>AI 질문</code></a>
   </div>`;
 }
@@ -760,13 +876,15 @@ function viewXlList(){
 /* --- 예시 표 --- */
 function sheetHTML(x){
   const p=x.def;const cells={...x.place(p),...(x.extra||{})};const u=x.out(p);
-  const res={};for(let r=u.f;r<=u.l;r++)res[u.c+r]=x.expect[r-u.f];
-  const all={...cells,...res};
+  const res={};for(let r=u.f;r<=u.l;r++){const v=x.expect[r-u.f];if(Array.isArray(v))v.forEach((z,j)=>res[nx(u.c,j)+r]=z);else res[u.c+r]=v} /* 펼쳐지는 수식은 여러 열일 수 있음 */
+  const all={...cells,...res};const anc=x.spill?u.c+u.f:"";
+  /* 띄어쓰기 정리 화면: 보이지 않는 띄어쓰기를 가운데 점으로 보이게 */
+  const vis=s=>esc(s).replace(/ /g,'<i class="sp" title="띄어쓰기">·</i>').replace(/\u00a0/g,'<i class="sp" title="보이지 않는 띄어쓰기">·</i>');
   let mc=1,mr=1;for(const k of Object.keys(all)){const m=k.match(/^([A-Z]+)(\d+)$/);mc=Math.max(mc,N(m[1]));mr=Math.max(mr,+m[2])}
   let h=`<table class="sheet"><thead><tr><th></th>${Array.from({length:mc},(_,i)=>`<th>${L(i+1)}</th>`).join("")}</tr></thead><tbody>`;
   for(let r=1;r<=mr;r++){h+=`<tr><th>${r}</th>`;for(let c=1;c<=mc;c++){const k=L(c)+r;const isR=k in res;const v=isR?res[k]:(cells[k]??"");
     const num=typeof v==="number"||/^-?\d+(%|)$/.test(String(v));const hd=!isR&&typeof v==="string"&&r===1&&v!=="";
-    h+=`<td class="${isR?"res ":""}${num?"nr ":""}${hd?"hd":""}">${esc(v)}</td>`}h+="</tr>"}
+    h+=`<td class="${isR?"res ":""}${k===anc?"anc ":""}${num?"nr ":""}${hd?"hd":""}">${x.vis&&!isR&&typeof v==="string"?vis(v):esc(v)}</td>`}h+="</tr>"}
   return h+"</tbody></table>";
 }
 function tsv(x){
@@ -785,9 +903,10 @@ function viewXl(id){
   setNav("xl");
   if(id==="ask")return viewXlAsk();
   const x=xlOf(id);if(!x){location.hash="#/xl";return}
+  remember("#/xl/"+id);
   let p=S.xl[id];if(!p||(p._hdr||"")!==(S.hdrText||"")){p=S.xl[id]={...x.def,_hdr:S.hdrText||""};if(S.hdr.length&&x.guess){const g0=guessCols(x,S.hdr);Object.assign(p,g0);p._pend=Object.keys(g0).length>0;for(const k of Object.keys(x.guess))if(!g0[k])p[k]=""}}
   const COLS=Array.from({length:26},(_,i)=>L(i+1));
-  const fieldHTML=tok=>{if(typeof tok==="string")return `<span>${tok}</span>`;const v=p[tok.k];
+  const fieldHTML=tok=>{if(typeof tok==="string")return tok.startsWith("<small")?tok:`<span>${tok}</span>`;const v=p[tok.k];
     if(tok.r)return `<input type="number" inputmode="numeric" min="1" max="1048576" data-k="${tok.k}" data-n="1" value="${v}" aria-label="${esc(ariaOf(tok.k))}">`;
     if(tok.w)return `<input class="w" data-k="${tok.k}" value="${esc(v)}" aria-label="셀 글자">`;
     return `<select data-k="${tok.k}" aria-label="${esc(ariaOf(tok.k))}">${opts(v)}</select><span>열</span>`};
@@ -803,7 +922,7 @@ function viewXl(id){
   const missing=()=>guessKeys().filter(k=>!p[k]);
   const ambOf=k=>p._amb&&p._amb[k]?` <span class="muted">(${esc(p._amb[k].join(" · "))} 중 어느 열을 쓸지 골라 주세요)</span>`:"";
   const refill=()=>{for(const k of guessKeys())p[k]=x.def[k];delete p._amb}; /* 제목 줄을 지우면 제목으로 고른 열 모두 예시로 */
-  const labelOf=k=>{for(const l of x.lines){const i=l.findIndex(t=>typeof t==="object"&&t.k===k);if(i>0&&typeof l[i-1]==="string")return l[i-1].replace(/^[·\s]+/,"").replace(/^(기록|합계표|내 표|기준표):\s*/,"")}return k};
+  const labelOf=k=>{for(const l of x.lines){const i=l.findIndex(t=>typeof t==="object"&&t.k===k);if(i>=0&&l[i].aria)return l[i].aria;if(i>0&&typeof l[i-1]==="string")return l[i-1].replace(/^[·\s]+/,"").replace(/^(기록|합계표|내 표|기준표):\s*/,"")}return k};
   app.innerHTML=`<div class="crumb"><a href="#/">처음</a> › <a href="#/xl">엑셀 수식</a> › ${x.fn}</div>
   <p class="muted" style="margin:0">이런 경우 있으시죠?</p>
   <h1>${x.scene}</h1>
@@ -811,6 +930,7 @@ function viewXl(id){
   <p class="jump" style="margin:-4px 0 14px"><button class="chip" type="button" data-jump="h2fit">2 내 표에 맞추기 ↓</button> <button class="chip" type="button" data-jump="h3out">3 수식 보기 ↓</button></p>
   <h3><span class="n">1</span> 예시 표</h3>
   <div class="sheetwrap" id="sw">${sheetHTML(x)}</div>
+  ${x.spill?`<p class="muted" style="margin:6px 0 0"><b>굵은 테두리 칸 하나에만</b> 수식을 넣으면 금색 칸이 모두 저절로 채워져요.</p>`:""}${x.legend?`<p class="muted" style="margin:4px 0 0">${x.legend}</p>`:""}
   <p class="swipe" id="swipe" hidden>표가 화면보다 넓어요. 옆으로 밀어서 보세요 →</p>
   <p style="margin:8px 0 18px"><button class="btn sub sm" id="cpTsv" type="button">예시 표 복사</button> <span class="muted">엑셀 A1 칸에 붙여 넣고 연습해 보세요. 예시 표로 연습할 때는 2번을 [예시대로 되돌리기] 상태로 두세요.</span> <span class="done" id="okT" hidden></span></p>
   <h3 id="h2fit"><span class="n">2</span> 내 표에 맞추기</h3>
@@ -839,7 +959,7 @@ function viewXl(id){
     const e=x.bad(p);
     if(e){box.innerHTML=`<div class="err">${esc(e)}</div>`;drawX();return}
     const nm=c=>{const s=(S.hdr[N(c)-1]||"").trim();return s?`'${esc(s)}'`:"제목 없음"};
-    const uu=x.out(p);const where=`${uu.c}${uu.f}${multi(x,p)?`~${uu.c}${uu.l}`:""}`;
+    const uu=x.out(p);const where=`${uu.c}${uu.f}${x.spill?"부터 저절로 펼쳐짐":multi(x,p)?`~${uu.c}${uu.l}`:""}`;
     if(p._pend){const ks=[];for(const l of x.lines)for(const t of l)if(typeof t==="object"&&!t.r&&!t.w)ks.push(t.k);
       box.innerHTML=`<div class="confirm"><b>제목 줄로 열을 골랐어요. 맞는지 확인해 주세요.</b><ul>${ks.map(k=>`<li>${esc(labelOf(k))}: <b>${p[k]}열</b> ${nm(p[k])}</li>`).join("")}<li>결과가 들어갈 곳: <b>${where}</b> ${nm(uu.c)}</li></ul>
         <p class="muted">틀린 곳은 2번에서 고친 뒤 누르세요. 결과 칸에는 기존 자료가 없어야 해요.</p><button class="btn sm" id="okMap" type="button">맞아요, 수식 보기</button></div>`;
@@ -849,16 +969,22 @@ function viewXl(id){
       $("#okCol").onclick=()=>{p._ok=uu.c;draw()};$("#clrHdr").onclick=()=>{S.hdr=[];S.hdrText="";refill();viewXl(id)};drawX();return}
     const u=x.out(p);const r0=x.r0(p);const f=x.F(p,r0);const first=u.c+u.f;
     const many=multi(x,p);const next=many?x.F(p,r0+1):"";
+    const sw=x.spillW?x.spillW(p):1;
+    const steps=x.spill?`<li><b>${first}</b> 칸 <b>하나에만</b> 수식을 붙여 넣고 <b>Enter</b>. 아래${sw>1?"·오른쪽":""}로 저절로 채워져요. <b>끌어 내리지 마세요.</b></li>
+      <li>결과가 펼쳐질 자리(${first}부터 아래${sw>1?`로, 오른쪽으로 ${sw}칸`:"로"})는 비워 두세요. <b>#분산!</b>(영문 엑셀은 #SPILL!)이 나오면 그 자리에 다른 자료가 있다는 뜻이에요. <b>기존 자료는 지우지 마세요.</b> 2번에서 결과 칸을 다른 빈 곳으로 바꾼 뒤 새 수식을 넣으세요(먼저 넣은 수식은 Delete로 지우기). 그래도 #분산!이면 칸 옆 오류 표시(느낌표)를 눌러 원인을 보세요.</li>
+      <li>펼쳐진 칸을 누르면 수식이 흐리게 보여요. 고칠 때는 첫 칸(${first})만 고치세요.</li>${x.step?`<li>${x.step(p)}</li>`:""}`
+     :`<li><b>${first}</b> 칸을 누르고 수식을 붙여 넣은 뒤 <b>Enter</b></li>
+      ${!many?"":`<li>${first} 칸을 다시 누르고, 오른쪽 아래 작은 네모를 <b>${u.c}${u.l}</b>까지 끌어 내리기 (작은 네모를 두 번 눌러도 됩니다)</li>
+      <li>${u.c}${u.f+1} 칸을 눌러 수식이 <code>${esc(next)}</code> 로 바뀌었는지 보기. <span class="muted">$ 붙은 범위는 그대로, 칸 이름만 한 줄씩 내려가면 맞아요.</span></li>`}`;
     box.innerHTML=`<div class="formula"><code id="fx">${esc(f)}</code><button class="btn sm" id="cpF" type="button">수식 복사</button><span class="done" id="okF" hidden></span></div>
      <ol class="how">
-      <li><b>${first}</b> 칸을 누르고 수식을 붙여 넣은 뒤 <b>Enter</b></li>
-      ${!many?"":`<li>${first} 칸을 다시 누르고, 오른쪽 아래 작은 네모를 <b>${u.c}${u.l}</b>까지 끌어 내리기 (작은 네모를 두 번 눌러도 됩니다)</li>
-      <li>${u.c}${u.f+1} 칸을 눌러 수식이 <code>${esc(next)}</code> 로 바뀌었는지 보기. <span class="muted">$ 붙은 범위는 그대로, 칸 이름만 한 줄씩 내려가면 맞아요.</span></li>`}
+      ${steps}
      </ol>
      ${x.note&&x.note(p)?`<div class="warn" style="margin:0 16px 12px">${esc(x.note(p))}</div>`:""}
      <div class="check"><b>맞는지 확인</b> — ${esc(x.check(p))}</div>
-     ${x.alt?`<p class="alt">${esc(x.altL)}: <code>${esc(x.alt(p,r0))}</code></p>`:""}`;
+     ${x.alt&&x.altBad&&x.altBad(p)?`<p class="alt"><b>${esc(x.altBad(p))}</b></p>`:x.alt?`<p class="alt">${esc(typeof x.altL==="function"?x.altL(p):x.altL)}: <code>${esc(x.alt(p,r0))}</code> <button class="chip" id="cpA" type="button" style="font-size:13px;padding:1px 10px">복사</button> <span class="done" id="okA" hidden></span></p>`:""}`;
     $("#cpF").onclick=async()=>{const ok=await copyText(f);flash($("#okF"),ok?"복사했어요":"복사가 안 됐어요")};
+    if($("#cpA"))$("#cpA").onclick=async()=>{const ok=await copyText(x.alt(p,r0));flash($("#okA"),ok?"복사했어요":"복사가 안 됐어요")};
     drawX();
   };
   const drawX=()=>{const d=$("#diff").value;const e=missing().length?"열을 다 골라 주세요.":x.bad(p);
@@ -890,7 +1016,7 @@ function viewXlAsk(){
     <pre class="prompt" id="pr"></pre><div class="panelfoot"><button class="btn" id="cp" type="button">질문 복사</button><span class="done" id="ok" hidden></span></div></div>
     <div class="after"><h3>답을 받으면</h3><p class="muted" style="margin:0 0 6px">질문은 <b>소속 조합에서 사용을 허용한 AI</b>에 붙여 넣으세요.</p><ol><li>수식을 한 칸에 먼저 넣고 결과 하나를 손으로 계산해 맞춰 보기</li><li>맞으면, 아래로 채워야 하는 수식일 때만 채우기 (저절로 펼쳐지면 그대로)</li><li>안 되면 오류 메시지를 그대로 같은 대화창에 붙여 넣기</li></ol></div></div></div>`;
   const draw=()=>{const r=xlAsk({want:st.want,cols:st.cols,diff:st.diff});setQ($("#pr"),$("#ok"),r.text);
-    const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요.`;$("#ok").hidden=true};
+    const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요.`};
   [["#w1","want"],["#w2","cols"],["#w3","diff"]].forEach(([s,k])=>$(s).addEventListener("input",e=>{st[k]=e.target.value;draw()}));
   const doCopy=async()=>{const ok=await copyText($("#pr").textContent);flash($("#ok"),ok?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.");return ok};
   $("#cp").onclick=doCopy;draw();mobileBar(doCopy);
@@ -907,15 +1033,16 @@ function viewAbout(){
      <li>업무 이름 검색 (예: 연체, 방역, RPC, 로컬푸드)</li>
      <li>엑셀 수식 ${XL.length}가지: 예시 표, 내 표에 맞춘 수식, 넣을 칸, 채우는 방법, 확인 방법</li>
      <li>목록에 없는 엑셀 일 → AI 질문 만들기</li>
-     <li>완성된 질문 전체를 검사해 전화번호·주민등록번호·계좌·이메일로 보이는 것을 [지움]으로 바꾸기 (모든 형태를 찾지는 못함, 사람 이름은 못 찾음)</li></ul></div>
+     <li>완성된 질문 전체를 검사해 전화번호·주민등록번호·계좌·이메일·주소(시·군·읍·면과 도로명·번지가 함께 적힌 것)로 보이는 것을 [지움]으로 바꾸기 (모든 형태를 찾지는 못함, 사람 이름은 못 찾음)</li>
+     <li>이 기기 브라우저에 고른 부서, 우리 조합 부서 이름, 최근 화면 3개를 기억 (처음 화면 [기록 지우기]로 지움, 질문·상황 글은 저장하지 않음)</li></ul></div>
    <div class="box"><h3 class="soon">준비 중 (아직 없음)</h3><ul class="soon">
      <li>AI에 직접 연결해 답 받기 — 지금은 복사해서 붙여 넣기</li>
      <li>연습용 엑셀 파일 내려받기 — 지금은 '예시 표 복사'</li>
-     <li>우리 조합 부서 이름 저장</li>
      <li>부서별 질문 사례를 현업 담당자가 다듬는 일</li></ul></div>
    <div class="box"><h3>엑셀 지원 범위</h3><ul>
-     <li>기준: <b>엑셀 2024, Windows</b> (농협에 설치 중인 오피스 2024). 2021에도 있는 함수(SUMIFS·COUNTIF·XLOOKUP·RANK.EQ·DAYS 등)만 씁니다. 실제 계산은 엑셀 2024에서 확인했습니다.</li>
-     <li>XLOOKUP·XMATCH는 2021·2024에 있습니다. 집에서 2019 이하를 쓰는 분을 위해 INDEX·MATCH 수식을 함께 보여 줍니다.</li>
+     <li>기준: <b>엑셀 2024, Windows</b> (농협에 설치 중인 오피스 2024). 2021에도 있는 함수(SUMIFS·COUNTIF·XLOOKUP·RANK.EQ·DAYS·FILTER·UNIQUE·SORT·LET 등)를 주로 쓰고, 괄호 앞 글자 떼기의 TEXTBEFORE·TEXTAFTER만 2024 전용입니다. 실제 계산은 엑셀 2024에서 확인했습니다.</li>
+     <li>XLOOKUP·XMATCH·FILTER·UNIQUE·SORT·LET은 2021·2024에 있고 2019 이하에는 없습니다. 이 앱은 2024 기준이라 2019용 수식은 따로 보여 주지 않습니다.</li>
+     <li>줄 뽑기·목록·글자 나누기·날짜 바꾸기·띄어쓰기 정리는 <b>첫 칸 하나에만</b> 넣으면 아래로 저절로 펼쳐지는 수식입니다. 끌어 내리지 말고, 펼쳐질 자리는 비워 두세요. 자리에 다른 자료가 있으면 한국어 엑셀에서 #분산!(영문 #SPILL!)이 나옵니다. 이때 기존 자료는 지우지 말고 결과 칸을 다른 빈 곳으로 옮기세요.</li>
      <li>GROUPBY·PIVOTBY·정규식(REGEX) 함수, 코파일럿처럼 마이크로소프트 365에만 있는 기능은 쓰지 않습니다.</li>
      <li>나머지(COUNTIF·SUMIFS·COUNTBLANK·RANK.EQ·DAYS·IFERROR)는 2013 이후 버전에서도 됩니다.</li>
      <li>열은 A~Z, 행은 1~1,048,576까지 고를 수 있어요. Z열 너머의 표는 '조금 다르면 AI에게 묻기'를 쓰세요.</li>
