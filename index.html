@@ -53,6 +53,8 @@ h3{font-size:18px;margin:0 0 8px;font-weight:800}
 .btn.sub:hover{background:var(--greent)}
 .btn.sm{font-size:15px;padding:7px 14px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
+.done.stale{color:var(--ink)!important;font-weight:800}
+h3[id]{scroll-margin-top:72px}
 .chip{font-size:15.5px;font-weight:700;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--white);cursor:pointer}
 .chip:hover{border-color:var(--ink3)}
 .chip[aria-pressed="true"]{background:var(--green);color:var(--white);border-color:var(--green)}
@@ -312,7 +314,8 @@ const PII=[
  ["휴대폰 번호",/(?<!\d)01[016789]\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
  ["전화번호",/(?<!\d)\(?0(?:2|[3-6][1-5]|70|80|50\d)\)?\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
  ["계좌·카드 번호",/(?<!\d)\d{2,6}(?:-\d{2,6}){2,4}(?!\d)/g,m=>m.replace(/\D/g,"").length>=10], /* 날짜 2026-11-09 같은 것은 통과 */
- ["계좌·카드 번호",/(?<=(?:계좌|카드|통장)(?:번호)?\s*[:：]?\s*)\d{10,16}(?!\d)/g]
+ ["계좌·카드 번호",/(?<=(?:계좌|카드|통장)(?:번호)?\s*[:：]?\s*)\d{10,16}(?!\d)/g],
+ ["계좌·카드 번호",/(?<![\d.,])\d{2,6}(?: \d{2,6}){2,4}(?![\d.,])/g,m=>{const d=m.replace(/\D/g,"").length;return d>=10&&d<=19}] /* 띄어 쓴 번호 */
 ];
 function scrub(text){
   const found=[];let t=text||"";
@@ -341,7 +344,9 @@ function rawPrompt(o){
   const my=(o.myDept||"").trim();
   const rules=["위 상황에 없는 숫자·날짜·금리·규정·연락처·담당자는 지어내지 말고 [확인 필요]로 표시해 주세요."];
   const own=t&&(o.sit||"").trim()&&(o.sit||"").trim()!==t.s; /* 상황을 직접 고침 → 확정해 적은 값이 있을 수 있음 */
-  const soft=r=>!own||/^정하지 않은/.test(r)?r:r.replace(/(숫자를 )?(지어내지 말고 )?\[확인 필요\]로 (두세요|표시해 주세요)/g,(m,a,b,c)=>`${a?"숫자는 ":""}상황에 적혀 있으면 그대로 쓰고, 없으면 ${b||""}[확인 필요]로 ${c}`);
+  /* 개인 연락처·내부 규정처럼 넣으면 안 되는 것, 원래 조건형인 문장은 그대로 */
+  const keep=/넣지 말고|말하지 말고|^정하지 않은|^정해지지 않은/;
+  const soft=r=>!own||keep.test(r)?r:r.replace(/(숫자를 )?(지어내지 말고 )?(\[[^\]]+\](?: 자리)?로|빈칸으로|비워) (두세요|두고|표시해 주세요)/g,(m,a,b,p,v)=>`${a?"숫자는 ":""}상황에 적혀 있으면 그대로 쓰고, 없으면 ${b||""}${p} ${v}`);
   if(t&&t.c) rules.push(soft(t.c));
   if(t&&t.f&&t.f[o.out]) rules.push(soft(t.f[o.out])); /* 결과 모양에 딸린 형식 지시는 그 모양을 골랐을 때만 */
   rules.push("쉬운 말로 쓰고, 어려운 용어는 괄호 안에 풀어 주세요.");
@@ -575,7 +580,9 @@ async function copyText(t){
     const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
     let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();return ok}
 }
-function flash(el,msg){el.textContent=msg;el.hidden=false}
+function flash(el,msg){el.textContent=msg;el.hidden=false;el.classList.remove("stale")}
+/* 질문 글을 바꿀 때: 이미 복사한 뒤에 바뀌었으면 다시 복사하라고 알림 (클립보드는 옛 질문) */
+function setQ(el,ok,t){if(!el||el.textContent===t)return;const had=el.textContent!=="";el.textContent=t;if(had&&ok&&!ok.hidden&&/복사했어요/.test(ok.textContent)){ok.textContent="질문이 바뀌었어요. 다시 [질문 복사]를 눌러 주세요.";ok.classList.add("stale")}}
 
 function setNav(k){
   document.querySelectorAll("nav.tabs a").forEach(a=>{if(a.dataset.nav===k)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")})}
@@ -599,7 +606,9 @@ const XKW={sum:"합계 소계 집계 품목별 지점별 부서별 거래처별 
 function findAll(q){
   q=q.trim().toLowerCase();if(!q)return [];
   const words=q.split(/\s+/);
-  const hit=hay=>words.every(w=>hay.includes(w)||(w.length>2&&/[문서일별표]$/.test(w)&&hay.includes(w.slice(0,-1))));
+  const has=(hay,w)=>hay.includes(w)||(w.length>2&&/[문서일별표]$/.test(w)&&hay.includes(w.slice(0,-1)))
+    ||(w.length>=4&&[...Array(w.length-3)].some((_,i)=>has(hay,w.slice(0,i+2))&&has(hay,w.slice(i+2)))); /* 붙여 쓴 말은 두 낱말로 나눠 봄 */
+  const hit=hay=>words.every(w=>has(hay,w));
   const r=[];
   for(const t of TASKS){const hay=[t.n,deptOf(t.d).n,...t.k].join(" ").toLowerCase();if(hit(hay))r.push({href:"#/ask/"+t.id,tag:"q",name:t.n,sub:deptOf(t.d).n})}
   for(const x of XL){const hay=[x.scene,x.sub,x.fn,"엑셀 수식 "+x.id,XKW[x.id]||""].join(" ").toLowerCase();if(hit(hay))r.push({href:"#/xl/"+x.id,tag:"x",name:x.scene,sub:"엑셀 · "+x.fn})}
@@ -661,10 +670,15 @@ function viewAskList(){
   setNav("ask");
   app.innerHTML=`<h1>AI 질문 만들기</h1>
   <p class="muted" style="margin:0">업무를 고르면 AI 대화창에 붙여 넣을 질문이 바로 만들어져요. 이 앱이 AI에게 직접 보내지는 않아요.</p>
-  <div class="now"><b>지금</b><span>내 부서의 업무 하나를 누르세요.</span></div>
+  <label class="search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+    <input id="aq" type="search" placeholder="업무 이름 (예: 회의록, 안내문, 연체)" aria-label="질문 만들 업무 찾기" autocomplete="off"></label>
+  <div id="ares"></div>
+  <div class="now"><b>지금</b><span>업무 이름을 적거나, 내 부서의 업무 하나를 누르세요.</span></div>
   ${DEPTS.map(d=>`<section class="sec"><div class="sechead"><h2>${d.n}</h2><span class="muted">${d.h}</span></div>
     <div class="tasks">${TASKS.filter(t=>t.d===d.id).map(t=>`<a class="task" href="#/ask/${t.id}">${t.n}<small>${OUTS[t.o].n} · ${AUDS[t.a].n}에게</small></a>`).join("")}</div></section>`).join("")}
   <section class="sec"><div class="sechead"><h2>목록에 없는 업무</h2></div><a class="btn sub" href="#/ask/custom">업무를 직접 적어서 만들기</a></section>`;
+  const aq=$("#aq");aq.addEventListener("input",()=>{const v=aq.value;$("#ares").innerHTML=resultsHTML(findAll(v),v)});
+  aq.addEventListener("keydown",e=>{if(e.key==="Enter"){const a=$("#ares a");if(a)location.hash=a.getAttribute("href")}});
 }
 
 /* --- 질문 만들기 --- */
@@ -709,7 +723,7 @@ function viewAsk(idq){
   const draw=()=>{
     /* 화면에 보이는 질문 = 복사되는 질문 = 경고의 근거 (한 번 만든 결과를 같이 씀) */
     const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name});
-    $("#pr").textContent=r.text;
+    setQ($("#pr"),$("#ok"),r.text);
     const f=r.found;
     const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요. 사람 이름은 가려지지 않으니 오른쪽 질문에서 직접 확인하고, 실제 정보는 빼고 가상으로 적어 주세요.`;
     $("#ok").hidden=true;
@@ -793,16 +807,17 @@ function viewXl(id){
   app.innerHTML=`<div class="crumb"><a href="#/">처음</a> › <a href="#/xl">엑셀 수식</a> › ${x.fn}</div>
   <p class="muted" style="margin:0">이런 경우 있으시죠?</p>
   <h1>${x.scene}</h1>
-  <div class="now"><b>지금</b><span>아래 예시처럼 결과(금색 칸)가 나와요. 내 표가 다르면 2번 문장만 고치세요. 수식은 바로 바뀌어요.</span></div>
+  <div class="now"><b>지금</b><span>아래 예시처럼 결과(금색 칸)가 나와요. 내 표가 다르면 2번에서 제목 줄을 붙이거나 열·행을 고르세요. 수식은 바로 바뀌어요.</span></div>
+  <p class="jump" style="margin:-4px 0 14px"><button class="chip" type="button" data-jump="h2fit">2 내 표에 맞추기 ↓</button> <button class="chip" type="button" data-jump="h3out">3 수식 보기 ↓</button></p>
   <h3><span class="n">1</span> 예시 표</h3>
   <div class="sheetwrap" id="sw">${sheetHTML(x)}</div>
   <p class="swipe" id="swipe" hidden>표가 화면보다 넓어요. 옆으로 밀어서 보세요 →</p>
   <p style="margin:8px 0 18px"><button class="btn sub sm" id="cpTsv" type="button">예시 표 복사</button> <span class="muted">엑셀 A1 칸에 붙여 넣고 연습해 보세요. 예시 표로 연습할 때는 2번을 [예시대로 되돌리기] 상태로 두세요.</span> <span class="done" id="okT" hidden></span></p>
-  <h3><span class="n">2</span> 내 표에 맞추기</h3>
+  <h3 id="h2fit"><span class="n">2</span> 내 표에 맞추기</h3>
   <div class="fit">${x.guess?`<div class="hdr"><label for="hdr">내 표의 제목 줄을 붙여 넣으면 열을 찾아 드려요 <span class="muted">(선택) 엑셀에서 제목 칸들을 드래그해 복사(Ctrl+C) → 여기에 붙여넣기(Ctrl+V). A열부터 복사하세요.</span></label><input id="hdr" class="t" placeholder="예: 판매일  지점  품목  수량  금액" value="${esc(S.hdrText)}" autocomplete="off"><p class="muted" id="hdrMsg" aria-live="polite"></p></div>`:""}${x.lines.map(l=>`<div class="line">${l.map(fieldHTML).join("")}</div>`).join("")}
     <p class="muted" style="margin:8px 0 0">열은 <b>A~Z열</b>까지 고를 수 있어요. 표가 Z열보다 넓으면 <a href="#/xl/ask">열 제목을 직접 적어 AI에게 묻기</a>를 쓰세요.</p>
     <p class="muted" style="margin:6px 0 0"><button class="chip" id="reset" type="button" style="font-size:14px;padding:3px 12px">예시대로 되돌리기</button></p></div>
-  <h3 style="margin-top:18px"><span class="n">3</span> 수식과 넣는 방법</h3>
+  <h3 id="h3out" style="margin-top:18px"><span class="n">3</span> 수식과 넣는 방법</h3>
   <div class="out" id="out"></div>
   <details class="more"><summary>조금 다르면 AI에게 묻기</summary><div class="in">
     <label for="diff" style="font-weight:700;display:block;margin-bottom:6px">무엇이 다른가요? <span class="muted">열 위치와 조건만, 실제 자료는 빼고</span></label>
@@ -813,6 +828,7 @@ function viewXl(id){
     <p class="muted" style="margin:6px 0 0">소속 조합에서 사용을 허용한 AI에 붙여 넣으세요.</p>
   </div></details>`;
   swipeHint();
+  app.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{const t=document.getElementById(b.dataset.jump);if(t)t.scrollIntoView({behavior:"smooth",block:"start"})});
   $("#cpTsv").onclick=async()=>{const ok=await copyText(tsv(x));flash($("#okT"),ok?"복사했어요. 엑셀 A1에 붙여 넣으세요.":"복사가 안 됐어요.")};
   const draw=()=>{
     const box=$("#out");const ms=missing();
@@ -846,7 +862,7 @@ function viewXl(id){
   };
   const drawX=()=>{const d=$("#diff").value;const e=missing().length?"열을 다 골라 주세요.":x.bad(p);
     const r=e?{text:"먼저 2번 내 표에 맞추기의 안내를 고쳐 주세요.",found:[]}:xlAsk({x,p,diff:d,hdr:S.hdr});
-    $("#xp").textContent=r.text;
+    setQ($("#xp"),$("#okX"),r.text);
     const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요(수식 속 셀 글자 포함). 엑셀에 넣을 수식은 그대로입니다.`};
   $(".fit").addEventListener("input",e=>{const el=e.target.closest("[data-k]");if(!el)return;p[el.dataset.k]=el.dataset.n?(el.value.trim()===""?NaN:Number(el.value)):el.value;draw()});
   $("#reset").onclick=()=>{Object.assign(p,x.def);delete p._pend;delete p._ok;S.hdr=[];S.hdrText="";viewXl(id)};
@@ -872,7 +888,7 @@ function viewXlAsk(){
   </div><div><div class="panel" id="panel"><div class="panelhead"><b>AI에게 보낼 질문</b><em>아직 AI의 답이 아니에요</em></div>
     <pre class="prompt" id="pr"></pre><div class="panelfoot"><button class="btn" id="cp" type="button">질문 복사</button><span class="done" id="ok" hidden></span></div></div>
     <div class="after"><h3>답을 받으면</h3><p class="muted" style="margin:0 0 6px">질문은 <b>소속 조합에서 사용을 허용한 AI</b>에 붙여 넣으세요.</p><ol><li>수식을 한 칸에 먼저 넣고 결과 하나를 손으로 계산해 맞춰 보기</li><li>맞으면, 아래로 채워야 하는 수식일 때만 채우기 (저절로 펼쳐지면 그대로)</li><li>안 되면 오류 메시지를 그대로 같은 대화창에 붙여 넣기</li></ol></div></div></div>`;
-  const draw=()=>{const r=xlAsk({want:st.want,cols:st.cols,diff:st.diff});$("#pr").textContent=r.text;
+  const draw=()=>{const r=xlAsk({want:st.want,cols:st.cols,diff:st.diff});setQ($("#pr"),$("#ok"),r.text);
     const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요.`;$("#ok").hidden=true};
   [["#w1","want"],["#w2","cols"],["#w3","diff"]].forEach(([s,k])=>$(s).addEventListener("input",e=>{st[k]=e.target.value;draw()}));
   const doCopy=async()=>{const ok=await copyText($("#pr").textContent);flash($("#ok"),ok?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.");return ok};
