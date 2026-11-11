@@ -54,7 +54,7 @@ h3{font-size:18px;margin:0 0 8px;font-weight:800}
 .btn.sm{font-size:15px;padding:7px 14px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .done.stale{color:var(--ink)!important;font-weight:800}
-h3[id]{scroll-margin-top:72px}
+h3[id]{scroll-margin-top:112px}
 .chip{font-size:15.5px;font-weight:700;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--white);cursor:pointer}
 .chip:hover{border-color:var(--ink3)}
 .chip[aria-pressed="true"]{background:var(--green);color:var(--white);border-color:var(--green)}
@@ -828,7 +828,8 @@ function viewXl(id){
     <p class="muted" style="margin:6px 0 0">소속 조합에서 사용을 허용한 AI에 붙여 넣으세요.</p>
   </div></details>`;
   swipeHint();
-  app.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{const t=document.getElementById(b.dataset.jump);if(t)t.scrollIntoView({behavior:"smooth",block:"start"})});
+  app.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{const t=document.getElementById(b.dataset.jump);if(!t)return;const top=document.querySelector(".top");const gap=(top?top.getBoundingClientRect().height:0)+12; /* 고정 메뉴 실제 높이만큼 비움 */
+    window.scrollTo({top:t.getBoundingClientRect().top+scrollY-gap,behavior:"smooth"})});
   $("#cpTsv").onclick=async()=>{const ok=await copyText(tsv(x));flash($("#okT"),ok?"복사했어요. 엑셀 A1에 붙여 넣으세요.":"복사가 안 됐어요.")};
   const draw=()=>{
     const box=$("#out");const ms=missing();
