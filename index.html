@@ -698,7 +698,7 @@ function viewAsk(idq){
         <div class="panelfoot"><button class="btn" id="cp" type="button">질문 복사</button><span class="done" id="ok" hidden></span></div>
       </div>
       <div class="after"><h3>복사한 다음</h3><ol>
-        <li>ChatGPT 같은 AI 대화창을 열고 <b>Ctrl+V</b>로 붙여 넣기 <span class="muted">(휴대폰은 입력칸을 길게 눌러 [붙여넣기], 다 쓰면 이 화면으로 돌아오기)</span></li>
+        <li><b>소속 조합에서 사용을 허용한 AI</b>(ChatGPT 등)의 대화창을 열고 <b>Ctrl+V</b>로 붙여 넣기 <span class="muted">(휴대폰은 입력칸을 길게 눌러 [붙여넣기], 다 쓰면 이 화면으로 돌아오기)</span></li>
         <li>답을 받으면 숫자·날짜·규정이 맞는지, <b>[확인 필요]</b> 자리를 채웠는지 사람이 확인</li>
         <li>마음에 안 들면 같은 대화창에 "더 짧게", "더 정중하게"처럼 한마디 더 하기</li></ol></div>
     </div>
@@ -732,7 +732,7 @@ function mobileBar(doCopy){
 function viewXlList(){
   setNav("xl");
   app.innerHTML=`<h1>엑셀 수식</h1>
-  <p class="muted" style="margin:0">엑셀 2024(Windows) 기준, 2021에서도 똑같이 됩니다. AI를 거치지 않고 바로 씁니다. 고르면 예시 표와 수식이 나오고, 내 표의 열을 맞추면 수식이 바뀌어요(제목 줄을 붙여 넣으면 열을 찾아 드려요).</p>
+  <p class="muted" style="margin:0">엑셀 2024(Windows) 기준. 2021에도 있는 함수만 쓰고, 실제 계산은 2024에서 확인했어요. AI를 거치지 않고 바로 씁니다. 고르면 예시 표와 수식이 나오고, 내 표의 열을 맞추면 수식이 바뀌어요(제목 줄을 붙여 넣으면 열을 찾아 드려요).</p>
   <div class="now"><b>지금</b><span>"이런 경우 있으시죠?" 중에서 지금 하려는 일을 누르세요.</span></div>
   <div class="xcards">
    ${XL.map(x=>`<a class="xcard" href="#/xl/${x.id}"><q>${x.scene}</q><span>${x.sub}</span><code>${x.fn}</code></a>`).join("")}
@@ -796,6 +796,7 @@ function viewXl(id){
   <p style="margin:8px 0 18px"><button class="btn sub sm" id="cpTsv" type="button">예시 표 복사</button> <span class="muted">엑셀 A1 칸에 붙여 넣고 연습해 보세요. 예시 표로 연습할 때는 2번을 [예시대로 되돌리기] 상태로 두세요.</span> <span class="done" id="okT" hidden></span></p>
   <h3><span class="n">2</span> 내 표에 맞추기</h3>
   <div class="fit">${x.guess?`<div class="hdr"><label for="hdr">내 표의 제목 줄을 붙여 넣으면 열을 찾아 드려요 <span class="muted">(선택) 엑셀에서 제목 칸들을 드래그해 복사(Ctrl+C) → 여기에 붙여넣기(Ctrl+V). A열부터 복사하세요.</span></label><input id="hdr" class="t" placeholder="예: 판매일  지점  품목  수량  금액" value="${esc(S.hdrText)}" autocomplete="off"><p class="muted" id="hdrMsg" aria-live="polite"></p></div>`:""}${x.lines.map(l=>`<div class="line">${l.map(fieldHTML).join("")}</div>`).join("")}
+    <p class="muted" style="margin:8px 0 0">열은 <b>A~Z열</b>까지 고를 수 있어요. 표가 Z열보다 넓으면 <a href="#/xl/ask">열 제목을 직접 적어 AI에게 묻기</a>를 쓰세요.</p>
     <p class="muted" style="margin:6px 0 0"><button class="chip" id="reset" type="button" style="font-size:14px;padding:3px 12px">예시대로 되돌리기</button></p></div>
   <h3 style="margin-top:18px"><span class="n">3</span> 수식과 넣는 방법</h3>
   <div class="out" id="out"></div>
@@ -805,6 +806,7 @@ function viewXl(id){
     <div class="warn" id="pii" hidden></div>
     <pre class="prompt" id="xp" style="border:1px solid var(--line);margin-top:10px;max-height:260px"></pre>
     <p style="margin:10px 0 0"><button class="btn sm" id="cpX" type="button">질문 복사</button> <span class="done" id="okX" hidden></span></p>
+    <p class="muted" style="margin:6px 0 0">소속 조합에서 사용을 허용한 AI에 붙여 넣으세요.</p>
   </div></details>`;
   swipeHint();
   $("#cpTsv").onclick=async()=>{const ok=await copyText(tsv(x));flash($("#okT"),ok?"복사했어요. 엑셀 A1에 붙여 넣으세요.":"복사가 안 됐어요.")};
@@ -865,7 +867,7 @@ function viewXlAsk(){
     <div class="warn" id="pii" hidden></div>
   </div><div><div class="panel" id="panel"><div class="panelhead"><b>AI에게 보낼 질문</b><em>아직 AI의 답이 아니에요</em></div>
     <pre class="prompt" id="pr"></pre><div class="panelfoot"><button class="btn" id="cp" type="button">질문 복사</button><span class="done" id="ok" hidden></span></div></div>
-    <div class="after"><h3>답을 받으면</h3><ol><li>수식을 한 칸에 먼저 넣고 결과 하나를 손으로 계산해 맞춰 보기</li><li>맞으면, 아래로 채워야 하는 수식일 때만 채우기 (저절로 펼쳐지면 그대로)</li><li>안 되면 오류 메시지를 그대로 같은 대화창에 붙여 넣기</li></ol></div></div></div>`;
+    <div class="after"><h3>답을 받으면</h3><p class="muted" style="margin:0 0 6px">질문은 <b>소속 조합에서 사용을 허용한 AI</b>에 붙여 넣으세요.</p><ol><li>수식을 한 칸에 먼저 넣고 결과 하나를 손으로 계산해 맞춰 보기</li><li>맞으면, 아래로 채워야 하는 수식일 때만 채우기 (저절로 펼쳐지면 그대로)</li><li>안 되면 오류 메시지를 그대로 같은 대화창에 붙여 넣기</li></ol></div></div></div>`;
   const draw=()=>{const r=xlAsk({want:st.want,cols:st.cols,diff:st.diff});$("#pr").textContent=r.text;
     const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요.`;$("#ok").hidden=true};
   [["#w1","want"],["#w2","cols"],["#w3","diff"]].forEach(([s,k])=>$(s).addEventListener("input",e=>{st[k]=e.target.value;draw()}));
@@ -891,7 +893,7 @@ function viewAbout(){
      <li>우리 조합 부서 이름 저장</li>
      <li>부서별 질문 사례를 현업 담당자가 다듬는 일</li></ul></div>
    <div class="box"><h3>엑셀 지원 범위</h3><ul>
-     <li>기준: <b>엑셀 2024, Windows</b> (농협에 설치 중인 오피스 2024). 2021에서도 똑같이 됩니다.</li>
+     <li>기준: <b>엑셀 2024, Windows</b> (농협에 설치 중인 오피스 2024). 2021에도 있는 함수(SUMIFS·COUNTIF·XLOOKUP·RANK.EQ·DAYS 등)만 씁니다. 실제 계산은 엑셀 2024에서 확인했습니다.</li>
      <li>XLOOKUP·XMATCH는 2021·2024에 있습니다. 집에서 2019 이하를 쓰는 분을 위해 INDEX·MATCH 수식을 함께 보여 줍니다.</li>
      <li>GROUPBY·PIVOTBY·정규식(REGEX) 함수, 코파일럿처럼 마이크로소프트 365에만 있는 기능은 쓰지 않습니다.</li>
      <li>나머지(COUNTIF·SUMIFS·COUNTBLANK·RANK.EQ·DAYS·IFERROR)는 2013 이후 버전에서도 됩니다.</li>
