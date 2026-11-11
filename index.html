@@ -308,6 +308,7 @@ const okRRN=m=>{const d=m.replace(/\D/g,"");const mo=+d.slice(2,4),da=+d.slice(4
 const PII=[
  ["이메일",/[\w.+-]+@[\w-]+\.[\w.-]+/g],
  ["주민등록번호",/(?<!\d)\d{6}\s*-?\s*[1-8]\d{6}(?!\d)/g,okRRN],
+ ["전화번호",/\+\s*82[\s-]*(?:\(0\)|0)?[\s-]*(?:1[016789]|2|[3-6][1-5]|70)[\s.\-)/]*\d{3,4}[\s.\-/]*\d{4}(?!\d)/g],
  ["휴대폰 번호",/(?<!\d)01[016789]\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
  ["전화번호",/(?<!\d)\(?0(?:2|[3-6][1-5]|70|80|50\d)\)?\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
  ["계좌·카드 번호",/(?<!\d)\d{2,6}(?:-\d{2,6}){2,4}(?!\d)/g,m=>m.replace(/\D/g,"").length>=10], /* 날짜 2026-11-09 같은 것은 통과 */
@@ -405,7 +406,9 @@ const XL=[
   place(p){const c={};put(c,p.K,p.f,"품목",this.data.map(d=>d[0]));put(c,p.V,p.f,"금액",this.data.map(d=>d[1]));put(c,p.S,p.s,"품목",this.names);if(p.s>1)c[nx(p.S)+(p.s-1)]="합계";return c},
   r0:p=>p.s, out:p=>({c:nx(p.S),f:p.s,l:p.e}),
   F:(p,r)=>`=SUMIFS(${col(p.V)},${col(p.K)},${p.S}${r})`,
+  altL:"품목 이름에 * ? ~ 가 들어 있거나 > < = 로 시작하면 (정확히 같은 이름만 더하기)", alt:(p,r)=>`=SUMPRODUCT(--(${col(p.K)}=${p.S}${r}),${col(p.V)})`,
   bad:p=>{if(p.K===p.V)return "품목 열과 금액 열이 같아요. 서로 다른 열을 골라 주세요.";
+    if(p.S===p.V)return `합계표 품목 이름 칸이 금액 열(${p.V}열)과 같아요. 이대로면 금액을 품목 이름처럼 찾는 틀린 수식이 됩니다. 품목 이름을 적어 둔 합계표 위치를 2번에서 골라 주세요.`;
     if(!(isRow(p.s)&&isRow(p.e)&&p.e>=p.s))return "합계표 행 번호를 확인해 주세요. 끝 행은 시작 행과 같거나 커야 해요.";
     if([p.K,p.V].includes(nx(p.S)))return `합계가 들어갈 ${nx(p.S)}열이 판매 기록 열(품목 ${p.K}·금액 ${p.V})과 같아요. 수식이 그 열 전체를 보므로 합계가 자기 자신을 더하게 됩니다. 합계표 품목 칸을 오른쪽에 빈 열이 있는 곳으로 옮겨 주세요.`;return ""},
   check:p=>`합계 칸을 모두 더한 값이 금액 열 전체 합계(=SUM(${p.V}:${p.V}))와 같은지 보세요. 수식이 ${p.K}열·${p.V}열 전체를 보므로, 그 열 위·아래에 다른 금액 표가 있으면 함께 더해집니다(그때는 총합 대조도 같이 틀어져요). 다른 표가 섞여 있으면 '조금 다르면 AI에게 묻기'로 범위를 정해 물어보세요. 품목 하나는 필터(Ctrl+Shift+L)로 그 품목만 골라 금액 열을 선택했을 때 화면 아래 '합계'와도 맞춰 보세요. 다르면 품목 이름의 띄어쓰기·오타, 합계표에 빠진 품목이 있는지 확인하세요.`},
@@ -428,7 +431,7 @@ const XL=[
   place(p){const c={};put(c,p.C,p.f,"품목 코드",this.data);if(p.f>1)c[p.O+(p.f-1)]="품목 이름";put(c,p.H,p.hf,"코드",this.ref.map(x=>x[0]));put(c,p.I,p.hf,"품목 이름",this.ref.map(x=>x[1]));return c},
   r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
   F:(p,r)=>`=XLOOKUP(${p.C}${r},${col(p.H)},${col(p.I)},"없음")`,
-  altL:"엑셀 2019 이하라면", alt:(p,r)=>`=IFERROR(INDEX(${col(p.I)},MATCH(${p.C}${r},${col(p.H)},0)),"없음")`,
+  altL:"엑셀 2019 이하라면 (코드에 * ? ~ 가 들어 있으면 다른 코드를 찾을 수 있어요)", alt:(p,r)=>`=IFERROR(INDEX(${col(p.I)},MATCH(${p.C}${r},${col(p.H)},0)),"없음")`,
   bad:p=>{if(!rowsOK(p))return ROWERR;if(p.H===p.I)return "기준표의 코드 열과 가져올 열이 같아요.";if(p.O===p.C)return "결과 열이 코드 열과 같아요. 빈 열을 골라 주세요.";
     if([p.H,p.I].includes(p.O))return "결과 열이 기준표 열과 같아요. 수식이 기준표 열 전체를 보므로 기준표와 다른 빈 열을 골라 주세요.";
     if([p.H,p.I].includes(p.C))return "내 표의 코드 열이 기준표 열과 같아요. 기준표에 없는 코드는 자기 자신을 찾아 '없음' 대신 엉뚱한 값이 나와요. 기준표는 다른 열에 두세요.";return ""},
@@ -682,7 +685,7 @@ function viewAsk(idq){
       <div class="field"><label for="sit"><span class="n">${custom?"4":"3"}</span>어떤 상황인가요? <span class="muted">가상으로 한두 줄</span></label>
         <textarea id="sit" placeholder="예: 다음 주 화요일 배송이 하루 늦어짐. 이유는 차량 정비.">${esc(st.sit)}</textarea>
         <div class="warn" id="pii" hidden></div>
-        <p class="muted" style="margin:6px 0 0">실제 이름·전화번호·계좌·금액은 쓰지 마세요. 전화·주민·계좌번호나 이메일로 보이는 것은 앱이 [지움]으로 바꾸지만 모든 경우를 찾지는 못하고, <b>사람 이름은 찾지 못해요.</b></p></div>
+        <p class="muted" style="margin:6px 0 0"><b>처음부터 가짜 이름·번호로만 적으세요.</b> 전화·주민·계좌번호나 이메일로 보이는 것은 앱이 [지움]으로 바꾸지만 모든 형태를 찾지는 못하고, <b>사람 이름은 찾지 못해요.</b></p></div>
       ${custom?"":`<details class="more"><summary>우리 조합에서는 부서 이름이 달라요 (선택)</summary><div class="in">
         <input class="t" id="my" value="${esc(st.my)}" placeholder="예: 경제과 자재계"></div></details>`}
     </div>
@@ -703,7 +706,7 @@ function viewAsk(idq){
     const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name});
     $("#pr").textContent=r.text;
     const f=r.found;
-    const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요. 오른쪽 질문에서 확인하고, 실제 정보는 빼고 가상으로 적어 주세요.`;
+    const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요. 사람 이름은 가려지지 않으니 오른쪽 질문에서 직접 확인하고, 실제 정보는 빼고 가상으로 적어 주세요.`;
     $("#ok").hidden=true;
   };
   const chipGroup=(sel,key)=>$(sel).addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st[key]=b.dataset.k;$(sel).querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));draw()});
@@ -763,13 +766,23 @@ function viewXl(id){
   setNav("xl");
   if(id==="ask")return viewXlAsk();
   const x=xlOf(id);if(!x){location.hash="#/xl";return}
-  let p=S.xl[id];if(!p){p=S.xl[id]={...x.def};const g0=guessCols(x,S.hdr);Object.assign(p,g0);if(Object.keys(g0).length)p._pend=true}
+  let p=S.xl[id];if(!p){p=S.xl[id]={...x.def};const g0=guessCols(x,S.hdr);Object.assign(p,g0);if(Object.keys(g0).length){p._pend=true;for(const k of Object.keys(x.guess||{}))if(!g0[k])p[k]=""}}
   const COLS=Array.from({length:26},(_,i)=>L(i+1));
   const fieldHTML=tok=>{if(typeof tok==="string")return `<span>${tok}</span>`;const v=p[tok.k];
-    if(tok.r)return `<input type="number" inputmode="numeric" min="1" max="1048576" data-k="${tok.k}" data-n="1" value="${v}" aria-label="${tok.k} 행">`;
+    if(tok.r)return `<input type="number" inputmode="numeric" min="1" max="1048576" data-k="${tok.k}" data-n="1" value="${v}" aria-label="${esc(ariaOf(tok.k))}">`;
     if(tok.w)return `<input class="w" data-k="${tok.k}" value="${esc(v)}" aria-label="셀 글자">`;
-    return `<select data-k="${tok.k}" aria-label="${tok.k} 열">${opts(v)}</select><span>열</span>`};
-  const opts=v=>COLS.map((c,i)=>{const nm=S.hdr[i];return `<option value="${c}"${c===v?" selected":""}>${c}${nm?" · "+esc(nm.length>8?nm.slice(0,8)+"…":nm):""}</option>`}).join("");
+    return `<select data-k="${tok.k}" aria-label="${esc(ariaOf(tok.k))}">${opts(v)}</select><span>열</span>`};
+  const opts=v=>(v?"":`<option value="" selected>— 직접 고르세요 —</option>`)+COLS.map((c,i)=>{const nm=S.hdr[i];return `<option value="${c}"${c===v?" selected":""}>${c}${nm?" · "+esc(nm.length>8?nm.slice(0,8)+"…":nm):""}</option>`}).join("");
+  /* 낭독기용 이름: 문장 속 말 그대로 (예: '기록: 품목 열' → '기록 품목 열', 행 칸은 '… 시작 행' / '… 끝 행') */
+  const clean=s=>s.split("·").pop().replace(/:\s*/," ").trim();
+  const ariaOf=k=>{for(const l of x.lines){const i=l.findIndex(t=>typeof t==="object"&&t.k===k);if(i<0)continue;const t=l[i];
+      if(!t.r)return typeof l[i-1]==="string"&&clean(l[i-1])?clean(l[i-1]):k;
+      const owner=[...l.slice(0,i)].reverse().find(z=>typeof z==="object"&&!z.r&&!z.w);const base=owner?ariaOf(owner.k):"";
+      const nxt=typeof l[i+1]==="string"?l[i+1]:"";return (base+(nxt.startsWith("행부터")?" 시작 행":nxt.startsWith("행까지")?" 끝 행":" 행")).trim()}return k};
+  /* 제목 줄에서 못 찾은 열은 예시 값(엉뚱한 열)을 남기지 않고 비워 직접 고르게 한다 */
+  const guessKeys=()=>Object.keys(x.guess||{});
+  const missing=()=>guessKeys().filter(k=>!p[k]);
+  const refill=()=>{for(const k of guessKeys())p[k]=x.def[k]}; /* 제목 줄을 지우면 제목으로 고른 열 모두 예시로 */
   const labelOf=k=>{for(const l of x.lines){const i=l.findIndex(t=>typeof t==="object"&&t.k===k);if(i>0&&typeof l[i-1]==="string")return l[i-1].replace(/^[·\s]+/,"").replace(/^(기록|합계표|내 표|기준표):\s*/,"")}return k};
   app.innerHTML=`<div class="crumb"><a href="#/">처음</a> › <a href="#/xl">엑셀 수식</a> › ${x.fn}</div>
   <p class="muted" style="margin:0">이런 경우 있으시죠?</p>
@@ -794,7 +807,11 @@ function viewXl(id){
   swipeHint();
   $("#cpTsv").onclick=async()=>{const ok=await copyText(tsv(x));flash($("#okT"),ok?"복사했어요. 엑셀 A1에 붙여 넣으세요.":"복사가 안 됐어요.")};
   const draw=()=>{
-    const e=x.bad(p);const box=$("#out");
+    const box=$("#out");const ms=missing();
+    if(ms.length){box.innerHTML=`<div class="confirm"><b>제목 줄에서 못 찾은 칸이 있어요.</b><ul>${ms.map(k=>`<li>${esc(labelOf(k))}: <b>2번에서 직접 고르세요</b></li>`).join("")}</ul>
+        <p class="muted">${x.id==="sum"?"합계를 낼 품목 이름을 적어 둔 칸(오른쪽이 비어 있는 합계표)을 고르세요. ":""}다 고르면 수식이 나와요. 다른 표의 제목 줄이면 지우고 예시대로 돌아가세요.</p><button class="chip" id="clrHdr" type="button">붙인 제목 줄 지우기</button></div>`;
+      $("#clrHdr").onclick=()=>{S.hdr=[];S.hdrText="";refill();delete p._pend;viewXl(id)};drawX();return}
+    const e=x.bad(p);
     if(e){box.innerHTML=`<div class="err">${esc(e)}</div>`;drawX();return}
     const nm=c=>{const s=(S.hdr[N(c)-1]||"").trim();return s?`'${esc(s)}'`:"제목 없음"};
     const uu=x.out(p);const where=`${uu.c}${uu.f}${multi(x,p)?`~${uu.c}${uu.l}`:""}`;
@@ -804,7 +821,7 @@ function viewXl(id){
       $("#okMap").onclick=()=>{p._pend=false;draw()};drawX();return}
     const cf=outConflict(x,p,S.hdr);
     if(cf&&p._ok!==uu.c){box.innerHTML=`<div class="err">${esc(cf)}<p style="margin:8px 0 0"><button class="chip" id="okCol" type="button">${uu.c}열은 비어 있어요, 계속</button> <button class="chip" id="clrHdr" type="button">붙인 제목 줄 지우기</button></p><p class="muted" style="margin:6px 0 0">다른 표에서 붙여 둔 제목 줄이면 [붙인 제목 줄 지우기]를 누르세요.</p></div>`;
-      $("#okCol").onclick=()=>{p._ok=uu.c;draw()};$("#clrHdr").onclick=()=>{S.hdr=[];S.hdrText="";viewXl(id)};drawX();return}
+      $("#okCol").onclick=()=>{p._ok=uu.c;draw()};$("#clrHdr").onclick=()=>{S.hdr=[];S.hdrText="";refill();viewXl(id)};drawX();return}
     const u=x.out(p);const r0=x.r0(p);const f=x.F(p,r0);const first=u.c+u.f;
     const many=multi(x,p);const next=many?x.F(p,r0+1):"";
     box.innerHTML=`<div class="formula"><code id="fx">${esc(f)}</code><button class="btn sm" id="cpF" type="button">수식 복사</button><span class="done" id="okF" hidden></span></div>
@@ -819,13 +836,13 @@ function viewXl(id){
     $("#cpF").onclick=async()=>{const ok=await copyText(f);flash($("#okF"),ok?"복사했어요":"복사가 안 됐어요")};
     drawX();
   };
-  const drawX=()=>{const d=$("#diff").value;const e=x.bad(p);
+  const drawX=()=>{const d=$("#diff").value;const e=missing().length?"열을 다 골라 주세요.":x.bad(p);
     const r=e?{text:"먼저 2번 내 표에 맞추기의 안내를 고쳐 주세요.",found:[]}:xlAsk({x,p,diff:d,hdr:S.hdr});
     $("#xp").textContent=r.text;
     const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요(수식 속 셀 글자 포함). 엑셀에 넣을 수식은 그대로입니다.`};
   $(".fit").addEventListener("input",e=>{const el=e.target.closest("[data-k]");if(!el)return;p[el.dataset.k]=el.dataset.n?parseInt(el.value,10):el.value;draw()});
-  $("#reset").onclick=()=>{Object.assign(p,x.def);delete p._pend;delete p._ok;viewXl(id)};
-  const hi=$("#hdr");if(hi){const apply=()=>{S.hdrText=hi.value;S.hdr=parseHdr(hi.value);const g=guessCols(x,S.hdr);Object.assign(p,g);p._pend=Object.keys(g).length>0;delete p._ok;
+  $("#reset").onclick=()=>{Object.assign(p,x.def);delete p._pend;delete p._ok;S.hdr=[];S.hdrText="";viewXl(id)};
+  const hi=$("#hdr");if(hi){const apply=()=>{S.hdrText=hi.value;S.hdr=parseHdr(hi.value);const g=guessCols(x,S.hdr);Object.assign(p,g);p._pend=Object.keys(g).length>0;delete p._ok;if(S.hdr.length){for(const k of Object.keys(x.guess))if(!g[k])p[k]=""}else refill();
       app.querySelectorAll(".fit select[data-k]").forEach(s=>{s.innerHTML=opts(p[s.dataset.k])});
       const ks=Object.keys(x.guess),got=ks.filter(k=>g[k]),miss=ks.filter(k=>!g[k]);
       $("#hdrMsg").textContent=!S.hdr.length?"":got.length?`${got.length}칸을 골랐어요. 아래 3번에서 맞는지 확인해 주세요.${miss.length?" 못 찾은 칸은 직접 골라 주세요.":""}`:"제목에서 맞는 열을 못 찾았어요. 아래에서 직접 골라 주세요.";draw()};
