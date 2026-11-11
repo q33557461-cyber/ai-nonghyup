@@ -448,7 +448,7 @@ const XL=[
   check:p=>`결과 칸을 모두 고른 뒤 [홈] 탭의 [%] 단추를 누르세요(113%는 112.5%를 반올림해 보여 주는 것, 소수점까지 보려면 [자릿수 늘림]). 한 줄만 계산기로 실적÷목표×100을 해서 같은지 보세요. 실적이 빈칸이면 빈칸, 목표가 0이거나 숫자가 아닌 글자(예: 미정)가 있으면 '입력 확인'이 나옵니다.`},
  {id:"blank",resOK:/누락|확인|결과|비고/,scene:"빠진 칸(누락)이 있는 줄을 찾아야 해요",sub:"여러 열 중 빈칸 있는 줄 표시",fn:"COUNTBLANK",
   def:{a:"B",b:"D",f:2,l:7,O:"E"},
-  lines:[["살펴볼 열",{k:"a"},"부터",{k:"b"},"까지 ·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지"],["결과를 적을 열",{k:"O"}]],
+  lines:[["살펴볼 열",{k:"a",aria:"살펴볼 첫 열"},"부터",{k:"b",aria:"살펴볼 마지막 열"},"까지 ·",{k:"f",r:1,aria:"검사 시작 행"},"행부터",{k:"l",r:1,aria:"검사 끝 행"},"행까지"],["결과를 적을 열",{k:"O"}]],
   data:[["가-01","가동",3],["가-02","",2],["가-03","나동",""],["가-04","다동",5],["","라동",1],["가-06","마동",4]],
   expect:["","누락 있음","누락 있음","","누락 있음",""],
   place(p){const c={};const cols=[p.a,nx(p.a),nx(p.a,2)];const hd=["신청 번호","마을","신청 수량"];cols.forEach((col,j)=>put(c,col,p.f,hd[j],this.data.map(d=>d[j])));if(p.f>1)c[p.O+(p.f-1)]="확인";return c},
@@ -478,7 +478,7 @@ const XL=[
   r0:p=>p.f, out:p=>({c:p.O,f:p.f,l:p.l}),
   F:(p,r)=>`=RANK.EQ(${p.V}${r},${rg(p.V,p.f,p.l)})`,
   bad:p=>!rowsOK(p)?ROWERR:p.V===p.O?"실적 열과 결과 열이 같아요.":"",
-  check:p=>`실적 열을 큰 순서로 정렬해 보면 순위와 같아야 합니다. 같은 값은 같은 순위가 되고 다음 순위는 건너뜁니다(4, 4, 6).`},
+  check:p=>`표 전체를 선택하고 실적 기준으로 내림차순(큰 값부터) 정렬해 보면 순위와 같아야 합니다. 실적 열만 따로 정렬하면 이름과 숫자가 어긋나니 꼭 표 전체를 고르세요(확인 뒤 Ctrl+Z로 되돌리기). 같은 값은 같은 순위가 되고 다음 순위는 건너뜁니다(4, 4, 6).`},
  {id:"days",guess:{D:/만기|마감|기한/,O:/남은|일수/},resOK:/남은|일수|D-|결과/,scene:"만기(마감)까지 며칠 남았는지 알고 싶어요",sub:"기준일부터 남은 일수",fn:"DAYS",
   def:{D:"C",f:2,l:6,O:"D",B:"G",b:1},
   lines:[["만기일 열",{k:"D"},"·",{k:"f",r:1},"행부터",{k:"l",r:1},"행까지 · 결과 열",{k:"O"}],["기준일을 적은 칸",{k:"B"},{k:"b",r:1},"행"]],
@@ -775,7 +775,7 @@ function viewXl(id){
   const opts=v=>(v?"":`<option value="" selected>— 직접 고르세요 —</option>`)+COLS.map((c,i)=>{const nm=S.hdr[i];return `<option value="${c}"${c===v?" selected":""}>${c}${nm?" · "+esc(nm.length>8?nm.slice(0,8)+"…":nm):""}</option>`}).join("");
   /* 낭독기용 이름: 문장 속 말 그대로 (예: '기록: 품목 열' → '기록 품목 열', 행 칸은 '… 시작 행' / '… 끝 행') */
   const clean=s=>s.split("·").pop().replace(/:\s*/," ").trim();
-  const ariaOf=k=>{for(const l of x.lines){const i=l.findIndex(t=>typeof t==="object"&&t.k===k);if(i<0)continue;const t=l[i];
+  const ariaOf=k=>{for(const l of x.lines){const i=l.findIndex(t=>typeof t==="object"&&t.k===k);if(i<0)continue;const t=l[i];if(t.aria)return t.aria;
       if(!t.r)return typeof l[i-1]==="string"&&clean(l[i-1])?clean(l[i-1]):k;
       const owner=[...l.slice(0,i)].reverse().find(z=>typeof z==="object"&&!z.r&&!z.w);const base=owner?ariaOf(owner.k):"";
       const nxt=typeof l[i+1]==="string"?l[i+1]:"";return (base+(nxt.startsWith("행부터")?" 시작 행":nxt.startsWith("행까지")?" 끝 행":" 행")).trim()}return k};
