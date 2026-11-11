@@ -340,8 +340,10 @@ function rawPrompt(o){
   const sit=(o.sit||"").trim()||"[상황을 한두 줄로 적어 주세요]";
   const my=(o.myDept||"").trim();
   const rules=["위 상황에 없는 숫자·날짜·금리·규정·연락처·담당자는 지어내지 말고 [확인 필요]로 표시해 주세요."];
-  if(t&&t.c) rules.push(t.c);
-  if(t&&t.f&&t.f[o.out]) rules.push(t.f[o.out]); /* 결과 모양에 딸린 형식 지시는 그 모양을 골랐을 때만 */
+  const own=t&&(o.sit||"").trim()&&(o.sit||"").trim()!==t.s; /* 상황을 직접 고침 → 확정해 적은 값이 있을 수 있음 */
+  const soft=r=>own&&/확인 필요|지어내지/.test(r)?`상황에 정해 적은 값은 그대로 쓰고, 적혀 있지 않은 것만 이렇게 해 주세요: ${r}`:r;
+  if(t&&t.c) rules.push(soft(t.c));
+  if(t&&t.f&&t.f[o.out]) rules.push(soft(t.f[o.out])); /* 결과 모양에 딸린 형식 지시는 그 모양을 골랐을 때만 */
   rules.push("쉬운 말로 쓰고, 어려운 용어는 괄호 안에 풀어 주세요.");
   rules.push("다 쓴 뒤 맨 끝에 '보내기 전에 사람이 확인할 점' 3가지를 적어 주세요.");
   const work=[dept,name].filter(Boolean).join(" · ")+(my?` (우리 조합에서는 '${my}' 업무)`:"");
@@ -375,7 +377,7 @@ const put=(cells,c,r,head,vals)=>{if(head!=null&&r>1)cells[c+(r-1)]=head;vals.fo
 const MAXR=1048576;
 const isRow=v=>Number.isInteger(v)&&v>=1&&v<=MAXR;
 const rowsOK=p=>isRow(p.f)&&isRow(p.l)&&p.l>=p.f;
-const ROWERR="행 번호를 확인해 주세요. 1부터 1,048,576 사이 숫자로 적고, 끝 행은 첫 행과 같거나 커야 해요.";
+const ROWERR="행 번호를 확인해 주세요. 1부터 1,048,576 사이의 소수점 없는 숫자로 적고, 끝 행은 첫 행과 같거나 커야 해요.";
 /* 결과가 두 칸 이상이라 아래로 채워야 하는지 (한 칸이면 끌어 내리기·다음 줄 확인 안내를 빼야 함) */
 const multi=(x,p)=>{if(x.single)return false;const u=x.out(p);return u.l>u.f};
 const headRow=f=>f>1?f-1:f; /* 제목 줄까지 포함한 표의 첫 행 */
@@ -528,14 +530,14 @@ function xlRaw(o){
 [지금 하는 일]
 ${x.scene}
 지금 쓰는 수식: ${x.F(p,x.r0(p))}${o.hdr&&o.hdr.some(Boolean)?`\n내 표 제목: ${o.hdr.map((s,i)=>s?`${L(i+1)} ${s}`:"").filter(Boolean).join(" · ")}`:""}
-넣은 칸: ${u.c}${u.f}${multi(x,p)?` (아래로 ${u.c}${u.l}까지 채움)`:""}
+넣은 칸: ${u.c}${u.f}${multi(x,p)?` (지금은 아래로 ${u.c}${u.l}까지 채워 씀)`:""}
 
 [다른 점]
 ${d}
 
 [부탁]
 1. 바꾼 수식 하나
-2. 넣을 칸과 채우는 방법
+2. 넣을 칸${multi(x,p)?", 그리고 아래로 채워야 하는지 (한 칸에 넣으면 저절로 펼쳐지는 수식이면 채우지 말라고 알려 주세요)":""}
 3. 결과가 맞는지 확인하는 방법
 을 쉬운 말로 알려 주세요. 실제 자료는 보내지 않았으니 열 위치로만 설명해 주세요.`;
   }
@@ -554,7 +556,7 @@ ${d}
 
 [부탁]
 1. 수식 하나와 넣을 칸
-2. 아래로 채우는 방법
+2. 아래로 채워야 하는지 (한 칸에 넣으면 저절로 펼쳐지는 수식이면 채우지 말라고 알려 주세요)
 3. 결과가 맞는지 확인하는 방법
 을 쉬운 말로 알려 주세요. 실제 자료는 보내지 않았으니 열 위치로만 설명해 주세요.`;
 }
@@ -766,7 +768,7 @@ function viewXl(id){
   setNav("xl");
   if(id==="ask")return viewXlAsk();
   const x=xlOf(id);if(!x){location.hash="#/xl";return}
-  let p=S.xl[id];if(!p){p=S.xl[id]={...x.def};const g0=guessCols(x,S.hdr);Object.assign(p,g0);if(Object.keys(g0).length){p._pend=true;for(const k of Object.keys(x.guess||{}))if(!g0[k])p[k]=""}}
+  let p=S.xl[id];if(!p||(p._hdr||"")!==(S.hdrText||"")){p=S.xl[id]={...x.def,_hdr:S.hdrText||""};if(S.hdr.length&&x.guess){const g0=guessCols(x,S.hdr);Object.assign(p,g0);p._pend=Object.keys(g0).length>0;for(const k of Object.keys(x.guess))if(!g0[k])p[k]=""}}
   const COLS=Array.from({length:26},(_,i)=>L(i+1));
   const fieldHTML=tok=>{if(typeof tok==="string")return `<span>${tok}</span>`;const v=p[tok.k];
     if(tok.r)return `<input type="number" inputmode="numeric" min="1" max="1048576" data-k="${tok.k}" data-n="1" value="${v}" aria-label="${esc(ariaOf(tok.k))}">`;
@@ -808,7 +810,7 @@ function viewXl(id){
   $("#cpTsv").onclick=async()=>{const ok=await copyText(tsv(x));flash($("#okT"),ok?"복사했어요. 엑셀 A1에 붙여 넣으세요.":"복사가 안 됐어요.")};
   const draw=()=>{
     const box=$("#out");const ms=missing();
-    if(ms.length){box.innerHTML=`<div class="confirm"><b>제목 줄에서 못 찾은 칸이 있어요.</b><ul>${ms.map(k=>`<li>${esc(labelOf(k))}: <b>2번에서 직접 고르세요</b></li>`).join("")}</ul>
+    if(ms.length){box.innerHTML=`<div class="confirm"><b>제목 줄에서 못 찾은 칸이 있어요.</b><ul>${ms.map(k=>`<li>${esc(ariaOf(k))}: <b>2번에서 직접 고르세요</b></li>`).join("")}</ul>
         <p class="muted">${x.id==="sum"?"합계를 낼 품목 이름을 적어 둔 칸(오른쪽이 비어 있는 합계표)을 고르세요. ":""}다 고르면 수식이 나와요. 다른 표의 제목 줄이면 지우고 예시대로 돌아가세요.</p><button class="chip" id="clrHdr" type="button">붙인 제목 줄 지우기</button></div>`;
       $("#clrHdr").onclick=()=>{S.hdr=[];S.hdrText="";refill();delete p._pend;viewXl(id)};drawX();return}
     const e=x.bad(p);
@@ -840,9 +842,9 @@ function viewXl(id){
     const r=e?{text:"먼저 2번 내 표에 맞추기의 안내를 고쳐 주세요.",found:[]}:xlAsk({x,p,diff:d,hdr:S.hdr});
     $("#xp").textContent=r.text;
     const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요(수식 속 셀 글자 포함). 엑셀에 넣을 수식은 그대로입니다.`};
-  $(".fit").addEventListener("input",e=>{const el=e.target.closest("[data-k]");if(!el)return;p[el.dataset.k]=el.dataset.n?parseInt(el.value,10):el.value;draw()});
+  $(".fit").addEventListener("input",e=>{const el=e.target.closest("[data-k]");if(!el)return;p[el.dataset.k]=el.dataset.n?(el.value.trim()===""?NaN:Number(el.value)):el.value;draw()});
   $("#reset").onclick=()=>{Object.assign(p,x.def);delete p._pend;delete p._ok;S.hdr=[];S.hdrText="";viewXl(id)};
-  const hi=$("#hdr");if(hi){const apply=()=>{S.hdrText=hi.value;S.hdr=parseHdr(hi.value);const g=guessCols(x,S.hdr);Object.assign(p,g);p._pend=Object.keys(g).length>0;delete p._ok;if(S.hdr.length){for(const k of Object.keys(x.guess))if(!g[k])p[k]=""}else refill();
+  const hi=$("#hdr");if(hi){const apply=()=>{S.hdrText=hi.value;S.hdr=parseHdr(hi.value);p._hdr=S.hdrText;const g=guessCols(x,S.hdr);Object.assign(p,g);p._pend=Object.keys(g).length>0;delete p._ok;if(S.hdr.length){for(const k of Object.keys(x.guess))if(!g[k])p[k]=""}else refill();
       app.querySelectorAll(".fit select[data-k]").forEach(s=>{s.innerHTML=opts(p[s.dataset.k])});
       const ks=Object.keys(x.guess),got=ks.filter(k=>g[k]),miss=ks.filter(k=>!g[k]);
       $("#hdrMsg").textContent=!S.hdr.length?"":got.length?`${got.length}칸을 골랐어요. 아래 3번에서 맞는지 확인해 주세요.${miss.length?" 못 찾은 칸은 직접 골라 주세요.":""}`:"제목에서 맞는 열을 못 찾았어요. 아래에서 직접 골라 주세요.";draw()};
@@ -863,7 +865,7 @@ function viewXlAsk(){
     <div class="warn" id="pii" hidden></div>
   </div><div><div class="panel" id="panel"><div class="panelhead"><b>AI에게 보낼 질문</b><em>아직 AI의 답이 아니에요</em></div>
     <pre class="prompt" id="pr"></pre><div class="panelfoot"><button class="btn" id="cp" type="button">질문 복사</button><span class="done" id="ok" hidden></span></div></div>
-    <div class="after"><h3>답을 받으면</h3><ol><li>수식을 한 칸에 먼저 넣고 결과 하나를 손으로 계산해 맞춰 보기</li><li>맞으면 아래로 채우기</li><li>안 되면 오류 메시지를 그대로 같은 대화창에 붙여 넣기</li></ol></div></div></div>`;
+    <div class="after"><h3>답을 받으면</h3><ol><li>수식을 한 칸에 먼저 넣고 결과 하나를 손으로 계산해 맞춰 보기</li><li>맞으면, 아래로 채워야 하는 수식일 때만 채우기 (저절로 펼쳐지면 그대로)</li><li>안 되면 오류 메시지를 그대로 같은 대화창에 붙여 넣기</li></ol></div></div></div>`;
   const draw=()=>{const r=xlAsk({want:st.want,cols:st.cols,diff:st.diff});$("#pr").textContent=r.text;
     const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요.`;$("#ok").hidden=true};
   [["#w1","want"],["#w2","cols"],["#w3","diff"]].forEach(([s,k])=>$(s).addEventListener("input",e=>{st[k]=e.target.value;draw()}));
