@@ -341,7 +341,7 @@ function rawPrompt(o){
   const my=(o.myDept||"").trim();
   const rules=["위 상황에 없는 숫자·날짜·금리·규정·연락처·담당자는 지어내지 말고 [확인 필요]로 표시해 주세요."];
   const own=t&&(o.sit||"").trim()&&(o.sit||"").trim()!==t.s; /* 상황을 직접 고침 → 확정해 적은 값이 있을 수 있음 */
-  const soft=r=>own&&/확인 필요|지어내지/.test(r)?`상황에 정해 적은 값은 그대로 쓰고, 적혀 있지 않은 것만 이렇게 해 주세요: ${r}`:r;
+  const soft=r=>!own||/^정하지 않은/.test(r)?r:r.replace(/(숫자를 )?(지어내지 말고 )?\[확인 필요\]로 (두세요|표시해 주세요)/g,(m,a,b,c)=>`${a?"숫자는 ":""}상황에 적혀 있으면 그대로 쓰고, 없으면 ${b||""}[확인 필요]로 ${c}`);
   if(t&&t.c) rules.push(soft(t.c));
   if(t&&t.f&&t.f[o.out]) rules.push(soft(t.f[o.out])); /* 결과 모양에 딸린 형식 지시는 그 모양을 골랐을 때만 */
   rules.push("쉬운 말로 쓰고, 어려운 용어는 괄호 안에 풀어 주세요.");
@@ -400,7 +400,7 @@ const XL=[
   altL:ALT_EXACT, alt:(p,r)=>`=IF(SUMPRODUCT(--(${rg(p.N,p.f,p.l)}=${p.N}${r}))>1,"중복","")`,
   bad:p=>!rowsOK(p)?ROWERR:p.N===p.O?"이름 열과 결과 열이 같아요. 결과는 빈 열에 적어 주세요.":"",
   check:p=>`이름 열(${p.N}${p.f}:${p.N}${p.l})만 선택하고 Ctrl+F → [옵션] → '전체 셀 내용 일치'를 켠 뒤, '중복'이 나온 이름 하나를 [모두 찾기] 하세요. 2건 이상이면 맞습니다. 빈칸으로 남은 이름도 하나 찾아 1건인지 보세요. 띄어쓰기가 다르면(김하늘 / 김 하늘) 다른 사람으로 봅니다.`},
- {id:"sum",guess:{K:[/^(?!.*코드).*(품목|품명|항목|상품)/,/품목|품명|항목|상품/,/지점|부서|마을/],V:/금액|매출|판매액|액$/,S:{re:[/품목|품명|항목|상품|지점|부서|마을/],next:[/합계|계$/,""]}},resOK:/합계|계$|결과/,scene:"품목별(지점별) 합계를 내야 해요",sub:"판매 기록에서 항목별 합계",fn:"SUMIFS",
+ {id:"sum",guess:{K:[/^(?!.*코드).*(품목|품명|항목|상품)/,/품목|품명|항목|상품/,/지점|부서|마을/],V:{re:/금액|매출|판매액|액$/,one:1},S:{re:[/품목|품명|항목|상품|지점|부서|마을/],next:[/합계|계$/,""]}},resOK:/합계|계$|결과/,scene:"품목별(지점별) 합계를 내야 해요",sub:"판매 기록에서 항목별 합계",fn:"SUMIFS",
   def:{K:"B",V:"C",f:2,l:8,S:"E",s:2,e:4},
   lines:[["기록: 품목 열",{k:"K"},"· 금액 열",{k:"V"}],["합계표: 품목 이름 칸",{k:"S"},{k:"s",r:1},"행부터",{k:"e",r:1},"행까지 (합계는 바로 오른쪽 열)"]],
   data:[["비료",120000],["농약",80000],["비료",45000],["상토",60000],["비료",150000],["농약",30000],["상토",25000]],
@@ -510,6 +510,7 @@ function guessCols(x,hdr){const out={},used=new Set();if(!x.guess||!hdr||!hdr.le
     let idx=[];for(const re of res){idx=hdr.map((s,i)=>i).filter(i=>i<lim&&H(i)&&re.test(H(i))&&!used.has(L(i+1)));if(idx.length)break}
     if(g.next){ /* 바로 오른쪽 열(결과가 들어갈 열)이 '합계' 같은 제목이거나 빈 열인 것만 */
       let pick=[];for(const nr of g.next){pick=idx.filter(i=>nr===""?!H(i+1):nr.test(H(i+1)));if(pick.length)break}idx=pick}
+    if(g.one&&idx.length>1){(out._amb=out._amb||{})[k]=idx.map(i=>H(i));continue} /* 후보가 여럿이면 직접 고르게 */
     if(!idx.length)continue;const i=g.last?idx[idx.length-1]:idx[0];out[k]=L(i+1);used.add(L(i+1))}
   return out}
 /* 결과가 들어갈 열에 이미 다른 자료 제목이 있으면 경고 (덮어쓰기 방지) */
@@ -593,13 +594,15 @@ function route(){
 addEventListener("hashchange",route);
 
 /* --- 검색 --- */
+/* 엑셀 화면을 현장에서 부르는 말 */
+const XKW={sum:"합계 소계 집계 품목별 지점별 부서별 거래처별 사무소별 계정별 담당별 마을별 거래처 사무소 계정 sumif",cnt:"건수 개수 몇 건 몇 명 세기 countif",look:"찾아오기 찾기 코드 단가 품목명 vlookup 브이룩업",dup:"중복 두 번 겹침",cmp:"명단 비교 대조 빠진 사람 미참석 미제출",rate:"달성률 비율 퍼센트 진도율 목표 대비",blank:"누락 빈칸 빠진 칸 미기재",rank:"순위 등수 석차",days:"만기 만기일 마감일 기한 남은 날 디데이 d-day 경과일"};
 function findAll(q){
   q=q.trim().toLowerCase();if(!q)return [];
   const words=q.split(/\s+/);
-  const hit=hay=>words.every(w=>hay.includes(w));
+  const hit=hay=>words.every(w=>hay.includes(w)||(w.length>2&&/[문서일별표]$/.test(w)&&hay.includes(w.slice(0,-1))));
   const r=[];
   for(const t of TASKS){const hay=[t.n,deptOf(t.d).n,...t.k].join(" ").toLowerCase();if(hit(hay))r.push({href:"#/ask/"+t.id,tag:"q",name:t.n,sub:deptOf(t.d).n})}
-  for(const x of XL){const hay=[x.scene,x.sub,x.fn,"엑셀 수식 "+x.id].join(" ").toLowerCase();if(hit(hay))r.push({href:"#/xl/"+x.id,tag:"x",name:x.scene,sub:"엑셀 · "+x.fn})}
+  for(const x of XL){const hay=[x.scene,x.sub,x.fn,"엑셀 수식 "+x.id,XKW[x.id]||""].join(" ").toLowerCase();if(hit(hay))r.push({href:"#/xl/"+x.id,tag:"x",name:x.scene,sub:"엑셀 · "+x.fn})}
   return r;
 }
 function resultsHTML(list,q){
@@ -784,7 +787,8 @@ function viewXl(id){
   /* 제목 줄에서 못 찾은 열은 예시 값(엉뚱한 열)을 남기지 않고 비워 직접 고르게 한다 */
   const guessKeys=()=>Object.keys(x.guess||{});
   const missing=()=>guessKeys().filter(k=>!p[k]);
-  const refill=()=>{for(const k of guessKeys())p[k]=x.def[k]}; /* 제목 줄을 지우면 제목으로 고른 열 모두 예시로 */
+  const ambOf=k=>p._amb&&p._amb[k]?` <span class="muted">(${esc(p._amb[k].join(" · "))} 중 어느 열을 쓸지 골라 주세요)</span>`:"";
+  const refill=()=>{for(const k of guessKeys())p[k]=x.def[k];delete p._amb}; /* 제목 줄을 지우면 제목으로 고른 열 모두 예시로 */
   const labelOf=k=>{for(const l of x.lines){const i=l.findIndex(t=>typeof t==="object"&&t.k===k);if(i>0&&typeof l[i-1]==="string")return l[i-1].replace(/^[·\s]+/,"").replace(/^(기록|합계표|내 표|기준표):\s*/,"")}return k};
   app.innerHTML=`<div class="crumb"><a href="#/">처음</a> › <a href="#/xl">엑셀 수식</a> › ${x.fn}</div>
   <p class="muted" style="margin:0">이런 경우 있으시죠?</p>
@@ -812,8 +816,8 @@ function viewXl(id){
   $("#cpTsv").onclick=async()=>{const ok=await copyText(tsv(x));flash($("#okT"),ok?"복사했어요. 엑셀 A1에 붙여 넣으세요.":"복사가 안 됐어요.")};
   const draw=()=>{
     const box=$("#out");const ms=missing();
-    if(ms.length){box.innerHTML=`<div class="confirm"><b>제목 줄에서 못 찾은 칸이 있어요.</b><ul>${ms.map(k=>`<li>${esc(ariaOf(k))}: <b>2번에서 직접 고르세요</b></li>`).join("")}</ul>
-        <p class="muted">${x.id==="sum"?"합계를 낼 품목 이름을 적어 둔 칸(오른쪽이 비어 있는 합계표)을 고르세요. ":""}다 고르면 수식이 나와요. 다른 표의 제목 줄이면 지우고 예시대로 돌아가세요.</p><button class="chip" id="clrHdr" type="button">붙인 제목 줄 지우기</button></div>`;
+    if(ms.length){box.innerHTML=`<div class="confirm"><b>${ms.some(k=>p._amb&&p._amb[k])?"제목 줄만으로 정할 수 없는 칸이 있어요.":"제목 줄에서 못 찾은 칸이 있어요."}</b><ul>${ms.map(k=>`<li>${esc(ariaOf(k))}: <b>2번에서 직접 고르세요</b>${ambOf(k)}</li>`).join("")}</ul>
+        <p class="muted">${x.id==="sum"&&ms.includes("S")?"합계를 낼 품목 이름을 적어 둔 칸(오른쪽이 비어 있는 합계표)을 고르세요. ":""}다 고르면 수식이 나와요. 다른 표의 제목 줄이면 지우고 예시대로 돌아가세요.</p><button class="chip" id="clrHdr" type="button">붙인 제목 줄 지우기</button></div>`;
       $("#clrHdr").onclick=()=>{S.hdr=[];S.hdrText="";refill();delete p._pend;viewXl(id)};drawX();return}
     const e=x.bad(p);
     if(e){box.innerHTML=`<div class="err">${esc(e)}</div>`;drawX();return}
@@ -846,7 +850,7 @@ function viewXl(id){
     const f=r.found;const w=$("#pii");w.hidden=!f.length;if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요(수식 속 셀 글자 포함). 엑셀에 넣을 수식은 그대로입니다.`};
   $(".fit").addEventListener("input",e=>{const el=e.target.closest("[data-k]");if(!el)return;p[el.dataset.k]=el.dataset.n?(el.value.trim()===""?NaN:Number(el.value)):el.value;draw()});
   $("#reset").onclick=()=>{Object.assign(p,x.def);delete p._pend;delete p._ok;S.hdr=[];S.hdrText="";viewXl(id)};
-  const hi=$("#hdr");if(hi){const apply=()=>{S.hdrText=hi.value;S.hdr=parseHdr(hi.value);p._hdr=S.hdrText;const g=guessCols(x,S.hdr);Object.assign(p,g);p._pend=Object.keys(g).length>0;delete p._ok;if(S.hdr.length){for(const k of Object.keys(x.guess))if(!g[k])p[k]=""}else refill();
+  const hi=$("#hdr");if(hi){const apply=()=>{S.hdrText=hi.value;S.hdr=parseHdr(hi.value);p._hdr=S.hdrText;const g=guessCols(x,S.hdr);delete p._amb;Object.assign(p,g);p._pend=Object.keys(g).length>0;delete p._ok;if(S.hdr.length){for(const k of Object.keys(x.guess))if(!g[k])p[k]=""}else refill();
       app.querySelectorAll(".fit select[data-k]").forEach(s=>{s.innerHTML=opts(p[s.dataset.k])});
       const ks=Object.keys(x.guess),got=ks.filter(k=>g[k]),miss=ks.filter(k=>!g[k]);
       $("#hdrMsg").textContent=!S.hdr.length?"":got.length?`${got.length}칸을 골랐어요. 아래 3번에서 맞는지 확인해 주세요.${miss.length?" 못 찾은 칸은 직접 골라 주세요.":""}`:"제목에서 맞는 열을 못 찾았어요. 아래에서 직접 골라 주세요.";draw()};
