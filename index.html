@@ -2,8 +2,8 @@
 <html lang="ko">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>김상무의 AI농협 — 농협 직원 전용 AI 질문 센터</title>
-<meta name="description" content="농협 직원 전용 AI 질문 센터. 부서와 업무를 고르면 AI 대화창에 바로 붙여 넣을 질문이 만들어집니다.">
+<title>AI첫걸음 — 농협 직원 전용 AI 질문 센터</title>
+<meta name="description" content="AI첫걸음 — 농협 직원 전용 AI 질문 센터. 부서와 업무를 고르면 AI 대화창에 바로 붙여 넣을 질문이 만들어집니다.">
 <meta name="theme-color" content="#173D27">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -214,11 +214,11 @@ footer{border-top:1px solid var(--line);padding:24px 0 32px;font-size:13px;color
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 <header class="top"><div class="wrap">
-  <a class="brand" href="#/"><i></i><b>김상무의 AI농협</b><small>농협 직원 전용 AI 질문 센터</small></a>
+  <a class="brand" href="#/"><i></i><b>AI첫걸음</b><small>농협 직원 전용 AI 질문 센터</small></a>
   <nav class="tabs" aria-label="메뉴"><a href="#/" data-nav="home">처음</a><a href="#/all" data-nav="all">전체 업무</a><a href="#/about" data-nav="about">안내</a></nav>
 </div></header>
 <main id="app" tabindex="-1"></main>
-<footer><div class="wrap">김상무의 AI농협은 농협 직원을 위한 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v05b</div></footer>
+<footer><div class="wrap">AI첫걸음은 김상무가 농협 직원을 위해 만든 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v05c</div></footer>
 <div class="mbar" id="mbar" hidden><button class="btn line" id="mView" type="button">질문 보기</button><button class="copy" id="mCopy" type="button">질문 복사</button></div>
 <script id="core">
 /* ===== 자료 (v04c에서 그대로 가져옴: 부서·결과 모양·읽는 사람·업무 52개·개인정보 가리기) ===== */
@@ -506,7 +506,7 @@ function viewHome(){
   const o=mem.get();const rec=(Array.isArray(o.recent)?o.recent:[]).map(taskOf).filter(Boolean);
   app.innerHTML=`
   <section class="hero"><div class="wrap">
-    <p class="eyebrow">농협 직원 전용 AI 질문 센터</p>
+    <p class="eyebrow">AI첫걸음 · 농협 직원 전용 AI 질문 센터</p>
     <h1>농협 일, AI에게<br>이렇게 물어보세요</h1>
     <p class="lead">부서와 업무를 고르면 AI 대화창에 바로 붙여 넣을 질문이 만들어집니다. 휴대폰에서도 됩니다.</p>
     <label class="search">${ICON.search}<span class="sr">업무 이름으로 찾기</span>
@@ -662,7 +662,7 @@ function mobileBar(doCopy){
 function viewAbout(){
   setNav("about");
   app.innerHTML=`<div class="wrap page">
-  <p class="eyebrow">안내</p><h1>김상무의 AI농협은 이런 도구입니다</h1>
+  <p class="eyebrow">안내</p><h1>AI첫걸음은 이런 도구입니다</h1>
   <p class="lead">농협 직원이 AI에게 일을 맡길 때 무엇을 어떻게 물어야 할지 덜 고민하도록, 업무별 질문을 만들어 드립니다. 처음 시작만 앱의 도움을 받고, 그다음은 AI 안에서 자연스럽게 대화를 이어 가시면 됩니다. 농협의 공식 서비스가 아니라 개인이 만든 교육용 도구입니다.</p>
   <div class="about">
    <div class="box"><h3>할 수 있는 것</h3><ul>
