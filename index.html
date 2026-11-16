@@ -5,21 +5,34 @@
 <title>AI첫걸음 — 농협 직원 전용 AI 질문 센터</title>
 <meta name="description" content="AI첫걸음 — 농협 직원 전용 AI 질문 센터. 부서와 업무를 고르면 AI 대화창에 바로 붙여 넣을 질문이 만들어집니다.">
 <meta name="theme-color" content="#173D27">
+<meta name="apple-mobile-web-app-title" content="AI첫걸음">
+<meta name="application-name" content="AI첫걸음">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%232F6E4D'/%3E%3Cstop offset='1' stop-color='%23123522'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M16 46h10V36h10V26h12' fill='none' stroke='%23D8AA43' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='48' cy='17' r='4.2' fill='%23F6F6F1'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
+/* AI첫걸음 v06 디자인 — 김상무 색(아이보리·먹·금·진녹)은 그대로, 김상무님 요청(11-16)으로 이 앱만 둥근 모서리·입체 그림자·은은한 그라데이션을 씀 */
 :root{
-  --ivory:#F6F6F1; --ivory2:#ECECE4; --ivory3:#E2E2D8;
-  --ink:#20251F; --ink2:#4A5048; --ink3:#6B7068;
-  --gold:#D8AA43; --goldh:#E2B954;
-  --green:#173D27; --green2:#21503A; --greent:#E4ECE6;
-  --white:#FFFFFF; --line:rgba(32,37,31,.12); --line2:rgba(32,37,31,.22);
+  --bg:#F3F4EE; --bg2:#E9EBE2; --surface:#FFFFFF; --soft:#F8F8F4;
+  --ink:#1D231E; --ink2:#465045; --ink3:#626A60;
+  --gold:#D8AA43; --goldh:#E6BE5E; --goldd:#A97E22;
+  --green:#173D27; --green2:#21503A; --green3:#2F6E4D; --leaf:#4E9E6B; --mint:#E3EEE6; --mint2:#D2E3D7;
+  --line:rgba(29,35,30,.10); --line2:rgba(29,35,30,.18);
+  --r-xl:26px; --r-lg:22px; --r:14px; --r-sm:10px;
+  --sh1:0 1px 2px rgba(20,45,30,.06),0 4px 10px rgba(20,45,30,.07);
+  --sh2:0 2px 4px rgba(20,45,30,.07),0 12px 26px rgba(20,45,30,.12);
+  --sh3:0 4px 10px rgba(20,45,30,.08),0 22px 50px rgba(20,45,30,.18);
+  --key:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -3px 0 rgba(29,35,30,.08);
+  --ease:cubic-bezier(.16,1,.3,1);
   --font:"Pretendard Variable",Pretendard,"Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif;
+  --emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
   --wrap:1120px; --gut:20px; --top:64px;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;letter-spacing:-.01em;word-break:keep-all;overflow-wrap:anywhere}
+html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;letter-spacing:-.01em;word-break:keep-all;overflow-wrap:anywhere;caret-color:var(--green3)}
+::selection{background:rgba(216,170,67,.35);color:var(--ink)}
 a{color:inherit}
 button,input,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 button{cursor:pointer}
@@ -27,198 +40,284 @@ button{cursor:pointer}
 .wrap{max-width:var(--wrap);margin:0 auto;padding-inline:var(--gut)}
 .muted{color:var(--ink3)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.emo{font-family:var(--emoji);font-style:normal;line-height:1}
 
 /* ---------- 머리 ---------- */
-.top{position:sticky;top:0;z-index:20;background:var(--green);color:var(--white);padding-top:env(safe-area-inset-top,0px)}
-.top .wrap{display:flex;align-items:center;gap:24px;height:var(--top)}
-.brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0}
-.brand i{display:block;width:4px;height:28px;background:var(--gold);flex:none}
+.top{position:sticky;top:0;z-index:20;color:#fff;background:rgba(23,61,39,.94);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);padding-top:env(safe-area-inset-top,0px);box-shadow:0 1px 0 rgba(255,255,255,.06),0 6px 20px rgba(10,30,18,.18)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:var(--top)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.appicon{display:block;width:34px;height:34px;flex:none;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.12)}
 .brand b{font-size:19px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
-.brand small{font-size:13px;color:rgba(246,246,241,.72);font-weight:500;white-space:nowrap}
-nav.tabs{margin-left:auto;display:flex;gap:4px}
-nav.tabs a{text-decoration:none;font-size:15px;font-weight:600;color:rgba(246,246,241,.8);padding:8px 12px;border-bottom:2px solid transparent}
-nav.tabs a:hover{color:var(--white)}
-nav.tabs a[aria-current]{color:var(--white);border-bottom-color:var(--gold)}
+.brand small{font-size:13px;color:rgba(246,246,241,.74);font-weight:500;white-space:nowrap}
+.badge{display:none;margin-left:auto;font-size:12px;font-weight:700;color:var(--green);background:linear-gradient(180deg,#F1D58F,var(--gold));padding:4px 10px;border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 6px rgba(0,0,0,.2);white-space:nowrap}
+nav.tabs{margin-left:auto;display:flex;gap:6px;padding:5px;border-radius:999px;background:rgba(0,0,0,.18);box-shadow:inset 0 1px 3px rgba(0,0,0,.25),0 1px 0 rgba(255,255,255,.08)}
+nav.tabs a{display:flex;align-items:center;gap:7px;text-decoration:none;font-size:15px;font-weight:700;color:rgba(246,246,241,.82);padding:7px 15px;border-radius:999px;transition:background .2s var(--ease),color .2s,transform .12s,box-shadow .2s}
+nav.tabs a svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs a:hover{color:#fff;background:rgba(255,255,255,.08)}
+nav.tabs a:active{transform:translateY(1px)}
+nav.tabs a[aria-current]{color:var(--green);background:linear-gradient(180deg,#FFFFFF,#E9EFE8);box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(23,61,39,.12),0 3px 8px rgba(0,0,0,.25)}
+
+/* ---------- 새싹이 (안내 도우미) ---------- */
+.mascot{display:block;width:60px;height:60px;flex:none;background:url("data:image/webp;base64,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") center/contain no-repeat;filter:drop-shadow(0 6px 8px rgba(20,45,30,.22))}
+.mascot.hop{animation:hop .6s var(--ease)}
+@keyframes hop{0%{transform:translateY(0) scale(1)}30%{transform:translateY(-8px) scale(1.04,.96)}60%{transform:translateY(0) scale(.98,1.03)}100%{transform:none}}
+.guide{display:flex;align-items:flex-end;gap:10px;margin:0 0 18px}
+.bubble{position:relative;margin:0 0 6px;padding:11px 15px;background:#fff;border-radius:16px 16px 16px 6px;box-shadow:var(--sh2);font-size:15px;font-weight:600;line-height:1.5;color:var(--ink)}
+.bubble small{display:block;font-size:12px;font-weight:700;color:var(--green3);margin-bottom:1px}
+.bubble b{color:var(--green)}
+.gpop{position:fixed;left:14px;right:14px;bottom:calc(98px + env(safe-area-inset-bottom,0px));z-index:31;display:flex;align-items:flex-end;gap:8px;pointer-events:none;opacity:0;transform:translateY(10px) scale(.98);transition:opacity .25s var(--ease),transform .35s var(--ease)}
+.gpop.show{opacity:1;transform:none}
+.gpop .mascot{width:54px;height:54px}
+.gpop .bubble{margin:0 0 4px;font-size:14px;box-shadow:var(--sh3)}
 
 /* ---------- 처음 화면 ---------- */
-.hero{background:var(--green);color:var(--white);padding:40px 0 48px;border-top:1px solid rgba(246,246,241,.12)}
-.eyebrow{font-size:14px;font-weight:700;letter-spacing:.06em;margin:0 0 14px}
-.hero .eyebrow{color:var(--gold)}
-.hero h1{font-size:clamp(30px,5.2vw,48px);line-height:1.18;font-weight:800;letter-spacing:-.03em;margin:0 0 14px}
-.hero p.lead{font-size:17px;color:rgba(246,246,241,.82);margin:0 0 28px;max-width:34em}
-.search{display:flex;align-items:center;gap:12px;background:var(--white);color:var(--ink);height:60px;padding:0 18px;max-width:640px;border:1px solid var(--white)}
-.search svg{width:22px;height:22px;flex:none;fill:none;stroke:var(--ink2);stroke-width:2}
+.hero{position:relative;overflow:hidden;color:#fff;padding:44px 0 84px;background:radial-gradient(80% 70% at 90% 0%,rgba(78,158,107,.42),transparent 62%),radial-gradient(55% 60% at 0% 100%,rgba(216,170,67,.14),transparent 60%),linear-gradient(180deg,#173D27 0%,#10301E 100%)}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.16) 1px,transparent 1.3px);background-size:22px 22px;-webkit-mask-image:linear-gradient(110deg,transparent 35%,#000 80%);mask-image:linear-gradient(110deg,transparent 35%,#000 80%);pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;align-items:center}
+.hero h1{font-size:clamp(31px,5.4vw,52px);line-height:1.14;font-weight:900;letter-spacing:-.035em;margin:0 0 14px}
+.hero h1 .hl{color:var(--goldh)}
+.hero p.lead{font-size:17px;color:rgba(246,246,241,.84);margin:0 0 26px;max-width:32em}
+.hero p.lead b{color:#fff}
+.search{display:flex;align-items:center;gap:12px;background:#fff;color:var(--ink);height:60px;padding:0 8px 0 18px;max-width:600px;border-radius:18px;box-shadow:0 12px 30px rgba(0,0,0,.28),inset 0 -3px 0 rgba(29,35,30,.06)}
+.search svg{width:22px;height:22px;flex:none;fill:none;stroke:var(--green3);stroke-width:2.2;stroke-linecap:round}
 .search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:17px;height:100%}
-.search input::placeholder{color:#8A8E86}
-.search:focus-within{outline:3px solid var(--gold);outline-offset:2px}
-.results{list-style:none;margin:10px 0 0;padding:0;max-width:640px;background:var(--white);border:1px solid var(--line)}
-.results li+li{border-top:1px solid var(--line)}
-.results a{display:flex;align-items:baseline;gap:10px;padding:13px 18px;text-decoration:none;color:var(--ink)}
-.results a:hover,.results a:focus-visible{background:var(--greent)}
+.search input::placeholder{color:#7D8379}
+.search:focus-within{box-shadow:0 12px 30px rgba(0,0,0,.28),0 0 0 4px rgba(216,170,67,.55)}
+.results{list-style:none;margin:10px 0 0;padding:6px;max-width:600px;background:#fff;border-radius:16px;box-shadow:var(--sh3)}
+.results a{display:flex;align-items:baseline;gap:10px;padding:11px 14px;border-radius:11px;text-decoration:none;color:var(--ink)}
+.results a:hover,.results a:focus-visible{background:var(--mint)}
 .results small{margin-left:auto;color:var(--ink3);font-size:13px;white-space:nowrap}
-.results .none{padding:14px 18px;color:var(--ink2)}
-.results .none a{display:inline;padding:0;text-decoration:underline;color:var(--green);font-weight:600}
+.results .none{padding:12px 14px;color:var(--ink2)}
+.results .none a{display:inline;padding:0;text-decoration:underline;color:var(--green);font-weight:700}
 .hero .results{color:var(--ink)}
 
-.steps3{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
-.steps3 div{display:flex;align-items:center;gap:12px;padding:20px 0;font-weight:600;font-size:15px}
-.steps3 div+div{padding-left:20px;border-left:1px solid var(--line)}
-.flow{margin:16px 0 0;font-size:15px;color:var(--ink2)}
-.flow b{color:var(--green)}
-.num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--white);font-size:14px;font-weight:700;flex:none}
+/* 떠 있는 질문 카드 미리보기 */
+.stage{position:relative}
+.cards{position:relative;min-height:290px;perspective:1100px}
+.pv{position:absolute;background:#fff;color:var(--ink);border-radius:18px;box-shadow:0 30px 60px rgba(0,0,0,.34),0 8px 18px rgba(0,0,0,.18)}
+.pv-q{top:6px;left:0;width:82%;transform:rotateY(-13deg) rotateX(7deg) rotateZ(-2deg);transform-origin:left center;overflow:hidden}
+.pv-top{display:flex;align-items:center;gap:8px;padding:10px 14px;background:linear-gradient(180deg,#1E4A31,#173D27);color:#fff;font-size:13px;font-weight:700}
+.pv-top .appicon{width:20px;height:20px;border-radius:6px}
+.pv-copy{margin-left:auto;font-size:12px;font-weight:800;color:var(--ink);background:linear-gradient(180deg,var(--goldh),var(--gold));padding:3px 10px;border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.pv-body{padding:12px 16px 14px;font-size:13.5px;line-height:1.55}
+.pv-body i{display:inline-block;font-style:normal;font-size:11.5px;font-weight:800;color:var(--green);background:var(--mint);padding:0 7px;border-radius:6px;margin-top:6px}
+.pv-body p{margin:3px 0 0;color:var(--ink2)}
+.pv-a{right:0;bottom:8px;width:64%;padding:14px 16px;transform:rotateY(-13deg) rotateX(7deg) rotateZ(1.5deg) translateZ(40px);background:linear-gradient(180deg,#FFFFFF,#F2F5EF);font-size:13.5px;line-height:1.55}
+.pv-a .tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;color:#fff;background:var(--green3);padding:2px 9px;border-radius:999px;margin-bottom:6px}
+.pv-a p{margin:0;color:var(--ink2)}
+.stage .guide{position:relative;z-index:3;margin:-4px 0 0}
+.stage .guide .mascot{width:92px;height:92px;margin-bottom:-6px}
+.stage .guide .bubble{font-size:14px}
 
-.sec{padding:44px 0 8px}
-.sechead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px}
-.sechead h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0}
+.steps3{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:-44px}
+.steps3 div{display:flex;align-items:center;gap:12px;background:#fff;border-radius:var(--r-lg);padding:16px 18px;font-weight:700;font-size:15px;box-shadow:var(--sh2)}
+.steps3 .emo{margin-left:auto;font-size:22px}
+.flow{margin:16px 0 0;padding:14px 16px 14px 48px;border-radius:var(--r);background:var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173D27' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H9l-5 4z'/%3E%3Cpath d='M8 10h8M8 13h5'/%3E%3C/svg%3E") no-repeat 16px 15px/22px;font-size:15px;color:var(--ink2)}
+.flow b{color:var(--green)}
+.num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;background:linear-gradient(180deg,var(--green3),var(--green));color:#fff;font-size:14px;font-weight:800;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 2px 6px rgba(23,61,39,.3)}
+.num svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+.sec{padding:40px 0 8px}
+.sechead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.sechead h2{font-size:24px;font-weight:800;letter-spacing:-.025em;margin:0}
 .sechead span{font-size:14px;color:var(--ink3)}
 .depts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.dept{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:var(--white);border:1px solid var(--line);padding:18px 18px 16px;min-height:132px;transition:border-color .15s}
-.dept:hover,.dept:focus-visible{border-color:var(--green)}
-.dept em{font-style:normal;font-size:13px;font-weight:700;color:var(--green);letter-spacing:.04em}
-.dept b{font-size:18px;font-weight:700;line-height:1.35}
+.dept{position:relative;display:flex;flex-direction:column;gap:3px;text-decoration:none;background:linear-gradient(180deg,#FFFFFF,#FBFBF7);border-radius:var(--r-lg);padding:16px 16px 18px;min-height:150px;box-shadow:var(--sh1),var(--key);transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+.dept:hover{transform:translateY(-3px);box-shadow:var(--sh2),var(--key)}
+.dept:active{transform:translateY(1px) scale(.985);box-shadow:0 1px 3px rgba(20,45,30,.12),inset 0 1px 0 #fff}
+.dept .ic{display:grid;place-items:center;width:50px;height:50px;border-radius:15px;margin-bottom:10px;font-size:27px;background:linear-gradient(180deg,#EEF5EF,#DCEADF);box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(23,61,39,.08),0 2px 5px rgba(23,61,39,.12)}
+.dept:nth-child(5n+2) .ic{background:linear-gradient(180deg,#FFF3E6,#FFE2C6)}
+.dept:nth-child(5n+3) .ic{background:linear-gradient(180deg,#FBF3D9,#F3E2A8)}
+.dept:nth-child(5n+4) .ic{background:linear-gradient(180deg,#F1EDF8,#E2DAF1)}
+.dept:nth-child(5n+5) .ic{background:linear-gradient(180deg,#EAF5FA,#D4EAF4)}
+.dept .cnt{position:absolute;top:16px;right:14px;font-size:12px;font-weight:700;color:var(--green);background:var(--mint);padding:3px 9px;border-radius:999px}
+.dept b{font-size:18px;font-weight:800;line-height:1.3;letter-spacing:-.02em}
 .dept span{font-size:14px;color:var(--ink2);line-height:1.45}
-.dept small{margin-top:auto;padding-top:8px;font-size:13px;color:var(--ink3)}
 .recent{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.recent a{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);padding:8px 14px;text-decoration:none;font-weight:600;font-size:15px}
-.recent a:hover{border-color:var(--green)}
+.recent a{display:inline-flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:9px 16px;text-decoration:none;font-weight:700;font-size:15px;box-shadow:var(--sh1),var(--key);transition:transform .15s}
+.recent a:active{transform:translateY(1px)}
 .recent a small{color:var(--ink3);font-weight:500;font-size:13px}
 .linkbtn{background:none;border:0;padding:4px 2px;color:var(--ink3);font-size:14px;text-decoration:underline;text-underline-offset:3px}
 .linkbtn:hover{color:var(--ink)}
-.own{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between;background:var(--white);border:1px solid var(--line);padding:20px 22px;margin-top:12px}
+.own{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between;background:#fff;border-radius:var(--r-lg);padding:18px 20px;margin-top:12px;box-shadow:var(--sh1)}
+.own .emo{font-size:30px}
+.own > div{display:flex;align-items:center;gap:14px}
 .own b{font-size:17px}
 .own p{margin:2px 0 0;color:var(--ink2);font-size:14px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:1px solid var(--green);background:var(--green);color:var(--white);font-weight:700;font-size:16px;text-decoration:none}
-.btn:hover{background:var(--green2)}
-.btn.line{background:transparent;color:var(--green)}
-.btn.line:hover{background:var(--greent)}
-.note{margin:36px 0 56px;padding:18px 22px;border-left:4px solid var(--green);background:var(--ivory2);font-size:15px;color:var(--ink2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:0;border-radius:14px;background:linear-gradient(180deg,var(--green3),var(--green));color:#fff;font-weight:800;font-size:16px;text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -3px 0 rgba(0,0,0,.18),0 6px 14px rgba(23,61,39,.28);transition:transform .12s,box-shadow .2s}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 2px 5px rgba(23,61,39,.25)}
+.btn.line{background:linear-gradient(180deg,#FFFFFF,#EEF3EE);color:var(--green);box-shadow:inset 0 0 0 1px rgba(23,61,39,.22),inset 0 -3px 0 rgba(23,61,39,.08),0 4px 10px rgba(20,45,30,.10)}
+.note{margin:32px 0 48px;padding:16px 18px 16px 50px;border-radius:var(--r);background:var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173D27' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z'/%3E%3Cpath d='M9.5 12l2 2 3.5-3.5'/%3E%3C/svg%3E") no-repeat 17px 17px/22px;font-size:15px;color:var(--ink2)}
 .note b{color:var(--ink)}
 
-/* ---------- 부서 화면 ---------- */
-.page{padding-block:32px 64px}
-.crumb{font-size:14px;color:var(--ink3);margin-bottom:14px}
+/* ---------- 부서·전체 업무 ---------- */
+.page{padding-block:26px 64px}
+.crumb{font-size:14px;color:var(--ink3);margin-bottom:12px}
 .crumb a{color:var(--ink2)}
 .page h1{font-size:clamp(26px,4.2vw,36px);font-weight:800;letter-spacing:-.03em;line-height:1.22;margin:0 0 8px}
-.page .eyebrow{color:var(--green)}
-.page .lead{color:var(--ink2);margin:0 0 24px}
-.tasks{list-style:none;margin:0;padding:0;background:var(--white);border:1px solid var(--line)}
-.tasks li+li{border-top:1px solid var(--line)}
-.tasks a{display:flex;align-items:center;gap:16px;padding:18px 20px;text-decoration:none}
-.tasks a:hover,.tasks a:focus-visible{background:var(--greent)}
+.page h1 .emo{font-size:.9em;margin-right:6px}
+.page .lead{color:var(--ink2);margin:0 0 20px}
+.tasks{list-style:none;margin:0;padding:6px;background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh1)}
+.tasks a{display:flex;align-items:center;gap:16px;padding:14px 14px;border-radius:12px;text-decoration:none;transition:background .15s,transform .12s}
+.tasks li+li a{border-top:1px solid var(--line);border-radius:0}
+.tasks a:hover,.tasks a:focus-visible{background:var(--mint);border-radius:12px}
+.tasks a:active{transform:scale(.99)}
 .tasks b{font-size:17px;font-weight:700}
 .tasks small{display:block;font-size:14px;color:var(--ink3);font-weight:500;margin-top:2px}
-.tasks svg{margin-left:auto;width:18px;height:18px;flex:none;fill:none;stroke:var(--ink3);stroke-width:2}
+.tasks svg{margin-left:auto;width:30px;height:30px;padding:7px;border-radius:50%;flex:none;fill:none;stroke:var(--green);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;background:var(--mint)}
 .tasks .dash a{color:var(--green)}
 .allgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px 24px}
-.allgrid h2{font-size:18px;font-weight:800;margin:0 0 10px;display:flex;align-items:baseline;gap:10px}
-.allgrid h2 a{font-size:13px;font-weight:600;color:var(--ink3)}
+.allgrid h2{font-size:18px;font-weight:800;margin:0 0 10px;display:flex;align-items:baseline;gap:8px}
+.allgrid h2 a{margin-left:auto;font-size:13px;font-weight:600;color:var(--ink3)}
 
 /* ---------- 질문 만들기 ---------- */
-.two{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:32px;align-items:start}
-.field{margin-bottom:28px}
-.lab{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;margin-bottom:10px}
+.two{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px;align-items:start}
+.field{background:#fff;border-radius:var(--r-lg);padding:18px;margin-bottom:14px;box-shadow:var(--sh1)}
+.lab{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin-bottom:12px}
 .lab .muted{font-size:14px;font-weight:500}
-textarea,input.t{display:block;width:100%;background:var(--white);border:1px solid var(--line2);padding:14px 16px;font-size:16px;line-height:1.6;border-radius:0}
-textarea{min-height:132px;resize:vertical}
-textarea:focus,input.t:focus{outline:3px solid var(--gold);outline-offset:0;border-color:var(--ink)}
+.lab .emo{font-size:19px}
+textarea,input.t{display:block;width:100%;background:var(--soft);border:1px solid var(--line2);padding:14px 16px;font-size:16px;line-height:1.6;border-radius:12px;transition:border-color .15s,box-shadow .2s,background .2s}
+textarea{min-height:128px;resize:vertical}
+textarea:focus,input.t:focus{outline:0;background:#fff;border-color:var(--green3);box-shadow:0 0 0 4px rgba(216,170,67,.4)}
 .minor{display:flex;gap:16px;margin-top:6px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{min-height:42px;padding:0 16px;background:var(--white);border:1px solid var(--line2);font-size:15px;font-weight:600;color:var(--ink)}
-.chip:hover{border-color:var(--green)}
-.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--white)}
-.toggle{display:flex;align-items:flex-start;gap:12px;margin-top:14px;padding:14px 16px;background:var(--white);border:1px solid var(--line);cursor:pointer}
-.toggle input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--green);flex:none}
+.chip{min-height:42px;padding:0 16px;background:linear-gradient(180deg,#FFFFFF,#F2F4EF);border:0;border-radius:999px;font-size:15px;font-weight:700;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line2),inset 0 -2px 0 rgba(29,35,30,.06),0 2px 4px rgba(20,45,30,.06);transition:transform .12s,box-shadow .2s}
+.chip:hover{box-shadow:inset 0 0 0 1px var(--green3),inset 0 -2px 0 rgba(29,35,30,.06),0 3px 8px rgba(20,45,30,.1)}
+.chip:active{transform:translateY(1px)}
+.chip[aria-pressed="true"]{padding-left:36px;color:#fff;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") no-repeat 14px 50%/15px,linear-gradient(180deg,var(--green3),var(--green));box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -2px 0 rgba(0,0,0,.18),0 4px 10px rgba(23,61,39,.28)}
+.toggle{display:flex;align-items:center;gap:14px;margin-top:14px;padding:14px 16px;background:var(--soft);border-radius:var(--r);cursor:pointer;box-shadow:inset 0 0 0 1px var(--line)}
+.toggle input{appearance:none;-webkit-appearance:none;position:relative;width:46px;height:28px;margin:0;border-radius:999px;background:#C5CBC2;flex:none;cursor:pointer;box-shadow:inset 0 1px 3px rgba(0,0,0,.18);transition:background .2s}
+.toggle input::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .25s var(--ease)}
+.toggle input:checked{background:var(--green3)}
+.toggle input:checked::after{transform:translateX(18px)}
 .toggle b{font-size:15px}
 .toggle span{display:block;font-size:13px;color:var(--ink3)}
-.warn{margin-top:10px;padding:12px 14px;background:var(--ink);color:var(--white);font-size:14px;border-left:4px solid var(--gold)}
+.warn{margin-top:10px;padding:12px 14px 12px 44px;background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D8AA43' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4l9 16H3z'/%3E%3Cpath d='M12 10v4M12 17h.01'/%3E%3C/svg%3E") no-repeat 14px 13px/20px;color:#fff;font-size:14px;border-radius:12px}
 .hint{font-size:13px;color:var(--ink3);margin:8px 0 0}
-.safe{margin:10px 0 0;padding:8px 12px;background:var(--ivory2);border-left:3px solid var(--green);font-size:14px;color:var(--ink2)}
+.safe{margin:10px 0 0;padding:9px 12px 9px 38px;border-radius:10px;background:var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173D27' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='9' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") no-repeat 12px 10px/18px;font-size:14px;color:var(--ink2)}
 .safe b{color:var(--ink)}
-.fbtext{margin:0;padding:10px 16px 14px;font-size:15px;line-height:1.6;background:var(--ivory);user-select:all;-webkit-user-select:all}
-details.more{border-top:1px solid var(--line);padding-top:14px}
-details.more summary{cursor:pointer;font-weight:600;font-size:15px;color:var(--ink2)}
-details.more .in{padding-top:10px}
+.fbtext{margin:0;padding:10px 16px 14px;font-size:15px;line-height:1.6;background:var(--soft);user-select:all;-webkit-user-select:all}
+details.more{background:#fff;border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--sh1)}
+details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--ink2)}
+details.more .in{padding-top:12px}
 
-.card{background:var(--white);border:1px solid var(--line2);position:sticky;top:calc(var(--top) + 16px)}
-.cardhead{display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--white);padding:12px 18px}
-.cardhead b{font-size:15px;font-weight:700}
-.cardhead small{margin-left:auto;font-size:13px;color:rgba(246,246,241,.7)}
-pre.prompt{margin:0;padding:20px 20px 8px;white-space:pre-wrap;font-family:var(--font);font-size:15px;line-height:1.75;color:var(--ink);max-height:min(58vh,560px);overflow:auto}
-pre.prompt .h{font-weight:800;color:var(--green)}
-.cardfoot{padding:16px 18px 18px;border-top:1px solid var(--line)}
-.copy{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;background:var(--gold);color:var(--ink);border:1px solid var(--gold);font-size:18px;font-weight:800}
-.copy:hover{background:var(--goldh)}
-.copy svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2}
-.done{display:block;margin-top:10px;font-size:14px;font-weight:600;color:var(--green);min-height:1.4em}
-.done.stale{color:var(--ink);background:var(--ivory2);padding:6px 10px}
+.card{background:#fff;border-radius:var(--r-xl);box-shadow:var(--sh3);overflow:hidden;position:sticky;top:calc(var(--top) + 16px)}
+.cardhead{display:flex;align-items:center;gap:10px;color:#fff;padding:13px 16px;background:radial-gradient(120% 160% at 100% 0%,rgba(78,158,107,.5),transparent 60%),linear-gradient(180deg,#1E4A31,#173D27)}
+.cardhead .appicon{width:26px;height:26px;border-radius:8px}
+.cardhead b{font-size:15px;font-weight:800}
+.cardhead small{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.14);color:rgba(246,246,241,.9)}
+pre.prompt{margin:0;padding:18px 20px 10px;white-space:pre-wrap;font-family:var(--font);font-size:15px;line-height:1.75;color:var(--ink);max-height:min(58vh,560px);overflow:auto;scrollbar-width:thin;scrollbar-color:var(--mint2) transparent}
+pre.prompt .h{display:inline-block;font-size:13px;font-weight:800;color:var(--green);background:var(--mint);padding:0 9px;border-radius:7px;line-height:1.75}
+.cardfoot{padding:16px 16px 18px;background:linear-gradient(180deg,#FAFAF7,#F1F3EC);border-top:1px solid var(--line)}
+.copy{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;border:0;border-radius:16px;background:linear-gradient(180deg,#EDC86C 0%,var(--gold) 55%,#C8982F 100%);color:var(--ink);font-size:18px;font-weight:800;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -3px 0 rgba(120,85,15,.28),0 8px 18px rgba(169,126,34,.38);transition:transform .12s,box-shadow .2s,background .3s}
+.copy:hover{filter:brightness(1.04)}
+.copy:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 3px 8px rgba(169,126,34,.3)}
+.copy svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.copy.copied{color:#fff;background:linear-gradient(180deg,var(--leaf),var(--green3) 60%,var(--green));box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -3px 0 rgba(0,0,0,.2),0 8px 18px rgba(23,61,39,.35)}
+.copy.copied svg{animation:pop .5s var(--ease)}
+@keyframes pop{0%{transform:scale(.3) rotate(-20deg)}100%{transform:none}}
+.done{display:block;margin-top:10px;font-size:14px;font-weight:700;color:var(--green);min-height:1.4em}
+.done.stale{color:var(--ink);background:#F6EBCB;padding:7px 11px;border-radius:10px}
 
-.next{margin-top:24px}
+.next{margin-top:22px}
 .next h3{font-size:16px;font-weight:800;margin:0 0 10px;display:flex;align-items:center;gap:10px}
 .ais{display:flex;flex-wrap:wrap;gap:8px}
-.ais a{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;background:var(--white);border:1px solid var(--line2);text-decoration:none;font-weight:700;font-size:15px}
-.ais a:hover{border-color:var(--green);color:var(--green)}
-.ais svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
-.follows{list-style:none;margin:0;padding:0;border:1px solid var(--line);background:var(--white)}
+.ais a{display:inline-flex;align-items:center;gap:7px;min-height:46px;padding:0 18px;background:linear-gradient(180deg,#FFFFFF,#F2F4EF);border-radius:14px;text-decoration:none;font-weight:800;font-size:15px;box-shadow:inset 0 0 0 1px var(--line2),inset 0 -3px 0 rgba(29,35,30,.07),0 3px 8px rgba(20,45,30,.08);transition:transform .12s}
+.ais a:hover{color:var(--green)}
+.ais a:active{transform:translateY(2px)}
+.ais svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.follows{list-style:none;margin:0;padding:6px;background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh1)}
 .follows li+li{border-top:1px solid var(--line)}
-.follows button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;padding:12px 16px;font-size:15px;font-weight:600}
-.follows button:hover{background:var(--greent)}
+.follows button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;padding:12px 10px;font-size:15px;font-weight:700;border-radius:10px;transition:background .15s}
+.follows button:hover{background:var(--mint)}
 .follows button span{flex:1}
-.follows button small{font-size:13px;color:var(--ink3);font-weight:600;white-space:nowrap}
-.follows button.ok small{color:var(--green)}
-.checks{margin:0;padding-left:20px;font-size:15px;color:var(--ink2)}
-.checks li{margin:4px 0}
+.follows button small{font-size:12px;color:var(--green);font-weight:800;white-space:nowrap;background:var(--mint);padding:4px 10px;border-radius:999px}
+.follows button.ok small{color:#fff;background:var(--green3)}
+.checks{list-style:none;margin:0;padding:0;font-size:15px;color:var(--ink2)}
+.checks li{margin:6px 0;padding-left:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23D2E3D7'/%3E%3Cpath d='M7.5 12.5l3 3L16.5 9' fill='none' stroke='%23173D27' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat 0 2px/21px}
 .checks b{color:var(--ink)}
 
 /* 휴대폰 아래 막대 */
-.mbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:1fr 1.6fr;gap:8px;padding:10px var(--gut) calc(10px + env(safe-area-inset-bottom,0px));background:var(--ivory);border-top:1px solid var(--line2)}
-.mbar .btn{min-height:52px}
-.mbar .copy{min-height:52px;font-size:17px}
-body.hasbar{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+.mbar{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:30;display:grid;grid-template-columns:1fr 1.6fr;gap:8px;padding:8px;border-radius:22px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--sh3),inset 0 0 0 1px var(--line)}
+.mbar .btn,.mbar .copy{min-height:52px;border-radius:15px}
+.mbar .copy{font-size:17px}
+body.hasbar{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
 
 /* 안내 */
 .about{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.box{background:var(--white);border:1px solid var(--line);padding:20px 22px}
-.box h3{font-size:17px;font-weight:800;margin:0 0 8px}
+.box{background:#fff;border-radius:var(--r-lg);padding:20px 22px;box-shadow:var(--sh1)}
+.box h3{font-size:17px;font-weight:800;margin:0 0 8px;display:flex;align-items:center;gap:8px}
 .box ul{margin:0;padding-left:20px;font-size:15px;color:var(--ink2)}
 .box li{margin:5px 0}
 .box b{color:var(--ink)}
 
-footer{border-top:1px solid var(--line);padding:24px 0 32px;font-size:13px;color:var(--ink3)}
+footer{padding:24px 0 32px;font-size:13px;color:var(--ink3)}
 
 @media (max-width:860px){
-  .two{grid-template-columns:1fr;gap:8px}
+  .two{grid-template-columns:1fr;gap:0}
   .card{position:static}
   pre.prompt{max-height:none}
+  .hero .wrap{grid-template-columns:1fr;gap:26px}
+  .stage{max-width:520px}
+  .cards{min-height:250px}
 }
-@media (min-width:861px){.mbar{display:none!important}body.hasbar{padding-bottom:0}}
+@media (min-width:861px){.mbar,.gpop{display:none!important}body.hasbar{padding-bottom:0}}
 @media (max-width:640px){
-  :root{--top:56px;--gut:16px}
+  :root{--top:58px;--gut:16px}
+  .top{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--green)}
   .brand small{display:none}
-  .brand b{font-size:17px}
-  nav.tabs a{padding:8px 7px;font-size:14px}
-  .hero{padding:28px 0 32px}
-  .hero p.lead{font-size:16px;margin-bottom:20px}
+  .brand b{font-size:18px}
+  .badge{display:inline-block}
+  /* 메뉴는 아래 탭 막대로 */
+  nav.tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:25;margin:0;gap:6px;padding:6px;border-radius:22px;background:rgba(255,255,255,.94);box-shadow:var(--sh3),inset 0 0 0 1px var(--line)}
+  nav.tabs a{flex:1;flex-direction:column;justify-content:center;gap:2px;font-size:12px;padding:7px 4px;color:var(--ink3);border-radius:16px}
+  nav.tabs a svg{width:23px;height:23px}
+  nav.tabs a:hover{background:none;color:var(--ink2)}
+  nav.tabs a[aria-current]{color:var(--green);background:linear-gradient(180deg,#FFFFFF,#E3EEE6);box-shadow:inset 0 1px 0 #fff,inset 0 -3px 0 rgba(23,61,39,.12),0 4px 10px rgba(23,61,39,.16)}
+  body{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+  body.hasbar nav.tabs{display:none}
+  .hero{padding:26px 0 74px}
+  .hero p.lead{font-size:16px;margin-bottom:18px}
   .search{height:56px}
-  .steps3{grid-template-columns:1fr}
-  .steps3 div{padding:12px 0}
-  .steps3 div+div{padding-left:0;border-left:0;border-top:1px solid var(--line)}
-  .sec{padding-top:32px}
-  .depts{grid-template-columns:1fr 1fr;gap:8px}
-  .dept{min-height:116px;padding:14px}
+  .cards{min-height:226px;margin-right:4px}
+  .pv-q{width:88%}
+  .pv-a{width:70%;font-size:13px}
+  .pv-body{font-size:13px}
+  .pv-body .x3{display:none}
+  .stage .guide .mascot{width:76px;height:76px}
+  .steps3{grid-template-columns:1fr;gap:8px;margin-top:-40px}
+  .steps3 div{padding:12px 14px}
+  .sec{padding-top:30px}
+  .sechead h2{font-size:21px}
+  .depts{grid-template-columns:1fr 1fr;gap:10px}
+  .dept{min-height:140px;padding:14px 14px 16px}
+  .dept .ic{width:46px;height:46px;font-size:25px}
   .dept b{font-size:16px}
   .dept span{font-size:13px}
   .allgrid{grid-template-columns:1fr}
-  .page{padding-top:22px}
+  .page{padding-top:18px}
+  .field{padding:16px}
 }
-@media (max-width:360px){.depts{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:360px){.depts{grid-template-columns:1fr}.badge{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="agrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F6E4D"/><stop offset="1" stop-color="#123522"/></linearGradient>
+  <symbol id="appicon" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="url(#agrad)"/><path d="M16 46h10V36h10V26h12" fill="none" stroke="#D8AA43" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="17" r="4.2" fill="#F6F6F1"/></symbol>
+</defs></svg>
 <header class="top"><div class="wrap">
-  <a class="brand" href="#/"><i></i><b>AI첫걸음</b><small>농협 직원 전용 AI 질문 센터</small></a>
-  <nav class="tabs" aria-label="메뉴"><a href="#/" data-nav="home">처음</a><a href="#/all" data-nav="all">전체 업무</a><a href="#/about" data-nav="about">안내</a></nav>
+  <a class="brand" href="#/"><svg class="appicon" aria-hidden="true"><use href="#appicon"/></svg><b>AI첫걸음</b><small>농협 직원 전용 AI 질문 센터</small></a>
+  <span class="badge">농협 직원 전용</span>
+  <nav class="tabs" aria-label="메뉴">
+    <a href="#/" data-nav="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></svg><span>처음</span></a>
+    <a href="#/all" data-nav="all"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><span>전체 업무</span></a>
+    <a href="#/about" data-nav="about"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.2"/></svg><span>안내</span></a>
+  </nav>
 </div></header>
 <main id="app" tabindex="-1"></main>
-<footer><div class="wrap">AI첫걸음은 김상무가 농협 직원을 위해 만든 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v05c</div></footer>
+<footer><div class="wrap">AI첫걸음은 김상무가 농협 직원을 위해 만든 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v06</div></footer>
+<div class="gpop" id="gpop" aria-hidden="true"><span class="mascot"></span><p class="bubble" id="gpopt"></p></div>
 <div class="mbar" id="mbar" hidden><button class="btn line" id="mView" type="button">질문 보기</button><button class="copy" id="mCopy" type="button">질문 복사</button></div>
 <script id="core">
 /* ===== 자료 (v04c에서 그대로 가져옴: 부서·결과 모양·읽는 사람·업무 52개·개인정보 가리기) ===== */
@@ -450,9 +549,27 @@ const S={q:"",ask:{}};
 const ICON={
   search:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>`,
   go:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>`,
-  copy:`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg>`,
+  copy:`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>`,
+  check:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`,
   out:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>`
 };
+/* v06: 부서 이모티콘, 안내 도우미 '새싹이' */
+const DEMO={common:"📝",credit:"💰",mgmt:"🏢",input:"🌾",sales:"🚚",mart:"🛒",farm:"🚜",live:"🐄",guide:"📚",audit:"🛡️"};
+const emo=(e,cls="")=>`<i class="emo ${cls}" aria-hidden="true">${e}</i>`;
+const MASCOT=`<span class="mascot" aria-hidden="true"></span>`;
+const APPICON=`<svg class="appicon" aria-hidden="true"><use href="#appicon"/></svg>`;
+const guide=msg=>`<div class="guide">${MASCOT}<p class="bubble" role="status"><small>새싹이</small><span id="gtext">${msg}</span></p></div>`;
+let lastSay="",popT=0;
+const hop=m=>{if(!m)return;m.classList.remove("hop");void m.getBoundingClientRect();m.classList.add("hop")};
+function say(msg,pop){
+  const g=$("#gtext");
+  if(g&&g.innerHTML!==msg){g.innerHTML=msg;hop(g.closest(".guide").querySelector(".mascot"))}
+  const seen=g&&(r=>r.top>70&&r.bottom<innerHeight-110)(g.getBoundingClientRect());
+  if(pop&&msg!==lastSay&&!seen&&!$("#mbar").hidden&&matchMedia("(max-width:860px)").matches){
+    const p=$("#gpop");$("#gpopt").innerHTML=msg;p.classList.add("show");hop(p.querySelector(".mascot"));
+    clearTimeout(popT);popT=setTimeout(()=>p.classList.remove("show"),3400)}
+  lastSay=msg;
+}
 
 async function copyText(t){
   try{await navigator.clipboard.writeText(t);return true}catch(e){
@@ -469,7 +586,7 @@ function remember(id){const o=mem.get();o.recent=[id,...(Array.isArray(o.recent)
 function setNav(k){document.querySelectorAll("nav.tabs a").forEach(a=>{if(a.dataset.nav===k)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")})}
 function route(){
   const h=location.hash.replace(/^#\/?/,"");const [a,b]=h.split("/");
-  $("#mbar").hidden=true;document.body.classList.remove("hasbar");
+  $("#mbar").hidden=true;document.body.classList.remove("hasbar");$("#gpop").classList.remove("show");lastSay="";
   if(a==="ask"&&b) viewAsk(b);
   else if(a==="d"&&b) viewDept(b);
   else if(a==="all") viewAll();
@@ -506,26 +623,33 @@ function viewHome(){
   const o=mem.get();const rec=(Array.isArray(o.recent)?o.recent:[]).map(taskOf).filter(Boolean);
   app.innerHTML=`
   <section class="hero"><div class="wrap">
-    <p class="eyebrow">AI첫걸음 · 농협 직원 전용 AI 질문 센터</p>
-    <h1>농협 일, AI에게<br>이렇게 물어보세요</h1>
-    <p class="lead">부서와 업무를 고르면 AI 대화창에 바로 붙여 넣을 질문이 만들어집니다. 휴대폰에서도 됩니다.</p>
-    <label class="search">${ICON.search}<span class="sr">업무 이름으로 찾기</span>
-      <input id="q" type="search" placeholder="업무 이름 (예: 공문, 연체, 방역, 회의록)" value="${esc(S.q)}" autocomplete="off" enterkeyhint="search"></label>
-    <div id="res">${resultsHTML(S.q)}</div>
+    <div>
+      <h1>농협 일, AI에게<br><span class="hl">이렇게</span> 물어보세요</h1>
+      <p class="lead"><b>농협 직원 전용 AI 질문 센터</b>예요. 부서와 업무를 고르면 AI 대화창에 바로 붙여 넣을 질문이 만들어져요. 휴대폰에서도 됩니다.</p>
+      <label class="search">${ICON.search}<span class="sr">업무 이름으로 찾기</span>
+        <input id="q" type="search" placeholder="업무 이름 (예: 공문, 연체, 방역, 회의록)" value="${esc(S.q)}" autocomplete="off" enterkeyhint="search"></label>
+      <div id="res">${resultsHTML(S.q)}</div>
+    </div>
+    <div class="stage"><div class="cards">
+      <div class="pv pv-q" aria-hidden="true"><div class="pv-top">${APPICON}AI에게 보낼 질문<span class="pv-copy">질문 복사</span></div>
+        <div class="pv-body"><i>[내 업무]</i><p>행사·교육 안내 문자</p><i>[상황]</i><p>조합원 대상 디지털 금융 교육, 본점 2층 회의실</p><div class="x3"><i>[꼭 지킬 것]</i><p>정하지 않은 날짜는 [확인 필요]로</p></div></div></div>
+      <div class="pv pv-a" aria-hidden="true"><span class="tag">AI 답</span><p>안녕하세요, ○○농협입니다. 조합원님을 위한 디지털 금융 교육을 엽니다. 일시: [확인 필요]</p></div></div>
+      ${guide(rec.length?"또 오셨네요! 😊 <b>최근 업무</b>부터 이어 가 볼까요?":"안녕하세요! 저는 <b>새싹이</b>예요 🌱 한 걸음씩 알려 드릴게요.")}
+    </div>
   </div></section>
   <div class="wrap">
     <div class="steps3" aria-label="쓰는 순서">
-      <div><span class="num">1</span>업무 고르기</div>
-      <div><span class="num">2</span>상황 한두 줄 바꾸기</div>
-      <div><span class="num">3</span>복사해서 AI에 붙여 넣기</div>
+      <div><span class="num">1</span>업무 고르기${emo("👆")}</div>
+      <div><span class="num">2</span>상황 한두 줄 바꾸기${emo("✏️")}</div>
+      <div><span class="num">3</span>복사해서 AI에 붙여 넣기${emo("📋")}</div>
     </div>
     <p class="flow"><b>처음 시작만 앱의 도움을 받으세요.</b> 그다음은 AI 안에서 자연스럽게 대화를 이어 가시면 됩니다.</p>
     ${rec.length?`<section class="sec" style="padding-top:28px"><div class="sechead"><h2 style="font-size:18px">최근에 쓴 업무</h2><button class="linkbtn" id="memClr" type="button">기록 지우기</button></div>
       <div class="recent">${rec.map(t=>`<a href="#/ask/${t.id}">${esc(t.n)}<small>${esc(deptOf(t.d).n)}</small></a>`).join("")}</div></section>`:""}
     <section class="sec">
       <div class="sechead"><h2>부서로 고르기</h2><span>조합마다 부서 이름과 겸임 업무는 다를 수 있어요</span></div>
-      <div class="depts">${DEPTS.map((d,i)=>`<a class="dept" href="#/d/${d.id}"><em>${String(i+1).padStart(2,"0")}</em><b>${d.n}</b><span>${d.h}</span><small>업무 ${TASKS.filter(t=>t.d===d.id).length}가지</small></a>`).join("")}</div>
-      <div class="own"><div><b>목록에 없는 업무인가요?</b><p>업무 이름과 상황만 적으면 같은 틀로 질문을 만들어 드려요.</p></div><a class="btn line" href="#/ask/custom">직접 적어서 만들기</a></div>
+      <div class="depts">${DEPTS.map(d=>`<a class="dept" href="#/d/${d.id}"><span class="ic">${emo(DEMO[d.id]||"📁")}</span><span class="cnt">업무 ${TASKS.filter(t=>t.d===d.id).length}</span><b>${d.n}</b><span>${d.h}</span></a>`).join("")}</div>
+      <div class="own"><div>${emo("✍️")}<div><b>목록에 없는 업무인가요?</b><p>업무 이름과 상황만 적으면 같은 틀로 질문을 만들어 드려요.</p></div></div><a class="btn line" href="#/ask/custom">직접 적어서 만들기</a></div>
     </section>
     <p class="note"><b>개인정보는 넣지 마세요.</b> 고객·조합원 이름, 전화번호, 계좌번호, 내부 자료는 빼고 상황만 적습니다. 앱은 번호처럼 보이는 것을 [지움]으로 바꾸지만 사람 이름은 찾지 못해요.</p>
   </div>`;
@@ -539,8 +663,9 @@ function viewDept(id){
   setNav("home");
   app.innerHTML=`<div class="wrap page">
     <div class="crumb"><a href="#/">처음</a> › ${esc(d.n)}</div>
-    <p class="eyebrow">부서</p><h1>${esc(d.n)}</h1>
-    <p class="lead">${esc(d.h)} · 업무를 누르면 질문이 바로 만들어져요.</p>
+    <h1>${emo(DEMO[d.id]||"📁")}${esc(d.n)}</h1>
+    <p class="lead">${esc(d.h)}</p>
+    ${guide("오늘 할 일을 <b>하나</b> 골라 보세요 👇 누르면 질문이 바로 만들어져요.")}
     <ul class="tasks">${TASKS.filter(t=>t.d===id).map(taskRow).join("")}
       <li class="dash"><a href="#/ask/custom?d=${d.id}"><div><b>다른 업무 직접 적기</b><small>${esc(d.n)}의 목록에 없는 일</small></div>${ICON.go}</a></li></ul>
   </div>`;
@@ -550,8 +675,9 @@ function viewDept(id){
 function viewAll(){
   setNav("all");
   app.innerHTML=`<div class="wrap page">
-    <p class="eyebrow">전체 업무</p><h1>${TASKS.length}가지 업무에서 고르기</h1>
-    <label class="search" style="margin:18px 0 6px">${ICON.search}<span class="sr">업무 이름으로 찾기</span>
+    <h1>${emo("🗂️")}${TASKS.length}가지 업무에서 고르기</h1>
+    ${guide("찾는 업무 이름을 적어 보세요 🔍 <b>연체, 방역, 회의록</b>처럼요.")}
+    <label class="search" style="margin:6px 0 6px">${ICON.search}<span class="sr">업무 이름으로 찾기</span>
       <input id="aq" type="search" placeholder="업무 이름 (예: 안내문, 수매, 감사)" autocomplete="off" enterkeyhint="search"></label>
     <div id="ares"></div>
     <div class="allgrid" style="margin-top:28px">${DEPTS.map(d=>`<section><h2>${esc(d.n)} <a href="#/d/${d.id}">부서 화면</a></h2><ul class="tasks">${TASKS.filter(t=>t.d===d.id).map(taskRow).join("")}</ul></section>`).join("")}</div>
@@ -575,14 +701,14 @@ function viewAsk(idq){
   let n=0;const N=()=>`<span class="num">${++n}</span>`;
   app.innerHTML=`<div class="wrap page">
   <div class="crumb">${crumb}</div>
-  <p class="eyebrow">${custom?"직접 적기":esc(deptOf(t.d).n)}</p>
-  <h1>${custom?"내 업무로 질문 만들기":esc(t.n)}</h1>
+  <h1>${custom?emo("✍️")+"내 업무로 질문 만들기":esc(t.n)}</h1>
   <p class="lead">${custom?"업무 이름과 상황을 적으면 오른쪽에 질문이 만들어집니다.":needSrc?"상황을 내 일로 바꾸고, <b>공개해도 되는 원문</b>을 붙인 뒤 [질문 복사]를 누르세요.":"질문은 이미 만들어져 있어요. <b>상황만 내 일로 바꾸고</b> [질문 복사]를 누르세요."}</p>
+  ${guide("")}
   <div class="two">
     <div>
       ${custom?`<div class="field"><label class="lab" for="nm">${N()}무슨 업무인가요? <span class="muted">부서 · 업무</span></label>
         <input class="t" id="nm" value="${esc(st.name)}" placeholder="예: 경제과 · 영농자재 배송 일정 안내"></div>`:""}
-      <div class="field"><label class="lab" for="sit">${N()}어떤 상황인가요?</label>
+      <div class="field"><label class="lab" for="sit">${N()}어떤 상황인가요?${emo("✏️")}</label>
         <textarea id="sit" placeholder="누구에게 무엇을 안내·부탁하는지 한두 줄로. 이름·번호는 빼고 적어 주세요.">${esc(st.sit)}</textarea>
         ${custom?"":`<div class="minor"><button class="linkbtn" id="clrSit" type="button">예시 지우기</button><button class="linkbtn" id="exSit" type="button">예시 다시 넣기</button></div>`}
         <div class="warn" id="pii" role="status" hidden></div>
@@ -591,32 +717,42 @@ function viewAsk(idq){
       ${needSrc?`<div class="field"><label class="lab" for="src">${N()}원문 붙여 넣기 <span class="muted">공개해도 되는 글만</span></label>
         <textarea id="src" placeholder="예: 농업기술센터 누리집에 공개된 안내 글. 내부 문서·개인정보는 넣지 마세요.">${esc(st.src)}</textarea>
         <p class="hint">비워 두면 AI가 완성본을 지어내지 않고 <b>원문부터 달라고</b> 합니다. 그때 같은 대화창에 원문을 붙여 넣으세요.</p></div>`:""}
-      <div class="field"><div class="lab">${N()}무엇을 받을까요?</div>
+      <div class="field"><div class="lab">${N()}무엇을 받을까요?${emo("📄")}</div>
         <div class="chips" id="outs">${Object.entries(OUTS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.out===k}">${v.n}</button>`).join("")}</div>
         <label class="toggle" id="nhw"${NH_OUTS.includes(st.out)?"":" hidden"}><input type="checkbox" id="nh"${st.nh?" checked":""}><div><b>농협 문서 기호로 쓰게 하기</b><span>1. → □ → ○ → ※, 절차는 ① ② ③</span></div></label></div>
-      <div class="field"><div class="lab">${N()}누가 읽나요?</div>
+      <div class="field"><div class="lab">${N()}누가 읽나요?${emo("👀")}</div>
         <div class="chips" id="auds">${Object.entries(AUDS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.aud===k}">${v.n}</button>`).join("")}</div></div>
       ${custom?"":`<details class="more"><summary>우리 조합에서는 부서 이름이 달라요 (선택)</summary><div class="in">
         <input class="t" id="my" value="${esc(st.my)}" placeholder="예: 경제과 자재계"><p class="hint">이 기기에만 기억해요.</p></div></details>`}
     </div>
     <div>
       <div class="card" id="panel">
-        <div class="cardhead"><b>AI에게 보낼 질문</b><small id="len"></small></div>
+        <div class="cardhead">${APPICON}<b>AI에게 보낼 질문</b><small id="len"></small></div>
         <pre class="prompt" id="pr" aria-live="polite"></pre>
         <div class="cardfoot"><button class="copy" id="cp" type="button">${ICON.copy}질문 복사</button><span class="done" id="ok" role="status"></span></div>
       </div>
-      <div class="next"><h3><span class="num">→</span>복사한 다음, 쓰는 AI를 열고 붙여 넣기</h3>
+      <div class="next"><h3><span class="num">${ICON.go}</span>복사한 다음, 쓰는 AI를 열고 붙여 넣기${emo("📲")}</h3>
         <div class="ais">${AIS.map(([nm,u])=>`<a href="${u}" target="_blank" rel="noopener noreferrer">${nm}${ICON.out}</a>`).join("")}</div>
         <p class="hint">소속 조합에서 쓰도록 허용한 AI를 쓰세요. 휴대폰은 입력칸을 길게 눌러 [붙여넣기].</p></div>
-      <div class="next"><h3>답을 받은 뒤에는 AI와 대화를 이어 가세요</h3>
+      <div class="next"><h3>답을 받은 뒤에는 AI와 대화를 이어 가세요${emo("💬")}</h3>
         <p class="flow" style="margin:0 0 10px"><b>처음 시작만 앱의 도움을 받으세요.</b> 그다음은 AI 안에서 "더 짧게 해 줘"처럼 편하게 말하며 이어 가시면 됩니다. 말이 막힐 때만 아래 문장을 눌러 복사하세요.</p>
         <ul class="follows" id="fl"></ul>
         <p class="hint">누르면 복사돼요. 같은 대화창에 붙여 넣으세요.</p></div>
-      <div class="next"><h3>쓰기 전에 사람이 확인할 것</h3>
+      <div class="next"><h3>쓰기 전에 사람이 확인할 것${emo("🔎")}</h3>
         <ol class="checks"><li><b>숫자·날짜·규정</b>이 맞는지</li><li><b>[확인 필요]</b> 자리를 모두 채웠는지</li><li>실제 이름·번호가 들어가지 않았는지</li></ol></div>
     </div>
   </div></div>`;
   const pr=$("#pr"),ok=$("#ok");let copied="";
+  /* 새싹이가 지금 할 일을 알려 줌 */
+  const guideMsg=found=>{
+    if(custom&&!st.name.split("·").pop().trim())return "먼저 <b>무슨 업무인지</b> 적어 주세요 ✏️";
+    if(!st.sit.trim())return "상황을 <b>한 줄만</b> 적어 주세요 🙂 누구에게 무엇을 할지면 돼요.";
+    if(found&&found.length)return "번호처럼 보이는 건 제가 <b>[지움]</b>으로 가렸어요 🙈 이름은 직접 빼 주세요.";
+    if(copied&&copied===pr.dataset.t)return "복사 완료! 🎉 이제 <b>AI 앱을 열고 붙여 넣으세요.</b> 그다음은 AI와 대화하시면 돼요.";
+    if(t&&st.sit===t.s)return needSrc?"예시 상황을 <b>내 일로 바꾸고</b>, 공개해도 되는 원문이 있으면 붙여 주세요 📄":"지금 적힌 건 예시예요. <b>상황만 내 일로 바꿔</b> 보세요 ✏️";
+    return "좋아요! 👍 이제 <b>[질문 복사]</b>를 눌러 주세요.";
+  };
+  let ready=false;
   const render=txt=>{pr.innerHTML=esc(txt).replace(/^(\[[^\]\n]+\])$/gm,'<span class="h">$1</span>');$("#len").textContent=txt.length.toLocaleString()+"자"};
   const drawFollows=()=>{$("#fl").innerHTML=follows(st.out).map(([k,v],i)=>`<li><button type="button" data-i="${i}"><span>${esc(k)}</span><small>복사</small></button></li>`).join("")};
   const draw=()=>{
@@ -626,6 +762,7 @@ function viewAsk(idq){
     const f=r.found;const w=$("#pii");w.hidden=!f.length;
     if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요. 사람 이름은 가려지지 않으니 직접 빼 주세요.`;
     $("#nhw").hidden=!NH_OUTS.includes(st.out);
+    say(guideMsg(f),ready);
   };
   const chipGroup=(sel,key)=>$(sel).addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st[key]=b.dataset.k;$(sel).querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));if(key==="out")drawFollows();draw()});
   chipGroup("#outs","out");chipGroup("#auds","aud");
@@ -640,47 +777,52 @@ function viewAsk(idq){
     $("#fl").querySelectorAll("button").forEach(x=>{x.classList.remove("ok");x.querySelector("small").textContent="복사"});
     $("#fl").querySelectorAll(".fbtext").forEach(x=>x.remove());
     b.classList.add("ok");b.querySelector("small").textContent=good?"복사했어요":"아래 글을 길게 눌러 복사";
-    if(!good)b.insertAdjacentHTML("afterend",`<p class="fbtext">${esc(v)}</p>`)}); /* P2-6: 실패하면 실제 문장을 펼침 */
+    if(!good)b.insertAdjacentHTML("afterend",`<p class="fbtext">${esc(v)}</p>`); /* P2-6: 실패하면 실제 문장을 펼침 */
+    say(good?"같은 대화창에 붙여 넣으면 돼요 💬":"아래 글을 길게 눌러 복사해 주세요 🙏",true)});
   /* P2-5: 비어 있는 채로 복사하지 않기 */
   const blank=()=>{if(custom&&!st.name.split("·").pop().trim())return ["#nm","업무 이름을 먼저 적어 주세요. (예: 영농자재 배송 일정 안내)"];
     if(!st.sit.trim())return ["#sit","상황을 한 줄이라도 적어 주세요. 누구에게 무엇을 하려는지면 됩니다."];return null};
-  const doCopy=async()=>{const b=blank();if(b){ok.classList.add("stale");ok.textContent=b[1];$(b[0]).focus();return "blank"}
+  const doCopy=async()=>{const b=blank();if(b){ok.classList.add("stale");ok.textContent=b[1];$(b[0]).focus();say(guideMsg(),true);return "blank"}
     const txt=pr.dataset.t;const good=await copyText(txt);if(good)copied=txt;ok.classList.remove("stale");
-    ok.textContent=good?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.";return good};
+    ok.textContent=good?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.";
+    if(good){const cp=$("#cp");cp.classList.add("copied");cp.innerHTML=ICON.check+"복사했어요";clearTimeout(cp._t);cp._t=setTimeout(()=>{cp.classList.remove("copied");cp.innerHTML=ICON.copy+"질문 복사"},1800)}
+    say(good?guideMsg():"복사가 안 됐어요 😥 질문을 <b>길게 눌러</b> 직접 복사해 주세요.",true);return good};
   $("#cp").addEventListener("click",doCopy);
-  drawFollows();draw();
+  drawFollows();draw();ready=true;
   mobileBar(doCopy);
 }
 function mobileBar(doCopy){
   const bar=$("#mbar");bar.hidden=false;document.body.classList.add("hasbar");
   const v=$("#mView"),c=$("#mCopy");
   v.onclick=()=>{const el=$("#panel");const head=$(".top").offsetHeight;window.scrollTo({top:scrollY+el.getBoundingClientRect().top-head-8,behavior:"auto"})};
-  c.onclick=async()=>{const r=await doCopy();c.textContent=r==="blank"?"먼저 적어 주세요":r?"복사했어요":"복사 안 됨";setTimeout(()=>c.textContent="질문 복사",2200)};
+  c.onclick=async()=>{const r=await doCopy();c.textContent=r==="blank"?"먼저 적어 주세요":r?"복사했어요":"복사 안 됨";c.classList.toggle("copied",r===true);
+    clearTimeout(c._t);c._t=setTimeout(()=>{c.textContent="질문 복사";c.classList.remove("copied")},2200)};
 }
 
 /* --- 안내 --- */
 function viewAbout(){
   setNav("about");
   app.innerHTML=`<div class="wrap page">
-  <p class="eyebrow">안내</p><h1>AI첫걸음은 이런 도구입니다</h1>
+  <h1>${emo("🌱")}AI첫걸음은 이런 도구입니다</h1>
   <p class="lead">농협 직원이 AI에게 일을 맡길 때 무엇을 어떻게 물어야 할지 덜 고민하도록, 업무별 질문을 만들어 드립니다. 처음 시작만 앱의 도움을 받고, 그다음은 AI 안에서 자연스럽게 대화를 이어 가시면 됩니다. 농협의 공식 서비스가 아니라 개인이 만든 교육용 도구입니다.</p>
+  ${guide("궁금한 건 여기서 확인하세요 📖 잘 안 되는 점은 <b>영상 댓글</b>로 알려 주세요!")}
   <div class="about">
-   <div class="box"><h3>할 수 있는 것</h3><ul>
+   <div class="box"><h3>${emo("✨")}할 수 있는 것</h3><ul>
      <li>${DEPTS.length}개 부서 묶음, ${TASKS.length}가지 업무의 질문 만들기와 직접 적기</li>
      <li>결과 모양 ${Object.keys(OUTS).length}가지, 읽는 사람 ${Object.keys(AUDS).length}가지, 농협 문서 기호</li>
      <li>답을 받은 뒤 이어서 쓸 말을 눌러서 복사</li>
      <li>업무 이름 검색 (예: 연체, 방역, RPC, 로컬푸드)</li></ul></div>
-   <div class="box"><h3>좋은 질문의 틀</h3><ul>
+   <div class="box"><h3>${emo("🧩")}좋은 질문의 틀</h3><ul>
      <li><b>역할</b> — 농협 업무를 아는 실무 선배로</li>
      <li><b>상황·만들 것·읽는 사람</b>을 나눠서</li>
      <li><b>지어내지 않기</b> — 모르는 숫자·날짜·규정은 [확인 필요]</li>
      <li><b>답하는 방법</b> — 완성본 먼저, 확인할 점 3가지</li></ul></div>
-   <div class="box"><h3>안전하게 쓰기</h3><ul>
+   <div class="box"><h3>${emo("🔒")}안전하게 쓰기</h3><ul>
      <li>실제 고객·조합원 이름, 전화번호, 계좌, 내부 숫자, 업무 파일은 넣지 마세요.</li>
      <li>완성된 질문에서 전화·주민등록·계좌번호, 이메일, 주소로 보이는 것은 [지움]으로 바꿉니다. 모든 형태를 찾지는 못하고 <b>사람 이름은 찾지 못합니다.</b></li>
      <li>이 앱은 AI에 직접 보내지 않습니다. 질문·상황 글은 저장하지 않고, 우리 조합 부서 이름과 최근 업무 3개만 이 기기에 기억합니다.</li>
      <li>AI 답은 사람이 확인한 뒤에 쓰세요.</li></ul></div>
-   <div class="box"><h3>알려 드릴 것</h3><ul>
+   <div class="box"><h3>${emo("📢")}알려 드릴 것</h3><ul>
      <li>소속 조합에서 쓰도록 허용한 AI를 쓰세요.</li>     <li>자료를 요약하거나 쉽게 바꾸는 업무는 <b>공개해도 되는 원문</b>만 붙여 넣으세요. 원문이 없으면 AI가 원문부터 달라고 합니다.</li>
      <li>부서 묶음은 흔한 예시일 뿐 전국 공통 조직도가 아닙니다.</li>
      <li>실제 직원 사용과 AI의 실제 답 품질은 아직 확인 중입니다. 잘 안 되는 부분은 영상 댓글로 알려 주시면 고치겠습니다.</li></ul></div>
