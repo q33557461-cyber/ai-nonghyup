@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>김상무의 AI농협 — 농협 직원 전용 AI 질문 센터</title>
+<meta name="description" content="농협 직원 전용 AI 질문 센터. 부서와 업무를 고르면 AI 대화창에 바로 붙여 넣을 질문이 만들어집니다.">
+<meta name="theme-color" content="#173D27">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --ivory:#F6F6F1; --ivory2:#ECECE4; --ivory3:#E2E2D8;
+  --ink:#20251F; --ink2:#4A5048; --ink3:#6B7068;
+  --gold:#D8AA43; --goldh:#E2B954;
+  --green:#173D27; --green2:#21503A; --greent:#E4ECE6;
+  --white:#FFFFFF; --line:rgba(32,37,31,.12); --line2:rgba(32,37,31,.22);
+  --font:"Pretendard Variable",Pretendard,"Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif;
+  --wrap:1120px; --gut:20px; --top:64px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;letter-spacing:-.01em;word-break:keep-all;overflow-wrap:anywhere}
+a{color:inherit}
+button,input,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding-inline:var(--gut)}
+.muted{color:var(--ink3)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- 머리 ---------- */
+.top{position:sticky;top:0;z-index:20;background:var(--green);color:var(--white);padding-top:env(safe-area-inset-top,0px)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:var(--top)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0}
+.brand i{display:block;width:4px;height:28px;background:var(--gold);flex:none}
+.brand b{font-size:19px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.brand small{font-size:13px;color:rgba(246,246,241,.72);font-weight:500;white-space:nowrap}
+nav.tabs{margin-left:auto;display:flex;gap:4px}
+nav.tabs a{text-decoration:none;font-size:15px;font-weight:600;color:rgba(246,246,241,.8);padding:8px 12px;border-bottom:2px solid transparent}
+nav.tabs a:hover{color:var(--white)}
+nav.tabs a[aria-current]{color:var(--white);border-bottom-color:var(--gold)}
+
+/* ---------- 처음 화면 ---------- */
+.hero{background:var(--green);color:var(--white);padding:40px 0 48px;border-top:1px solid rgba(246,246,241,.12)}
+.eyebrow{font-size:14px;font-weight:700;letter-spacing:.06em;margin:0 0 14px}
+.hero .eyebrow{color:var(--gold)}
+.hero h1{font-size:clamp(30px,5.2vw,48px);line-height:1.18;font-weight:800;letter-spacing:-.03em;margin:0 0 14px}
+.hero p.lead{font-size:17px;color:rgba(246,246,241,.82);margin:0 0 28px;max-width:34em}
+.search{display:flex;align-items:center;gap:12px;background:var(--white);color:var(--ink);height:60px;padding:0 18px;max-width:640px;border:1px solid var(--white)}
+.search svg{width:22px;height:22px;flex:none;fill:none;stroke:var(--ink2);stroke-width:2}
+.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:17px;height:100%}
+.search input::placeholder{color:#8A8E86}
+.search:focus-within{outline:3px solid var(--gold);outline-offset:2px}
+.results{list-style:none;margin:10px 0 0;padding:0;max-width:640px;background:var(--white);border:1px solid var(--line)}
+.results li+li{border-top:1px solid var(--line)}
+.results a{display:flex;align-items:baseline;gap:10px;padding:13px 18px;text-decoration:none;color:var(--ink)}
+.results a:hover,.results a:focus-visible{background:var(--greent)}
+.results small{margin-left:auto;color:var(--ink3);font-size:13px;white-space:nowrap}
+.results .none{padding:14px 18px;color:var(--ink2)}
+.results .none a{display:inline;padding:0;text-decoration:underline;color:var(--green);font-weight:600}
+.hero .results{color:var(--ink)}
+
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.steps3 div{display:flex;align-items:center;gap:12px;padding:20px 0;font-weight:600;font-size:15px}
+.steps3 div+div{padding-left:20px;border-left:1px solid var(--line)}
+.num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--white);font-size:14px;font-weight:700;flex:none}
+
+.sec{padding:44px 0 8px}
+.sechead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.sechead h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0}
+.sechead span{font-size:14px;color:var(--ink3)}
+.depts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.dept{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:var(--white);border:1px solid var(--line);padding:18px 18px 16px;min-height:132px;transition:border-color .15s}
+.dept:hover,.dept:focus-visible{border-color:var(--green)}
+.dept em{font-style:normal;font-size:13px;font-weight:700;color:var(--green);letter-spacing:.04em}
+.dept b{font-size:18px;font-weight:700;line-height:1.35}
+.dept span{font-size:14px;color:var(--ink2);line-height:1.45}
+.dept small{margin-top:auto;padding-top:8px;font-size:13px;color:var(--ink3)}
+.recent{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.recent a{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);padding:8px 14px;text-decoration:none;font-weight:600;font-size:15px}
+.recent a:hover{border-color:var(--green)}
+.recent a small{color:var(--ink3);font-weight:500;font-size:13px}
+.linkbtn{background:none;border:0;padding:4px 2px;color:var(--ink3);font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:hover{color:var(--ink)}
+.own{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between;background:var(--white);border:1px solid var(--line);padding:20px 22px;margin-top:12px}
+.own b{font-size:17px}
+.own p{margin:2px 0 0;color:var(--ink2);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:1px solid var(--green);background:var(--green);color:var(--white);font-weight:700;font-size:16px;text-decoration:none}
+.btn:hover{background:var(--green2)}
+.btn.line{background:transparent;color:var(--green)}
+.btn.line:hover{background:var(--greent)}
+.note{margin:36px 0 56px;padding:18px 22px;border-left:4px solid var(--green);background:var(--ivory2);font-size:15px;color:var(--ink2)}
+.note b{color:var(--ink)}
+
+/* ---------- 부서 화면 ---------- */
+.page{padding-block:32px 64px}
+.crumb{font-size:14px;color:var(--ink3);margin-bottom:14px}
+.crumb a{color:var(--ink2)}
+.page h1{font-size:clamp(26px,4.2vw,36px);font-weight:800;letter-spacing:-.03em;line-height:1.22;margin:0 0 8px}
+.page .eyebrow{color:var(--green)}
+.page .lead{color:var(--ink2);margin:0 0 24px}
+.tasks{list-style:none;margin:0;padding:0;background:var(--white);border:1px solid var(--line)}
+.tasks li+li{border-top:1px solid var(--line)}
+.tasks a{display:flex;align-items:center;gap:16px;padding:18px 20px;text-decoration:none}
+.tasks a:hover,.tasks a:focus-visible{background:var(--greent)}
+.tasks b{font-size:17px;font-weight:700}
+.tasks small{display:block;font-size:14px;color:var(--ink3);font-weight:500;margin-top:2px}
+.tasks svg{margin-left:auto;width:18px;height:18px;flex:none;fill:none;stroke:var(--ink3);stroke-width:2}
+.tasks .dash a{color:var(--green)}
+.allgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px 24px}
+.allgrid h2{font-size:18px;font-weight:800;margin:0 0 10px;display:flex;align-items:baseline;gap:10px}
+.allgrid h2 a{font-size:13px;font-weight:600;color:var(--ink3)}
+
+/* ---------- 질문 만들기 ---------- */
+.two{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:32px;align-items:start}
+.field{margin-bottom:28px}
+.lab{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;margin-bottom:10px}
+.lab .muted{font-size:14px;font-weight:500}
+textarea,input.t{display:block;width:100%;background:var(--white);border:1px solid var(--line2);padding:14px 16px;font-size:16px;line-height:1.6;border-radius:0}
+textarea{min-height:132px;resize:vertical}
+textarea:focus,input.t:focus{outline:3px solid var(--gold);outline-offset:0;border-color:var(--ink)}
+.minor{display:flex;gap:16px;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:42px;padding:0 16px;background:var(--white);border:1px solid var(--line2);font-size:15px;font-weight:600;color:var(--ink)}
+.chip:hover{border-color:var(--green)}
+.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--white)}
+.toggle{display:flex;align-items:flex-start;gap:12px;margin-top:14px;padding:14px 16px;background:var(--white);border:1px solid var(--line);cursor:pointer}
+.toggle input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--green);flex:none}
+.toggle b{font-size:15px}
+.toggle span{display:block;font-size:13px;color:var(--ink3)}
+.warn{margin-top:10px;padding:12px 14px;background:var(--ink);color:var(--white);font-size:14px;border-left:4px solid var(--gold)}
+.hint{font-size:13px;color:var(--ink3);margin:8px 0 0}
+details.more{border-top:1px solid var(--line);padding-top:14px}
+details.more summary{cursor:pointer;font-weight:600;font-size:15px;color:var(--ink2)}
+details.more .in{padding-top:10px}
+
+.card{background:var(--white);border:1px solid var(--line2);position:sticky;top:calc(var(--top) + 16px)}
+.cardhead{display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--white);padding:12px 18px}
+.cardhead b{font-size:15px;font-weight:700}
+.cardhead small{margin-left:auto;font-size:13px;color:rgba(246,246,241,.7)}
+pre.prompt{margin:0;padding:20px 20px 8px;white-space:pre-wrap;font-family:var(--font);font-size:15px;line-height:1.75;color:var(--ink);max-height:min(58vh,560px);overflow:auto}
+pre.prompt .h{font-weight:800;color:var(--green)}
+.cardfoot{padding:16px 18px 18px;border-top:1px solid var(--line)}
+.copy{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;background:var(--gold);color:var(--ink);border:1px solid var(--gold);font-size:18px;font-weight:800}
+.copy:hover{background:var(--goldh)}
+.copy svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2}
+.done{display:block;margin-top:10px;font-size:14px;font-weight:600;color:var(--green);min-height:1.4em}
+.done.stale{color:var(--ink);background:var(--ivory2);padding:6px 10px}
+
+.next{margin-top:24px}
+.next h3{font-size:16px;font-weight:800;margin:0 0 10px;display:flex;align-items:center;gap:10px}
+.ais{display:flex;flex-wrap:wrap;gap:8px}
+.ais a{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;background:var(--white);border:1px solid var(--line2);text-decoration:none;font-weight:700;font-size:15px}
+.ais a:hover{border-color:var(--green);color:var(--green)}
+.ais svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+.follows{list-style:none;margin:0;padding:0;border:1px solid var(--line);background:var(--white)}
+.follows li+li{border-top:1px solid var(--line)}
+.follows button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;padding:12px 16px;font-size:15px;font-weight:600}
+.follows button:hover{background:var(--greent)}
+.follows button span{flex:1}
+.follows button small{font-size:13px;color:var(--ink3);font-weight:600;white-space:nowrap}
+.follows button.ok small{color:var(--green)}
+.checks{margin:0;padding-left:20px;font-size:15px;color:var(--ink2)}
+.checks li{margin:4px 0}
+.checks b{color:var(--ink)}
+
+/* 휴대폰 아래 막대 */
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:1fr 1.6fr;gap:8px;padding:10px var(--gut) calc(10px + env(safe-area-inset-bottom,0px));background:var(--ivory);border-top:1px solid var(--line2)}
+.mbar .btn{min-height:52px}
+.mbar .copy{min-height:52px;font-size:17px}
+body.hasbar{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+
+/* 안내 */
+.about{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.box{background:var(--white);border:1px solid var(--line);padding:20px 22px}
+.box h3{font-size:17px;font-weight:800;margin:0 0 8px}
+.box ul{margin:0;padding-left:20px;font-size:15px;color:var(--ink2)}
+.box li{margin:5px 0}
+.box b{color:var(--ink)}
+
+footer{border-top:1px solid var(--line);padding:24px 0 32px;font-size:13px;color:var(--ink3)}
+
+@media (max-width:860px){
+  .two{grid-template-columns:1fr;gap:8px}
+  .card{position:static}
+  pre.prompt{max-height:none}
+}
+@media (min-width:861px){.mbar{display:none!important}body.hasbar{padding-bottom:0}}
+@media (max-width:640px){
+  :root{--top:56px;--gut:16px}
+  .brand small{display:none}
+  .brand b{font-size:17px}
+  nav.tabs a{padding:8px 7px;font-size:14px}
+  .hero{padding:28px 0 32px}
+  .hero p.lead{font-size:16px;margin-bottom:20px}
+  .search{height:56px}
+  .steps3{grid-template-columns:1fr}
+  .steps3 div{padding:12px 0}
+  .steps3 div+div{padding-left:0;border-left:0;border-top:1px solid var(--line)}
+  .sec{padding-top:32px}
+  .depts{grid-template-columns:1fr 1fr;gap:8px}
+  .dept{min-height:116px;padding:14px}
+  .dept b{font-size:16px}
+  .dept span{font-size:13px}
+  .allgrid{grid-template-columns:1fr}
+  .page{padding-top:22px}
+}
+@media (max-width:360px){.depts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#/"><i></i><b>김상무의 AI농협</b><small>농협 직원 전용 AI 질문 센터</small></a>
+  <nav class="tabs" aria-label="메뉴"><a href="#/" data-nav="home">처음</a><a href="#/all" data-nav="all">전체 업무</a><a href="#/about" data-nav="about">안내</a></nav>
+</div></header>
+<main id="app" tabindex="-1"></main>
+<footer><div class="wrap">김상무의 AI농협은 농협 직원을 위한 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v05</div></footer>
+<div class="mbar" id="mbar" hidden><button class="btn line" id="mView" type="button">질문 보기</button><button class="copy" id="mCopy" type="button">질문 복사</button></div>
+<script id="core">
+/* ===== 자료 (v04c에서 그대로 가져옴: 부서·결과 모양·읽는 사람·업무 52개·개인정보 가리기) ===== */
+const DEPTS=[
+ {id:"common",n:"공통 업무",h:"회의록·공문·안내·민원"},
+ {id:"credit",n:"신용(금융)",h:"예금·대출·연체·공제·카드"},
+ {id:"mgmt",n:"경영관리",h:"총무·기획·인사·결산·조합원"},
+ {id:"input",n:"구매·영농자재",h:"비료·농약·자재 재고"},
+ {id:"sales",n:"판매·유통",h:"수매·출하·APC·RPC"},
+ {id:"mart",n:"하나로마트·로컬푸드",h:"매장·행사·출하 농가"},
+ {id:"farm",n:"농기계·육묘·방제·주유",h:"임대·공동방제·주유소"},
+ {id:"live",n:"축산",h:"사료·가축시장·방역·한우"},
+ {id:"guide",n:"지도·교육지원",h:"영농지도·교육·복지"},
+ {id:"audit",n:"감사·준법·리스크",h:"자체감사·소비자보호·자금세탁방지"}
+];
+const OUTS={
+ sms:{n:"안내 문자",how:"3~5문장. 인사 → 핵심 → 할 일 순서로, 휴대폰에서 읽기 쉽게"},
+ notice:{n:"공지·안내문",how:"제목, 핵심 내용, 일시·장소·준비물, 문의 순서로"},
+ doc:{n:"공문",how:"제목 → 관련 → 본문(1. 2. …) → 붙임 순서로, 간결하고 정중하게"},
+ report:{n:"보고서 초안",how:"제목, 현황, 문제점, 개선안, 건의 순서. 개조식(□ ○)으로 짧게"},
+ summary:{n:"요약",how:"핵심 3줄과 해야 할 일 목록(담당·기한 칸 포함)"},
+ check:{n:"체크리스트",how:"확인할 항목을 □ 표시로 10개 이내, 중요한 것부터"},
+ table:{n:"표",how:"항목 · 내용 · 담당 · 기한 열이 있는 표"},
+ script:{n:"응대 말씀",how:"직원이 그대로 읽을 수 있는 말 순서와, 예상 질문 3개와 답"},
+ edu:{n:"설명 자료",how:"처음 듣는 사람도 이해하도록 5단계 이내 설명과 쉬운 예시"}
+};
+/* 농협 문서 기호(1. → □ → ○ → ※)를 고를 수 있는 결과 모양 */
+const NH_OUTS=["doc","notice","report"];
+const AUDS={
+ member:{n:"조합원·고객",how:"어르신도 이해하는 쉬운 말과 존댓말"},
+ staff:{n:"직원·동료",how:"업무 용어는 써도 되지만 짧고 분명하게"},
+ boss:{n:"상사·임원",how:"결론을 먼저, 근거는 짧게"},
+ ext:{n:"외부 기관·거래처",how:"정중한 공문 말투"}
+};
+/* c: 어떤 결과 모양이든 지킬 사실·안전 조건, f: 특정 결과 모양에만 붙는 형식 지시 */
+const T=(id,d,n,k,o,a,s,c,f)=>({id,d,n,k:k.split(","),o,a,s,c,f});
+const TASKS=[
+ T("c1","common","회의록 정리","회의,회의록,메모,정리","summary","staff","11월 직원 회의. 연말 행사 준비, 창구 대기 줄이기, 다음 달 교육 일정을 이야기함. 담당과 기한은 일부만 정해짐.","정해지지 않은 담당·기한은 [미정]으로 표시해 주세요."),
+ T("c2","common","업무연락·공문 초안","공문,시행문,업무연락,협조,문서","doc","ext","관내 초등학교에 농촌 체험 행사 협조를 요청하는 업무연락. 날짜와 인원은 아직 정하지 않음.","문서번호와 날짜는 비워 두세요."),
+ T("c3","common","행사·교육 안내 문자","안내,문자,행사,교육,초대","sms","member","조합원 대상 디지털 금융 교육. 장소는 본점 2층 회의실, 날짜와 시간은 아직 정하지 않음.","정하지 않은 날짜와 시간은 [확인 필요]로 두세요.",{sms:"짧은 문자(90자 안팎) 하나와 긴 문자 하나, 두 가지로 주세요."}),
+ T("c4","common","민원·불만 응대","민원,불만,클레임,항의,응대","script","member","고객이 창구 대기 시간이 길다고 불만을 말함. 원인은 점심시간 근무 인원 부족.","변명처럼 들리지 않게 해 주세요. 지킬 수 없는 약속은 넣지 마세요.",{script:"사과 → 사정 설명 → 개선 약속 순서로 말해 주세요.",sms:"사과 → 사정 설명 → 개선 약속 순서로 써 주세요."}),
+ T("c5","common","긴 자료 요약","요약,정리,자료,보고","summary","boss","20쪽짜리 농업 지원사업 안내 자료를 요약해야 함. 자료 내용은 이 질문 아래에 따로 붙여 넣을 예정.","자료에 없는 내용은 덧붙이지 말고, 숫자는 자료에 적힌 그대로만 쓰세요."),
+ T("c6","common","인수인계서","인수인계,인계,휴가,부재","table","staff","2주 휴가 전에 매일 하는 일, 주 1회 하는 일, 급한 일이 생겼을 때 처리 순서를 정리해야 함.","개인 연락처는 넣지 말고 [연락처] 자리로 비워 두세요."),
+ T("r1","credit","예금·적금 상품 안내","예금,적금,상품,금리,만기,수신","script","member","정기적금 만기가 된 고객에게 재가입을 권하는 상황. 금리 숫자는 아직 확인하지 않음.","금리와 우대 조건은 지어내지 말고 [확인 필요]로 두세요. 원금이 무조건 보장된다고 단정하지 마세요."),
+ T("r2","credit","대출 상담 준비","대출,여신,상담,서류,농업인대출","check","staff","처음 농업인 대출을 상담하러 오는 조합원을 맞기 전에 물어볼 것과 준비 서류를 정리하고 싶음.","심사 기준·한도·금리는 말하지 말고, 내부 규정을 확인해야 하는 곳에 [규정 확인]을 붙여 주세요."),
+ T("r3","credit","연체 안내 문자","연체,독촉,상환,납부,이자","sms","member","대출 이자 납부일이 지난 고객에게 보내는 첫 안내. 금액과 날짜는 아직 확인하지 않음.","겁을 주거나 압박하는 표현 없이 정중하게 써 주세요. 법적 조치나 불이익을 지어내지 마세요."),
+ T("r4","credit","공제(보험) 만기 안내","공제,보험,만기,갱신,화재공제","sms","member","화재공제 만기 한 달 전 안내. 보장 내용과 공제료는 아직 확인하지 않음.","보장 내용을 단정하지 말고 '자세한 내용은 창구에서 안내'로 맺어 주세요."),
+ T("r5","credit","금융사기 예방 안내","보이스피싱,사기,피싱,예방,스미싱","notice","member","어르신 고객이 많은 지점 창구에 붙일 보이스피싱 예방 안내문.","실제처럼 꾸민 이름·번호는 넣지 마세요.",{notice:"큰 글씨로 붙일 수 있게 짧은 문장으로 써 주세요."}),
+ T("r6","credit","스마트뱅킹 사용법 안내","스마트뱅킹,앱,전자금융,인터넷뱅킹,카드,모바일","edu","member","처음 스마트폰 뱅킹을 쓰는 어르신에게 계좌 조회 방법을 알려 드림.","앱 메뉴 이름은 바뀔 수 있으니 [화면에서 확인]을 붙여 주세요. 직원이 비밀번호를 대신 입력해 준다는 내용은 넣지 마세요."),
+ T("m1","mgmt","이사회·대의원회 자료","이사회,대의원,총회,안건,회의자료","report","boss","다음 달 이사회에 '로컬푸드 직매장 영업시간 조정' 안건을 올릴 자료 초안.","찬반 의견을 지어내지 말고, 결정할 사항과 근거 자료가 필요한 곳을 표시해 주세요."),
+ T("m2","mgmt","사업계획 초안","사업계획,계획,목표,기획,예산","report","boss","내년 조합원 교육 사업계획의 뼈대. 예산과 목표 숫자는 아직 정하지 않음.","목표와 예산 숫자는 지어내지 말고 빈칸으로 두세요."),
+ T("m3","mgmt","신규 직원 교육 일정","직원교육,연수,교육계획,인사,신규","table","staff","신규 직원 3명의 첫 달 교육 일정표(창구, 마트, 사무 순환).","실제 이름 대신 '신규 직원 1·2·3'으로 써 주세요."),
+ T("m4","mgmt","결산·마감 일정 공지","결산,마감,회계,일정,연말","notice","staff","연말 결산 전에 부서별로 낼 자료와 마감일을 알리는 내부 공지.","마감일과 양식 이름은 [확인 필요]로 두세요."),
+ T("m5","mgmt","조합원 가입·출자 안내","조합원,가입,출자,배당,귀농","script","member","귀농한 분이 조합원 가입 방법을 물어봄.","가입 자격·출자금·배당은 정관과 규정을 따르므로 숫자를 지어내지 말고 [확인 필요]로 두세요."),
+ T("m6","mgmt","시설 안전점검 계획","안전,점검,시설,소방,겨울","check","staff","겨울철 본점과 창고 시설의 안전점검 항목 정리.","법으로 정한 점검 주기 같은 기준은 [확인 필요]로 표시해 주세요."),
+ T("i1","input","비료·농약 신청 안내","비료,농약,공급,신청,무기질비료","sms","member","봄철 무기질비료 신청 접수 시작 안내. 신청 기간과 가격은 아직 확인하지 않음.","지원금과 할인율은 지어내지 마세요."),
+ T("i2","input","자재 재고 점검표","재고,자재,창고,점검,실사","check","staff","월말 영농자재 창고 재고 실사 준비.","수량은 빈칸으로 두고 확인 방법만 적어 주세요."),
+ T("i3","input","농약 안전사용 안내","농약,안전,사용,보관","notice","member","농약 판매대 옆에 둘 안전사용·보관 안내문.","희석 배수와 사용량은 '제품 표시를 따르세요'로 안내하고 숫자를 지어내지 마세요."),
+ T("i4","input","자재 가격 변동 설명","가격,인상,변동,자재,비료값","script","member","조합원이 작년보다 비료값이 올랐다며 이유를 물음.","원인을 단정하지 말고, 확인된 사실과 추측을 나눠 주세요."),
+ T("s1","sales","벼 수매 안내","수매,벼,쌀,RPC,추곡","notice","member","올해 벼 수매 일정과 준비물 안내. 수매 가격과 일정은 아직 확인하지 않음.","수매 가격과 등급 기준은 지어내지 마세요."),
+ T("s2","sales","출하 일정 변경 안내","출하,APC,선별,공선,일정변경","sms","member","산지유통센터(APC) 사과 출하 일정이 바뀜. 바뀐 날짜는 아직 확인하지 않음.","바뀐 점이 맨 먼저 보이게 하고, 날짜는 [확인 필요]로 두세요."),
+ T("s3","sales","출하 품질 기준 설명","품질,등급,선별,규격,공동선별","edu","member","처음 공동선별에 참여하는 농가에게 선별 기준을 설명.","등급 기준 숫자는 [확인 필요]로 두세요."),
+ T("s4","sales","판로·납품 제안서","판로,납품,제안,학교급식,거래처","report","ext","지역 학교급식에 친환경 쌀을 납품하자고 제안하는 1쪽 자료.","생산량과 가격은 지어내지 말고 빈칸으로 두세요."),
+ T("s5","sales","RPC 건조·저장 안내","RPC,DSC,건조,저장,미곡","sms","member","벼 건조·저장 시설 이용 시간 안내.","운영 시간과 요금은 [확인 필요]로 두세요."),
+ T("h1","mart","행사 전단 문구","행사,전단,할인,마트,하나로마트","notice","member","하나로마트 주말 농산물 행사 전단의 제목과 짧은 소개 문구.","할인율·가격은 [가격] 자리로 두고, 과장 광고 표현은 피해 주세요."),
+ T("h2","mart","로컬푸드 출하 농가 공지","로컬푸드,직매장,출하농가,농가,라벨","sms","member","로컬푸드 직매장 출하 농가에게 포장·라벨 규칙이 바뀐다고 알림.","바뀌는 날짜는 [확인 필요]로 두세요."),
+ T("h3","mart","계산대 응대 매뉴얼","응대,계산대,고객,매뉴얼,환불","script","staff","신규 계산원이 환불 요청을 받았을 때 하는 말과 순서.","환불 기준은 '매장 기준을 따름'으로 두고 지어내지 마세요."),
+ T("h4","mart","신선식품 폐기 점검","폐기,유통기한,신선,재고,마감","check","staff","마감 전 신선식품 유통기한·폐기 점검 순서.","위생 기준 숫자는 [확인 필요]로 두세요."),
+ T("h5","mart","고객 후기 답글","후기,리뷰,답글,불만,온라인","script","member","매장 채소가 시들었다는 온라인 후기에 다는 답글.","고객을 탓하지 말고, 보상 약속은 넣지 마세요."),
+ T("f1","farm","농기계 임대 예약 안내","농기계,임대,예약,농기계은행","sms","member","봄철 농기계 임대 예약 접수 안내.","임대료와 기간은 [확인 필요]로 두세요."),
+ T("f2","farm","공동방제 일정 안내","방제,공동방제,드론,항공방제","sms","member","마을별 벼 공동방제 일정 안내. 날씨에 따라 바뀔 수 있음.","약제 이름과 사용량은 지어내지 말고, 날씨로 일정이 바뀔 수 있다는 점을 넣어 주세요."),
+ T("f3","farm","육묘 신청 안내","육묘,모종,모판,상토,신청","notice","member","벼 육묘장 모판 신청 안내.","신청 기간과 가격은 [확인 필요]로 두세요."),
+ T("f4","farm","주유소 안전점검표","주유소,주유,안전,유류","check","staff","농협 주유소 아침 개점 전 안전 점검.","법정 기준은 [확인 필요]로 표시해 주세요."),
+ T("f5","farm","농기계 안전교육 자료","농기계,안전,교육,사고,경운기","edu","member","고령 조합원 대상 경운기 안전 사용 교육 자료.","사고 통계 숫자는 지어내지 마세요."),
+ T("l1","live","가축시장 개장 안내","가축시장,송아지,경매,우시장","sms","member","이번 달 가축시장 개장 일정과 출장 준비 안내.","날짜와 수수료는 [확인 필요]로 두세요."),
+ T("l2","live","사료 주문 마감 안내","사료,배합사료,TMR,조사료,주문","sms","member","명절 연휴 전 사료 주문 마감 안내.","가격과 마감 시간은 [확인 필요]로 두세요."),
+ T("l3","live","방역 협조 문자","방역,구제역,소독,럼피스킨,가축전염병,AI","sms","member","겨울철 축사 소독과 외부인 출입 통제에 협조를 부탁하는 문자.","방역 기준과 발생 정보는 '정부·지자체 공식 안내를 따르세요'로 쓰고 지어내지 마세요."),
+ T("l4","live","한우 출하 상담 준비","한우,출하,도축,등급,비육","check","staff","한우 농가와 출하 시기를 상담하기 전에 확인할 항목.","시세와 등급 판정 기준을 단정하지 마세요."),
+ T("l5","live","컨설팅 방문 기록 정리","컨설팅,방문,농가,기록,축산","report","boss","한우 농가 방문 메모(사료 급여, 축사 환경, 농가 요청)를 보고서로 정리.","메모에 없는 내용은 덧붙이지 마세요."),
+ T("g1","guide","조합원 교육 모집 안내","조합원교육,교육,강좌,영농교육,모집","notice","member","겨울 영농 교육 3회 과정 모집 안내.","강사와 일정은 [확인 필요]로 두세요."),
+ T("g2","guide","영농 기술 자료 쉽게 풀기","영농,기술,재배,병해충,탄저병","edu","member","농업기술센터 자료의 고추 탄저병 예방 내용을 어르신이 읽기 쉽게 바꾸기.","자료에 없는 약제나 처방을 덧붙이지 마세요."),
+ T("g3","guide","복지사업 안내","복지,장학금,건강검진,경로","sms","member","조합원 자녀 장학금 신청 안내.","자격과 금액은 [확인 필요]로 두세요."),
+ T("g4","guide","봉사 행사 준비표","고향주부모임,청년,여성,봉사,김장,행사","table","staff","연말 김장 나눔 봉사 행사 준비표.","예산 숫자는 빈칸으로 두세요."),
+ T("g5","guide","현장 상담 기록 정리","상담,현장,농가,요청","summary","boss","농가 현장 방문에서 들은 요청 사항 메모를 정리.","메모에 없는 내용은 덧붙이지 마세요."),
+ T("a1","audit","자체감사 체크리스트","감사,자체감사,점검,감사준비","check","staff","분기 자체감사 전에 창구 업무에서 스스로 점검할 항목.","내부 규정 조항은 [규정 확인]으로 표시해 주세요."),
+ T("a2","audit","금융소비자보호 점검","금융소비자,설명의무,불완전판매,소비자보호","check","staff","상품을 팔 때 설명을 빠뜨리지 않았는지 점검하는 표.","법 조항을 지어내지 말고, 확인할 곳을 표시해 주세요."),
+ T("a3","audit","자금세탁방지 교육 자료","자금세탁,AML,고객확인,의심거래","edu","staff","신규 직원 대상 자금세탁방지 기초 교육 자료.","기준 금액과 보고 기한은 [확인 필요]로 두세요."),
+ T("a4","audit","개인정보 보호 점검","개인정보,보안,유출,정보보호","check","staff","사무실 개인정보 보호 자가 점검(책상, 출력물, 화면).","실제 개인정보처럼 보이는 예시를 만들지 마세요."),
+ T("a5","audit","금융사고 예방 공지","사고예방,금융사고,내부통제,시재","notice","staff","연말 금융사고 예방을 위한 직원 공지.","실제 사고 사례를 지어내지 마세요.")
+];
+
+/* 받침에 따라 을/를 */
+const eul=w=>{const c=(w||"").trim().slice(-1).charCodeAt(0);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28?"을":"를"};
+
+/* 개인정보로 보이는 것 찾기 (이름은 못 찾음) */
+/* 앞뒤가 숫자가 아닐 때만 잡는다(긴 금액 속 일부를 번호로 읽지 않게) */
+const okRRN=m=>{const d=m.replace(/\D/g,"");const mo=+d.slice(2,4),da=+d.slice(4,6);return mo>=1&&mo<=12&&da>=1&&da<=31};
+/* 주소 가리기에서 빼는 말: 시·군·구·읍·면으로 끝나지만 지명이 아닌 말, '로·길'로 끝나지만 도로가 아닌 말(앞으로·전화로…), 리로 끝나는 보통 낱말 */
+/* 시: '교육시·점검시(~할 때)'와 구별하려고 실제 시 이름만 (2026 기준 행정 시 + 특별·광역시 줄임) */
+const CITY="(?:서울특별|부산광역|대구광역|인천광역|광주광역|대전광역|울산광역|세종특별자치|서울|부산|대구|인천|광주|대전|울산|세종|수원|성남|의정부|안양|부천|광명|평택|동두천|안산|고양|과천|구리|남양주|오산|시흥|군포|의왕|하남|용인|파주|이천|안성|김포|화성|양주|포천|여주|춘천|원주|강릉|동해|태백|속초|삼척|청주|충주|제천|천안|공주|보령|아산|서산|논산|계룡|당진|전주|군산|익산|정읍|남원|김제|목포|여수|순천|나주|광양|포항|경주|김천|안동|구미|영주|영천|상주|문경|경산|창원|진주|통영|사천|김해|밀양|거제|양산|제주|서귀포)시";
+/* 면: '신청하면·필요하면'처럼 말끝 '~면'은 지명이 아님 */
+const IF_END=/(?:하|되|으|려|다|라|않|었|았|겠|해|봐|와|져|러)면$/;
+const ADDR_STOP=/^(?:시|군|구|읍|면|대면|비대면|측면|전면|이면|화면|반면|방면|표면|국면|정면|장면|단면|내면|외면|지면|서면|당면|직면|체면|평면|일면|양면|안면|지시|표시|동시|수시|즉시|다시|혹시|역시|당시|임시|일시|개시|게시|상시|무시|제시|감시|도시|요구|연구|도구|친구|입구|출구|창구|가구|기구|지구|항구|전구|문구|용구|축구|야구|농구|배구|탁구|장군|아군|적군|대군)$/;
+const ROAD_STOP=/으로$|위주로$|중심으로$|별로$|식으로$|^(?:앞|뒤|새|따|주|서|별|도|홀|실|위|옆|밖|안|길|이|그|저)로$|(?:그|이|저|제|멋|마음|순서|뜻|생각|예정|계획|규정|원래|지시|요청|안내|평소|기준|절차|말)대로$|^(?:이|그|저|가는|오는|먼|빠른|지름|갈|뒷|앞|첫|외|산|눈|빗|퇴근|출근|귀갓|등굣|하굣)길$/;
+const RI_STOP=/^(?:거리|우리|관리|처리|정리|수리|요리|무리|머리|소리|자리|다리|고리|유리|원리|논리|의리|이리|저리|그리|오리|도리|진리|경리|총리|대리|심리|물리|조리|미리|빨리|멀리|널리|부리|꼬리|마리|권리|윤리|승리|분리|섭리|합리|추리|기리)$/;
+/* 번호 바로 뒤가 시·명·회 같은 단위면 주소가 아님 (3시, 2번, 5명, 45농가, 120포 — 제미나이 검토 반영) */
+const ADDR_END="(?!\\d|\\s?(?:시간|시|분|명|개월|개|일|회|번(?!길)|부(?!근)|건|층|석|원|년|월|주|차|곳|대|장|권|통|세대|세|살|마리|톤|평|배|농가|가구|호|인|포|상자|박스|필지|마지기|단계|차례|가지|쪽|페이지|문항|항목|개소|회차|조|팀|반|등|위|ha|㎡|km|kg|m|%))";
+const PII=[
+ ["이메일",/[\w.+-]+@[\w-]+\.[\w.-]+/g],
+ ["주민등록번호",/(?<!\d)\d{6}\s*-?\s*[1-8]\d{6}(?!\d)/g,okRRN],
+ ["전화번호",/\+\s*82[\s-]*(?:\(0\)|0)?[\s-]*(?:1[016789]|2|[3-6][1-5]|70)[\s.\-)/]*\d{3,4}[\s.\-/]*\d{4}(?!\d)/g],
+ ["휴대폰 번호",/(?<!\d)01[016789]\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
+ ["전화번호",/(?<!\d)\(?0(?:2|[3-6][1-5]|70|80|50\d)\)?\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
+ ["계좌·카드 번호",/(?<!\d)\d{2,6}(?:-\d{2,6}){2,4}(?!\d)/g,m=>m.replace(/\D/g,"").length>=10], /* 날짜 2026-11-09 같은 것은 통과 */
+ ["계좌·카드 번호",/(?<=(?:계좌|카드|통장)(?:번호)?\s*[:：]?\s*)\d{10,16}(?!\d)/g],
+ ["계좌·카드 번호",/(?<![\d.,])\d{2,6}(?: \d{2,6}){2,4}(?![\d.,])/g,m=>{const d=m.replace(/\D/g,"").length;return d>=10&&d<=19}], /* 띄어 쓴 번호 */
+ /* 주소(v03): 오작동을 줄이려고 '시·군·구·읍·면 + 도로명 + 번호', '읍·면 + ○○리 + 번지', '○○번길 번호', '…번지'만 잡는다. 이름 가리기는 보류 */
+ ["주소",new RegExp("(?<![가-힣])("+CITY+"|[가-힣]{1,8}(?:군|구|읍|면))\\s+(?:([가-힣]{1,8}(?:구|읍|면|동))\\s+)?([가-힣0-9]{1,12}(?:로|길))\\s?\\d{1,4}(?:-\\d{1,4})?"+ADDR_END,"g"),(m,a,b,r)=>!ADDR_STOP.test(a)&&!IF_END.test(a)&&!(b&&(ADDR_STOP.test(b)||IF_END.test(b)))&&!ROAD_STOP.test(r)],
+ ["주소",new RegExp("(?<![가-힣])[가-힣0-9]{1,12}(?:로|길)\\s?\\d{1,4}번?길\\s?\\d{1,4}(?:-\\d{1,4})?(?!\\d)","g")],
+ ["주소",new RegExp("(?<![가-힣])([가-힣]{1,8}(?:읍|면))\\s*([가-힣]{1,6}리)\\s*(?:산\\s?)?\\d{1,5}(?:-\\d{1,5})?"+ADDR_END,"g"),(m,a,r)=>!ADDR_STOP.test(a)&&!IF_END.test(a)&&!RI_STOP.test(r)],
+ ["주소",new RegExp("(?<![가-힣])[가-힣]{1,8}(?:리|동|가)\\s*(?:산\\s?)?\\d{1,5}(?:-\\d{1,5})?\\s?번지","g")]
+];
+function scrub(text){
+  const found=[];let t=text||"";
+  for(const [name,re,ok] of PII){
+    t=t.replace(re,(...a)=>{const m=a[0];
+      if(ok&&!ok(...a)) return m;
+      if(!found.includes(name)) found.push(name); return "[지움]";
+    });
+  }
+  return {text:t,found};
+}
+
+function deptOf(id){return DEPTS.find(d=>d.id===id)}
+function taskOf(id){return TASKS.find(t=>t.id===id)}
+
+/* ===== v05 질문 만들기 =====
+   질문을 다 만든 뒤 전체를 한 번에 검사해 가린다 → 화면 경고와 실제 복사 내용이 항상 같다. */
+function askPrompt(o){return scrub(rawPrompt(o))}
+function makePrompt(o){return askPrompt(o).text}
+function rawPrompt(o){
+  /* o: {task, out, aud, sit, myDept, customName, nh} */
+  const t=o.task, out=OUTS[o.out], aud=AUDS[o.aud];
+  const name=t?t.n:(o.customName||"").trim()||"[업무 이름]";
+  const dept=t?deptOf(t.d).n:"";
+  const sit=(o.sit||"").trim()||"[상황을 한두 줄로 적어 주세요]";
+  const my=(o.myDept||"").trim();
+  const rules=["위 상황에 없는 숫자·날짜·금리·규정·연락처·담당자는 지어내지 말고 [확인 필요]로 표시해 주세요."];
+  const own=t&&(o.sit||"").trim()&&(o.sit||"").trim()!==t.s; /* 상황을 직접 고침 → 확정해 적은 값이 있을 수 있음 */
+  const keep=/넣지 말고|말하지 말고|^정하지 않은|^정해지지 않은/;
+  const soft=r=>!own||keep.test(r)?r:r.replace(/(숫자를 )?(지어내지 말고 )?(\[[^\]]+\](?: 자리)?로|빈칸으로|비워) (두세요|두고|표시해 주세요)/g,(m,a,b,p,v)=>`${a?"숫자는 ":""}상황에 적혀 있으면 그대로 쓰고, 없으면 ${b||""}${p} ${v}`);
+  if(t&&t.c) rules.push(soft(t.c));
+  const fo=t&&t.f&&t.f[o.out];const ord=!!(fo&&/순서로/.test(fo)&&/순서로/.test(out.how)); /* 순서 지시가 둘이면 AI가 헷갈림 → 업무 쪽 순서 하나만 */
+  if(fo&&!ord) rules.push(soft(fo));
+  const tail=ord?(out.how.split(/순서로,?\s*/)[1]||""):"";
+  const how=ord?soft(fo).replace(/ ?(써|말해) 주세요\.?$/,"")+(tail?", "+tail:""):out.how;
+  if(o.nh&&NH_OUTS.includes(o.out)) rules.push("농협 문서 기호로 써 주세요. 큰 항목은 1. 2. 3., 그 아래는 □, 그 아래는 ○, 주의·참고는 ※. 순서대로 하는 절차는 ① ② ③."+(o.aud==="staff"?" 문장 끝은 '~함', '~임', '~음'처럼 짧게 끊어 주세요.":" 읽는 사람이 직원이 아니니 문장은 존댓말로 써 주세요."));
+  rules.push("쉬운 말로 쓰고, 어려운 용어는 괄호 안에 풀어 주세요.");
+  if(!rules.some(r=>/연락처\]|\[이름\]/.test(r))) rules.push("사람 이름·전화번호·계좌번호가 들어갈 곳은 [이름], [연락처]처럼 빈자리로 두세요.");
+  const work=[dept,name].filter(Boolean).join(" · ")+(my?` (우리 조합에서는 '${my}' 업무)`:"");
+  const who=dept?`농협 ${dept.replace(/ 업무$/,"")} 업무를 잘 아는 실무 선배`:"농협 업무를 잘 아는 실무 선배";
+  return `당신은 ${who}입니다. 아래 내용으로 ${out.n}${eul(out.n)} 써 주세요. 농협 직원이 조금만 고쳐 바로 쓸 수 있는 초안이면 됩니다.
+
+[내 업무]
+${work}
+
+[상황]
+${sit}
+
+[만들 것]
+${out.n}: ${how}
+읽는 사람: ${aud.n} — ${aud.how}
+
+[꼭 지킬 것]
+${rules.map((r,i)=>`${i+1}. ${r}`).join("\n")}
+
+[답하는 방법]
+1. 설명은 빼고 완성한 ${out.n}부터 보여 주세요.
+2. 그 아래에 '보내기 전에 사람이 확인할 점' 3가지를 적어 주세요.
+3. 상황이 부족해 정확히 쓰기 어려우면, 맨 끝에 더 알려 주면 좋을 것 2가지만 물어봐 주세요.`;
+}
+
+/* 답을 받은 뒤 같은 대화창에 이어서 붙여 넣을 말 */
+const FOLLOW_BASE=[
+  ["더 짧게","더 짧게 줄여 주세요. 꼭 필요한 내용만 남겨 주세요."],
+  ["더 정중하게","조금 더 정중하고 부드러운 말투로 바꿔 주세요."],
+  ["더 쉬운 말로","어르신도 한 번에 이해하시도록 더 쉬운 말로 바꿔 주세요."],
+  ["확인할 곳만 모으기","[확인 필요]로 둔 곳만 목록으로 모아 주세요. 각각 누구에게 무엇을 확인하면 되는지도 한 줄씩 적어 주세요."]
+];
+const FOLLOW_OUT={
+  sms:[["90자 문자로","같은 내용을 90자 안팎의 짧은 문자 하나로도 만들어 주세요."]],
+  notice:[["안내 문자로도","같은 내용을 조합원께 보낼 안내 문자(90자 안팎)로도 만들어 주세요."]],
+  doc:[["시행문 모양으로","수신 · 제목 · 관련 · 본문(1. 2. 3.) · 붙임 순서의 시행문 모양으로 다시 정리해 주세요."]],
+  report:[["한 쪽으로 줄이기","보고서를 A4 한 쪽 분량으로 줄여 주세요. 결론을 맨 위에 두세요."]],
+  summary:[["할 일 표로","해야 할 일만 할 일 · 담당 · 기한 표로 정리해 주세요. 정해지지 않은 칸은 [미정]으로 두세요."]],
+  check:[["인쇄용 점검표로","인쇄해서 쓸 수 있게 번호 · 점검 항목 · 확인(□) · 비고 열이 있는 표로 바꿔 주세요."]],
+  table:[["엑셀에 붙일 표로","엑셀에 그대로 붙여 넣을 수 있게 표만 다시 보여 주세요. 설명은 빼 주세요."]],
+  script:[["예상 질문 더","고객이 할 만한 질문 3개를 더 만들고, 각각 짧은 답을 붙여 주세요."]],
+  edu:[["한 장 요약으로","교육 자료를 한 장짜리 요약으로 줄여 주세요. 꼭 기억할 것 3가지를 맨 아래에 두세요."]]
+};
+const follows=out=>[...(FOLLOW_OUT[out]||[]),...FOLLOW_BASE];
+
+/* AI 바로가기 (이 앱은 AI에 직접 보내지 않음) */
+const AIS=[["챗지피티","https://chatgpt.com/"],["제미나이","https://gemini.google.com/app"],["클로드","https://claude.ai/new"]];
+
+/* ===== 화면 ===== */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const S={q:"",ask:{}};
+const ICON={
+  search:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>`,
+  go:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>`,
+  copy:`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg>`,
+  out:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>`
+};
+
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);return true}catch(e){
+    const ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
+    let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();return ok}
+}
+/* 이 기기에만 기억: 우리 조합 부서 이름·최근 업무 3개. 질문·상황 글은 저장하지 않음 */
+const MEMKEY="kimsangmu-ai-nh-v05";
+const mem={get(){try{const o=JSON.parse(localStorage.getItem(MEMKEY)||"{}");return o&&typeof o==="object"?o:{}}catch(e){return {}}},
+  set(o){try{localStorage.setItem(MEMKEY,JSON.stringify(o))}catch(e){}},
+  clear(){try{localStorage.removeItem(MEMKEY)}catch(e){}}};
+function remember(id){const o=mem.get();o.recent=[id,...(Array.isArray(o.recent)?o.recent:[]).filter(h=>h!==id)].slice(0,3);mem.set(o)}
+
+function setNav(k){document.querySelectorAll("nav.tabs a").forEach(a=>{if(a.dataset.nav===k)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")})}
+function route(){
+  const h=location.hash.replace(/^#\/?/,"");const [a,b]=h.split("/");
+  $("#mbar").hidden=true;document.body.classList.remove("hasbar");
+  if(a==="ask"&&b) viewAsk(b);
+  else if(a==="d"&&b) viewDept(b);
+  else if(a==="all") viewAll();
+  else if(a==="about") viewAbout();
+  else viewHome();
+  window.scrollTo(0,0);
+}
+addEventListener("hashchange",route);
+
+/* --- 검색 --- */
+function findAll(q){
+  q=q.trim().toLowerCase();if(!q)return [];
+  const words=q.split(/\s+/);
+  const has=(hay,w)=>hay.includes(w)||(w.length>2&&/[문서일별표]$/.test(w)&&hay.includes(w.slice(0,-1)))
+    ||(w.length>=4&&[...Array(w.length-3)].some((_,i)=>has(hay,w.slice(0,i+2))&&has(hay,w.slice(i+2)))); /* 붙여 쓴 말은 두 낱말로 나눠 봄 */
+  return TASKS.filter(t=>{const hay=[t.n,deptOf(t.d).n,...t.k].join(" ").toLowerCase();return words.every(w=>has(hay,w))});
+}
+function resultsHTML(q){
+  if(!q.trim())return "";
+  const list=findAll(q);
+  if(!list.length)return `<ul class="results"><li class="none">'${esc(q)}'에 맞는 업무가 없어요. <a href="#/ask/custom">직접 적어서 질문 만들기</a></li></ul>`;
+  return `<ul class="results">${list.slice(0,10).map(t=>`<li><a href="#/ask/${t.id}"><b>${esc(t.n)}</b><small>${esc(deptOf(t.d).n)}</small></a></li>`).join("")}</ul>`;
+}
+function bindSearch(id,box){
+  const qi=$(id);if(!qi)return;
+  qi.addEventListener("input",()=>{S.q=qi.value;$(box).innerHTML=resultsHTML(S.q)});
+  qi.addEventListener("keydown",e=>{if(e.key==="Enter"){const f=$(box+" a");if(f)location.hash=f.getAttribute("href")}});
+}
+const taskRow=t=>`<li><a href="#/ask/${t.id}"><div><b>${esc(t.n)}</b><small>${OUTS[t.o].n} · ${AUDS[t.a].n}에게</small></div>${ICON.go}</a></li>`;
+
+/* --- 처음 --- */
+function viewHome(){
+  setNav("home");
+  const o=mem.get();const rec=(Array.isArray(o.recent)?o.recent:[]).map(taskOf).filter(Boolean);
+  app.innerHTML=`
+  <section class="hero"><div class="wrap">
+    <p class="eyebrow">농협 직원 전용 AI 질문 센터</p>
+    <h1>농협 일, AI에게<br>이렇게 물어보세요</h1>
+    <p class="lead">부서와 업무를 고르면 AI 대화창에 바로 붙여 넣을 질문이 만들어집니다. 휴대폰에서도 됩니다.</p>
+    <label class="search">${ICON.search}<span class="sr">업무 이름으로 찾기</span>
+      <input id="q" type="search" placeholder="업무 이름 (예: 공문, 연체, 방역, 회의록)" value="${esc(S.q)}" autocomplete="off" enterkeyhint="search"></label>
+    <div id="res">${resultsHTML(S.q)}</div>
+  </div></section>
+  <div class="wrap">
+    <div class="steps3" aria-label="쓰는 순서">
+      <div><span class="num">1</span>업무 고르기</div>
+      <div><span class="num">2</span>상황 한두 줄 바꾸기</div>
+      <div><span class="num">3</span>복사해서 AI에 붙여 넣기</div>
+    </div>
+    ${rec.length?`<section class="sec" style="padding-top:28px"><div class="sechead"><h2 style="font-size:18px">최근에 쓴 업무</h2><button class="linkbtn" id="memClr" type="button">기록 지우기</button></div>
+      <div class="recent">${rec.map(t=>`<a href="#/ask/${t.id}">${esc(t.n)}<small>${esc(deptOf(t.d).n)}</small></a>`).join("")}</div></section>`:""}
+    <section class="sec">
+      <div class="sechead"><h2>부서로 고르기</h2><span>조합마다 부서 이름과 겸임 업무는 다를 수 있어요</span></div>
+      <div class="depts">${DEPTS.map((d,i)=>`<a class="dept" href="#/d/${d.id}"><em>${String(i+1).padStart(2,"0")}</em><b>${d.n}</b><span>${d.h}</span><small>업무 ${TASKS.filter(t=>t.d===d.id).length}가지</small></a>`).join("")}</div>
+      <div class="own"><div><b>목록에 없는 업무인가요?</b><p>업무 이름과 상황만 적으면 같은 틀로 질문을 만들어 드려요.</p></div><a class="btn line" href="#/ask/custom">직접 적어서 만들기</a></div>
+    </section>
+    <p class="note"><b>개인정보는 넣지 마세요.</b> 고객·조합원 이름, 전화번호, 계좌번호, 내부 자료는 빼고 상황만 적습니다. 앱은 번호처럼 보이는 것을 [지움]으로 바꾸지만 사람 이름은 찾지 못해요.</p>
+  </div>`;
+  bindSearch("#q","#res");
+  if($("#memClr"))$("#memClr").onclick=()=>{mem.clear();viewHome()};
+}
+
+/* --- 부서 --- */
+function viewDept(id){
+  const d=deptOf(id);if(!d){location.hash="#/";return}
+  setNav("home");
+  app.innerHTML=`<div class="wrap page">
+    <div class="crumb"><a href="#/">처음</a> › ${esc(d.n)}</div>
+    <p class="eyebrow">부서</p><h1>${esc(d.n)}</h1>
+    <p class="lead">${esc(d.h)} · 업무를 누르면 질문이 바로 만들어져요.</p>
+    <ul class="tasks">${TASKS.filter(t=>t.d===id).map(taskRow).join("")}
+      <li class="dash"><a href="#/ask/custom?d=${d.id}"><div><b>다른 업무 직접 적기</b><small>${esc(d.n)}의 목록에 없는 일</small></div>${ICON.go}</a></li></ul>
+  </div>`;
+}
+
+/* --- 전체 업무 --- */
+function viewAll(){
+  setNav("all");
+  app.innerHTML=`<div class="wrap page">
+    <p class="eyebrow">전체 업무</p><h1>${TASKS.length}가지 업무에서 고르기</h1>
+    <label class="search" style="margin:18px 0 6px">${ICON.search}<span class="sr">업무 이름으로 찾기</span>
+      <input id="aq" type="search" placeholder="업무 이름 (예: 안내문, 수매, 감사)" autocomplete="off" enterkeyhint="search"></label>
+    <div id="ares"></div>
+    <div class="allgrid" style="margin-top:28px">${DEPTS.map(d=>`<section><h2>${esc(d.n)} <a href="#/d/${d.id}">부서 화면</a></h2><ul class="tasks">${TASKS.filter(t=>t.d===d.id).map(taskRow).join("")}</ul></section>`).join("")}</div>
+    <div class="own" style="margin-top:28px"><div><b>목록에 없는 업무</b><p>업무 이름과 상황만 적으면 됩니다.</p></div><a class="btn line" href="#/ask/custom">직접 적어서 만들기</a></div>
+  </div>`;
+  bindSearch("#aq","#ares");
+}
+
+/* --- 질문 만들기 --- */
+function viewAsk(idq){
+  setNav("home");
+  const [id,qs]=idq.split("?");const custom=id==="custom";
+  const t=custom?null:taskOf(id);
+  if(!custom&&!t){location.hash="#/";return}
+  const pre=custom?new URLSearchParams(qs||"").get("d"):null;
+  const myMem=(mem.get().my||{});
+  const st=S.ask[id]||(S.ask[id]={out:t?t.o:"notice",aud:t?t.a:"member",sit:t?t.s:"",my:t&&typeof myMem[t.d]==="string"?myMem[t.d]:"",name:pre&&deptOf(pre)?deptOf(pre).n+" · ":"",nh:t?t.o==="doc":false});
+  if(t)remember(id);
+  const crumb=custom?`<a href="#/">처음</a> › 직접 적기`:`<a href="#/">처음</a> › <a href="#/d/${t.d}">${esc(deptOf(t.d).n)}</a> › ${esc(t.n)}`;
+  let n=0;const N=()=>`<span class="num">${++n}</span>`;
+  app.innerHTML=`<div class="wrap page">
+  <div class="crumb">${crumb}</div>
+  <p class="eyebrow">${custom?"직접 적기":esc(deptOf(t.d).n)}</p>
+  <h1>${custom?"내 업무로 질문 만들기":esc(t.n)}</h1>
+  <p class="lead">${custom?"업무 이름과 상황을 적으면 오른쪽에 질문이 만들어집니다.":"질문은 이미 만들어져 있어요. <b>상황만 내 일로 바꾸고</b> [질문 복사]를 누르세요."}</p>
+  <div class="two">
+    <div>
+      ${custom?`<div class="field"><label class="lab" for="nm">${N()}무슨 업무인가요? <span class="muted">부서 · 업무</span></label>
+        <input class="t" id="nm" value="${esc(st.name)}" placeholder="예: 경제과 · 영농자재 배송 일정 안내"></div>`:""}
+      <div class="field"><label class="lab" for="sit">${N()}어떤 상황인가요?</label>
+        <textarea id="sit" placeholder="누구에게 무엇을 안내·부탁하는지 한두 줄로. 이름·번호는 빼고 적어 주세요.">${esc(st.sit)}</textarea>
+        ${custom?"":`<div class="minor"><button class="linkbtn" id="clrSit" type="button">예시 지우기</button><button class="linkbtn" id="exSit" type="button">예시 다시 넣기</button></div>`}
+        <div class="warn" id="pii" role="status" hidden></div>
+        <p class="hint">${custom?"":"지금 적힌 글은 예시예요. "}정하지 않은 날짜·금액은 그냥 비워 두면 AI가 [확인 필요]로 표시합니다.</p></div>
+      <div class="field"><div class="lab">${N()}무엇을 받을까요?</div>
+        <div class="chips" id="outs">${Object.entries(OUTS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.out===k}">${v.n}</button>`).join("")}</div>
+        <label class="toggle" id="nhw"${NH_OUTS.includes(st.out)?"":" hidden"}><input type="checkbox" id="nh"${st.nh?" checked":""}><div><b>농협 문서 기호로 쓰게 하기</b><span>1. → □ → ○ → ※, 절차는 ① ② ③</span></div></label></div>
+      <div class="field"><div class="lab">${N()}누가 읽나요?</div>
+        <div class="chips" id="auds">${Object.entries(AUDS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.aud===k}">${v.n}</button>`).join("")}</div></div>
+      ${custom?"":`<details class="more"><summary>우리 조합에서는 부서 이름이 달라요 (선택)</summary><div class="in">
+        <input class="t" id="my" value="${esc(st.my)}" placeholder="예: 경제과 자재계"><p class="hint">이 기기에만 기억해요.</p></div></details>`}
+    </div>
+    <div>
+      <div class="card" id="panel">
+        <div class="cardhead"><b>AI에게 보낼 질문</b><small id="len"></small></div>
+        <pre class="prompt" id="pr" aria-live="polite"></pre>
+        <div class="cardfoot"><button class="copy" id="cp" type="button">${ICON.copy}질문 복사</button><span class="done" id="ok" role="status"></span></div>
+      </div>
+      <div class="next"><h3><span class="num">→</span>복사한 다음, 쓰는 AI를 열고 붙여 넣기</h3>
+        <div class="ais">${AIS.map(([nm,u])=>`<a href="${u}" target="_blank" rel="noopener noreferrer">${nm}${ICON.out}</a>`).join("")}</div>
+        <p class="hint">소속 조합에서 쓰도록 허용한 AI를 쓰세요. 휴대폰은 입력칸을 길게 눌러 [붙여넣기].</p></div>
+      <div class="next"><h3>답을 받은 뒤, 이어서 붙여 넣을 말</h3>
+        <ul class="follows" id="fl"></ul>
+        <p class="hint">누르면 복사돼요. 같은 대화창에 붙여 넣으세요.</p></div>
+      <div class="next"><h3>쓰기 전에 사람이 확인할 것</h3>
+        <ol class="checks"><li><b>숫자·날짜·규정</b>이 맞는지</li><li><b>[확인 필요]</b> 자리를 모두 채웠는지</li><li>실제 이름·번호가 들어가지 않았는지</li></ol></div>
+    </div>
+  </div></div>`;
+  const pr=$("#pr"),ok=$("#ok");let copied="";
+  const render=txt=>{pr.innerHTML=esc(txt).replace(/^(\[[^\]\n]+\])$/gm,'<span class="h">$1</span>');$("#len").textContent=txt.length.toLocaleString()+"자"};
+  const drawFollows=()=>{$("#fl").innerHTML=follows(st.out).map(([k,v],i)=>`<li><button type="button" data-i="${i}"><span>${esc(k)}</span><small>복사</small></button></li>`).join("")};
+  const draw=()=>{
+    const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name,nh:st.nh});
+    if(pr.dataset.t!==r.text){pr.dataset.t=r.text;render(r.text);
+      if(copied&&copied!==r.text){ok.textContent="질문이 바뀌었어요. 다시 [질문 복사]를 눌러 주세요.";ok.classList.add("stale")}}
+    const f=r.found;const w=$("#pii");w.hidden=!f.length;
+    if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요. 사람 이름은 가려지지 않으니 직접 빼 주세요.`;
+    $("#nhw").hidden=!NH_OUTS.includes(st.out);
+  };
+  const chipGroup=(sel,key)=>$(sel).addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st[key]=b.dataset.k;$(sel).querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));if(key==="out")drawFollows();draw()});
+  chipGroup("#outs","out");chipGroup("#auds","aud");
+  $("#sit").addEventListener("input",e=>{st.sit=e.target.value;draw()});
+  if($("#clrSit"))$("#clrSit").onclick=()=>{st.sit="";$("#sit").value="";$("#sit").focus();draw()};
+  if($("#exSit"))$("#exSit").onclick=()=>{st.sit=t.s;$("#sit").value=t.s;draw()};
+  if($("#my"))$("#my").addEventListener("input",e=>{st.my=e.target.value;const o=mem.get();const my=o.my&&typeof o.my==="object"?o.my:{};if(st.my.trim())my[t.d]=st.my.trim();else delete my[t.d];o.my=my;mem.set(o);draw()});
+  $("#nh").addEventListener("change",e=>{st.nh=e.target.checked;draw()});
+  if($("#nm"))$("#nm").addEventListener("input",e=>{st.name=e.target.value;draw()});
+  $("#fl").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;const v=follows(st.out)[+b.dataset.i][1];const good=await copyText(v);
+    $("#fl").querySelectorAll("button").forEach(x=>{x.classList.remove("ok");x.querySelector("small").textContent="복사"});
+    b.classList.add("ok");b.querySelector("small").textContent=good?"복사했어요":"길게 눌러 복사"});
+  const doCopy=async()=>{const txt=pr.dataset.t;const good=await copyText(txt);if(good)copied=txt;ok.classList.remove("stale");
+    ok.textContent=good?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.";return good};
+  $("#cp").addEventListener("click",doCopy);
+  drawFollows();draw();
+  mobileBar(doCopy);
+}
+function mobileBar(doCopy){
+  const bar=$("#mbar");bar.hidden=false;document.body.classList.add("hasbar");
+  const v=$("#mView"),c=$("#mCopy");
+  v.onclick=()=>{const el=$("#panel");const head=$(".top").offsetHeight;window.scrollTo({top:scrollY+el.getBoundingClientRect().top-head-8,behavior:"auto"})};
+  c.onclick=async()=>{const good=await doCopy();c.textContent=good?"복사했어요":"복사 안 됨";setTimeout(()=>c.textContent="질문 복사",2200)};
+}
+
+/* --- 안내 --- */
+function viewAbout(){
+  setNav("about");
+  app.innerHTML=`<div class="wrap page">
+  <p class="eyebrow">안내</p><h1>김상무의 AI농협은 이런 도구입니다</h1>
+  <p class="lead">농협 직원이 AI에게 일을 맡길 때 무엇을 어떻게 물어야 할지 덜 고민하도록, 업무별 질문을 만들어 드립니다. 농협의 공식 서비스가 아니라 개인이 만든 교육용 도구입니다.</p>
+  <div class="about">
+   <div class="box"><h3>할 수 있는 것</h3><ul>
+     <li>${DEPTS.length}개 부서 묶음, ${TASKS.length}가지 업무의 질문 만들기와 직접 적기</li>
+     <li>결과 모양 ${Object.keys(OUTS).length}가지, 읽는 사람 ${Object.keys(AUDS).length}가지, 농협 문서 기호</li>
+     <li>답을 받은 뒤 이어서 쓸 말을 눌러서 복사</li>
+     <li>업무 이름 검색 (예: 연체, 방역, RPC, 로컬푸드)</li></ul></div>
+   <div class="box"><h3>좋은 질문의 틀</h3><ul>
+     <li><b>역할</b> — 농협 업무를 아는 실무 선배로</li>
+     <li><b>상황·만들 것·읽는 사람</b>을 나눠서</li>
+     <li><b>지어내지 않기</b> — 모르는 숫자·날짜·규정은 [확인 필요]</li>
+     <li><b>답하는 방법</b> — 완성본 먼저, 확인할 점 3가지</li></ul></div>
+   <div class="box"><h3>안전하게 쓰기</h3><ul>
+     <li>실제 고객·조합원 이름, 전화번호, 계좌, 내부 숫자, 업무 파일은 넣지 마세요.</li>
+     <li>완성된 질문에서 전화·주민등록·계좌번호, 이메일, 주소로 보이는 것은 [지움]으로 바꿉니다. 모든 형태를 찾지는 못하고 <b>사람 이름은 찾지 못합니다.</b></li>
+     <li>이 앱은 AI에 직접 보내지 않습니다. 질문·상황 글은 저장하지 않고, 우리 조합 부서 이름과 최근 업무 3개만 이 기기에 기억합니다.</li>
+     <li>AI 답은 사람이 확인한 뒤에 쓰세요.</li></ul></div>
+   <div class="box"><h3>알려 드릴 것</h3><ul>
+     <li>소속 조합에서 쓰도록 허용한 AI를 쓰세요.</li>
+     <li>부서 묶음은 흔한 예시일 뿐 전국 공통 조직도가 아닙니다.</li>
+     <li>실제 직원 사용과 AI의 실제 답 품질은 아직 확인 중입니다. 잘 안 되는 부분은 영상 댓글로 알려 주시면 고치겠습니다.</li></ul></div>
+  </div></div>`;
+}
+
+window.__AI={DEPTS,TASKS,OUTS,AUDS,makePrompt,askPrompt,scrub,findAll,follows};
+route();
+</script>
