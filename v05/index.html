@@ -64,6 +64,8 @@ nav.tabs a[aria-current]{color:var(--white);border-bottom-color:var(--gold)}
 .steps3{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
 .steps3 div{display:flex;align-items:center;gap:12px;padding:20px 0;font-weight:600;font-size:15px}
 .steps3 div+div{padding-left:20px;border-left:1px solid var(--line)}
+.flow{margin:16px 0 0;font-size:15px;color:var(--ink2)}
+.flow b{color:var(--green)}
 .num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--white);font-size:14px;font-weight:700;flex:none}
 
 .sec{padding:44px 0 8px}
@@ -131,6 +133,9 @@ textarea:focus,input.t:focus{outline:3px solid var(--gold);outline-offset:0;bord
 .toggle span{display:block;font-size:13px;color:var(--ink3)}
 .warn{margin-top:10px;padding:12px 14px;background:var(--ink);color:var(--white);font-size:14px;border-left:4px solid var(--gold)}
 .hint{font-size:13px;color:var(--ink3);margin:8px 0 0}
+.safe{margin:10px 0 0;padding:8px 12px;background:var(--ivory2);border-left:3px solid var(--green);font-size:14px;color:var(--ink2)}
+.safe b{color:var(--ink)}
+.fbtext{margin:0;padding:10px 16px 14px;font-size:15px;line-height:1.6;background:var(--ivory);user-select:all;-webkit-user-select:all}
 details.more{border-top:1px solid var(--line);padding-top:14px}
 details.more summary{cursor:pointer;font-weight:600;font-size:15px;color:var(--ink2)}
 details.more .in{padding-top:10px}
@@ -214,7 +219,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 32px;font-size:13px;color
   <nav class="tabs" aria-label="메뉴"><a href="#/" data-nav="home">처음</a><a href="#/all" data-nav="all">전체 업무</a><a href="#/about" data-nav="about">안내</a></nav>
 </div></header>
 <main id="app" tabindex="-1"></main>
-<footer><div class="wrap">김상무의 AI농협은 농협 직원을 위한 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v05</div></footer>
+<footer><div class="wrap">김상무의 AI농협은 농협 직원을 위한 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v05b</div></footer>
 <div class="mbar" id="mbar" hidden><button class="btn line" id="mView" type="button">질문 보기</button><button class="copy" id="mCopy" type="button">질문 복사</button></div>
 <script id="core">
 /* ===== 자료 (v04c에서 그대로 가져옴: 부서·결과 모양·읽는 사람·업무 52개·개인정보 가리기) ===== */
@@ -351,6 +356,16 @@ function scrub(text){
 function deptOf(id){return DEPTS.find(d=>d.id===id)}
 function taskOf(id){return TASKS.find(t=>t.id===id)}
 
+/* ===== v05 자료 보정 (로시 검증 20261116 반영) ===== */
+/* P2-4: 응대 말씀은 첫 응대를 먼저 */
+OUTS.script.how="먼저 30초 안에 말할 첫 응대, 그 아래 예상 질문 3개와 짧은 답. 직원이 그대로 읽을 수 있는 말로";
+/* P2-7: 지어내기 쉬운 곳 막기 */
+taskOf("c2").c="문서번호와 날짜는 비워 두세요. 붙임이 있는지 정해지지 않았으면 붙임은 [확인 필요]로 두세요.";
+taskOf("r3").c+=" 원래 납부일과 새로 정한 기한을 섞지 말고, 합의하지 않은 새 날짜는 만들지 마세요.";
+/* P1-1: 원문을 바꾸거나 요약하는 업무 — 원문이 없으면 완성본 대신 원문부터 요청 */
+const SRC=new Set(["c5","g2","g5","l5"]);
+taskOf("c5").s="20쪽짜리 농업 지원사업 안내 자료를 상사에게 보고하려고 요약해야 함.";
+
 /* ===== v05 질문 만들기 =====
    질문을 다 만든 뒤 전체를 한 번에 검사해 가린다 → 화면 경고와 실제 복사 내용이 항상 같다. */
 function askPrompt(o){return scrub(rawPrompt(o))}
@@ -376,6 +391,16 @@ function rawPrompt(o){
   if(!rules.some(r=>/연락처\]|\[이름\]/.test(r))) rules.push("사람 이름·전화번호·계좌번호가 들어갈 곳은 [이름], [연락처]처럼 빈자리로 두세요.");
   const work=[dept,name].filter(Boolean).join(" · ")+(my?` (우리 조합에서는 '${my}' 업무)`:"");
   const who=dept?`농협 ${dept.replace(/ 업무$/,"")} 업무를 잘 아는 실무 선배`:"농협 업무를 잘 아는 실무 선배";
+  const needSrc=!!(t&&SRC.has(t.id)), src=(o.src||"").trim();
+  if(needSrc&&src) rules.push("[원문]에 있는 내용만 쓰고, 원문에 없는 설명·사진·처방·숫자는 덧붙이지 마세요.");
+  const how3=needSrc&&!src?[
+    "아직 원문을 붙이지 않았습니다. 완성본을 만들지 말고, 개인정보·내부 자료를 뺀 공개해도 되는 원문을 붙여 달라고 먼저 요청해 주세요.",
+    `원문을 받으면 그 내용만 써서 ${out.n}${eul(out.n)} 만들고, 원문에 없는 설명·사진·처방은 덧붙이지 마세요.`,
+    "완성한 뒤 맨 아래에 '보내기 전에 사람이 확인할 점' 3가지를 적어 주세요."]:[
+    `설명은 빼고 완성한 ${out.n}부터 보여 주세요.`,
+    "그 아래에 '보내기 전에 사람이 확인할 점' 3가지를 적어 주세요.",
+    "상황이 부족해 정확히 쓰기 어려우면, 맨 끝에 더 알려 주면 좋을 것 2가지만 물어봐 주세요.",
+    ...(t?[]:["원문을 쉽게 바꾸거나 요약하는 일인데 원문이 없으면, 완성본 대신 원문부터 요청해 주세요."])];
   return `당신은 ${who}입니다. 아래 내용으로 ${out.n}${eul(out.n)} 써 주세요. 농협 직원이 조금만 고쳐 바로 쓸 수 있는 초안이면 됩니다.
 
 [내 업무]
@@ -383,7 +408,7 @@ ${work}
 
 [상황]
 ${sit}
-
+${needSrc&&src?`\n[원문 — 공개해도 되는 내용]\n${src}\n`:""}
 [만들 것]
 ${out.n}: ${how}
 읽는 사람: ${aud.n} — ${aud.how}
@@ -392,9 +417,7 @@ ${out.n}: ${how}
 ${rules.map((r,i)=>`${i+1}. ${r}`).join("\n")}
 
 [답하는 방법]
-1. 설명은 빼고 완성한 ${out.n}부터 보여 주세요.
-2. 그 아래에 '보내기 전에 사람이 확인할 점' 3가지를 적어 주세요.
-3. 상황이 부족해 정확히 쓰기 어려우면, 맨 끝에 더 알려 주면 좋을 것 2가지만 물어봐 주세요.`;
+${how3.map((r,i)=>`${i+1}. ${r}`).join("\n")}`;
 }
 
 /* 답을 받은 뒤 같은 대화창에 이어서 붙여 넣을 말 */
@@ -497,6 +520,7 @@ function viewHome(){
       <div><span class="num">2</span>상황 한두 줄 바꾸기</div>
       <div><span class="num">3</span>복사해서 AI에 붙여 넣기</div>
     </div>
+    <p class="flow"><b>처음 시작만 앱의 도움을 받으세요.</b> 그다음은 AI 안에서 자연스럽게 대화를 이어 가시면 됩니다.</p>
     ${rec.length?`<section class="sec" style="padding-top:28px"><div class="sechead"><h2 style="font-size:18px">최근에 쓴 업무</h2><button class="linkbtn" id="memClr" type="button">기록 지우기</button></div>
       <div class="recent">${rec.map(t=>`<a href="#/ask/${t.id}">${esc(t.n)}<small>${esc(deptOf(t.d).n)}</small></a>`).join("")}</div></section>`:""}
     <section class="sec">
@@ -545,7 +569,8 @@ function viewAsk(idq){
   if(!custom&&!t){location.hash="#/";return}
   const pre=custom?new URLSearchParams(qs||"").get("d"):null;
   const myMem=(mem.get().my||{});
-  const st=S.ask[id]||(S.ask[id]={out:t?t.o:"notice",aud:t?t.a:"member",sit:t?t.s:"",my:t&&typeof myMem[t.d]==="string"?myMem[t.d]:"",name:pre&&deptOf(pre)?deptOf(pre).n+" · ":"",nh:t?t.o==="doc":false});
+  const st=S.ask[id]||(S.ask[id]={out:t?t.o:"notice",aud:t?t.a:"member",sit:t?t.s:"",my:t&&typeof myMem[t.d]==="string"?myMem[t.d]:"",name:pre&&deptOf(pre)?deptOf(pre).n+" · ":"",nh:t?t.o==="doc":false,src:""});
+  const needSrc=!!(t&&SRC.has(t.id));
   if(t)remember(id);
   const crumb=custom?`<a href="#/">처음</a> › 직접 적기`:`<a href="#/">처음</a> › <a href="#/d/${t.d}">${esc(deptOf(t.d).n)}</a> › ${esc(t.n)}`;
   let n=0;const N=()=>`<span class="num">${++n}</span>`;
@@ -553,7 +578,7 @@ function viewAsk(idq){
   <div class="crumb">${crumb}</div>
   <p class="eyebrow">${custom?"직접 적기":esc(deptOf(t.d).n)}</p>
   <h1>${custom?"내 업무로 질문 만들기":esc(t.n)}</h1>
-  <p class="lead">${custom?"업무 이름과 상황을 적으면 오른쪽에 질문이 만들어집니다.":"질문은 이미 만들어져 있어요. <b>상황만 내 일로 바꾸고</b> [질문 복사]를 누르세요."}</p>
+  <p class="lead">${custom?"업무 이름과 상황을 적으면 오른쪽에 질문이 만들어집니다.":needSrc?"상황을 내 일로 바꾸고, <b>공개해도 되는 원문</b>을 붙인 뒤 [질문 복사]를 누르세요.":"질문은 이미 만들어져 있어요. <b>상황만 내 일로 바꾸고</b> [질문 복사]를 누르세요."}</p>
   <div class="two">
     <div>
       ${custom?`<div class="field"><label class="lab" for="nm">${N()}무슨 업무인가요? <span class="muted">부서 · 업무</span></label>
@@ -562,7 +587,11 @@ function viewAsk(idq){
         <textarea id="sit" placeholder="누구에게 무엇을 안내·부탁하는지 한두 줄로. 이름·번호는 빼고 적어 주세요.">${esc(st.sit)}</textarea>
         ${custom?"":`<div class="minor"><button class="linkbtn" id="clrSit" type="button">예시 지우기</button><button class="linkbtn" id="exSit" type="button">예시 다시 넣기</button></div>`}
         <div class="warn" id="pii" role="status" hidden></div>
+        <p class="safe"><b>실제 이름·번호·내부 자료는 쓰지 마세요.</b> 이름은 자동으로 가려지지 않아요.</p>
         <p class="hint">${custom?"":"지금 적힌 글은 예시예요. "}정하지 않은 날짜·금액은 그냥 비워 두면 AI가 [확인 필요]로 표시합니다.</p></div>
+      ${needSrc?`<div class="field"><label class="lab" for="src">${N()}원문 붙여 넣기 <span class="muted">공개해도 되는 글만</span></label>
+        <textarea id="src" placeholder="예: 농업기술센터 누리집에 공개된 안내 글. 내부 문서·개인정보는 넣지 마세요.">${esc(st.src)}</textarea>
+        <p class="hint">비워 두면 AI가 완성본을 지어내지 않고 <b>원문부터 달라고</b> 합니다. 그때 같은 대화창에 원문을 붙여 넣으세요.</p></div>`:""}
       <div class="field"><div class="lab">${N()}무엇을 받을까요?</div>
         <div class="chips" id="outs">${Object.entries(OUTS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.out===k}">${v.n}</button>`).join("")}</div>
         <label class="toggle" id="nhw"${NH_OUTS.includes(st.out)?"":" hidden"}><input type="checkbox" id="nh"${st.nh?" checked":""}><div><b>농협 문서 기호로 쓰게 하기</b><span>1. → □ → ○ → ※, 절차는 ① ② ③</span></div></label></div>
@@ -580,7 +609,8 @@ function viewAsk(idq){
       <div class="next"><h3><span class="num">→</span>복사한 다음, 쓰는 AI를 열고 붙여 넣기</h3>
         <div class="ais">${AIS.map(([nm,u])=>`<a href="${u}" target="_blank" rel="noopener noreferrer">${nm}${ICON.out}</a>`).join("")}</div>
         <p class="hint">소속 조합에서 쓰도록 허용한 AI를 쓰세요. 휴대폰은 입력칸을 길게 눌러 [붙여넣기].</p></div>
-      <div class="next"><h3>답을 받은 뒤, 이어서 붙여 넣을 말</h3>
+      <div class="next"><h3>답을 받은 뒤에는 AI와 대화를 이어 가세요</h3>
+        <p class="flow" style="margin:0 0 10px"><b>처음 시작만 앱의 도움을 받으세요.</b> 그다음은 AI 안에서 "더 짧게 해 줘"처럼 편하게 말하며 이어 가시면 됩니다. 말이 막힐 때만 아래 문장을 눌러 복사하세요.</p>
         <ul class="follows" id="fl"></ul>
         <p class="hint">누르면 복사돼요. 같은 대화창에 붙여 넣으세요.</p></div>
       <div class="next"><h3>쓰기 전에 사람이 확인할 것</h3>
@@ -591,7 +621,7 @@ function viewAsk(idq){
   const render=txt=>{pr.innerHTML=esc(txt).replace(/^(\[[^\]\n]+\])$/gm,'<span class="h">$1</span>');$("#len").textContent=txt.length.toLocaleString()+"자"};
   const drawFollows=()=>{$("#fl").innerHTML=follows(st.out).map(([k,v],i)=>`<li><button type="button" data-i="${i}"><span>${esc(k)}</span><small>복사</small></button></li>`).join("")};
   const draw=()=>{
-    const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name,nh:st.nh});
+    const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name,nh:st.nh,src:st.src});
     if(pr.dataset.t!==r.text){pr.dataset.t=r.text;render(r.text);
       if(copied&&copied!==r.text){ok.textContent="질문이 바뀌었어요. 다시 [질문 복사]를 눌러 주세요.";ok.classList.add("stale")}}
     const f=r.found;const w=$("#pii");w.hidden=!f.length;
@@ -601,6 +631,7 @@ function viewAsk(idq){
   const chipGroup=(sel,key)=>$(sel).addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st[key]=b.dataset.k;$(sel).querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));if(key==="out")drawFollows();draw()});
   chipGroup("#outs","out");chipGroup("#auds","aud");
   $("#sit").addEventListener("input",e=>{st.sit=e.target.value;draw()});
+  if($("#src"))$("#src").addEventListener("input",e=>{st.src=e.target.value;draw()});
   if($("#clrSit"))$("#clrSit").onclick=()=>{st.sit="";$("#sit").value="";$("#sit").focus();draw()};
   if($("#exSit"))$("#exSit").onclick=()=>{st.sit=t.s;$("#sit").value=t.s;draw()};
   if($("#my"))$("#my").addEventListener("input",e=>{st.my=e.target.value;const o=mem.get();const my=o.my&&typeof o.my==="object"?o.my:{};if(st.my.trim())my[t.d]=st.my.trim();else delete my[t.d];o.my=my;mem.set(o);draw()});
@@ -608,8 +639,14 @@ function viewAsk(idq){
   if($("#nm"))$("#nm").addEventListener("input",e=>{st.name=e.target.value;draw()});
   $("#fl").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;const v=follows(st.out)[+b.dataset.i][1];const good=await copyText(v);
     $("#fl").querySelectorAll("button").forEach(x=>{x.classList.remove("ok");x.querySelector("small").textContent="복사"});
-    b.classList.add("ok");b.querySelector("small").textContent=good?"복사했어요":"길게 눌러 복사"});
-  const doCopy=async()=>{const txt=pr.dataset.t;const good=await copyText(txt);if(good)copied=txt;ok.classList.remove("stale");
+    $("#fl").querySelectorAll(".fbtext").forEach(x=>x.remove());
+    b.classList.add("ok");b.querySelector("small").textContent=good?"복사했어요":"아래 글을 길게 눌러 복사";
+    if(!good)b.insertAdjacentHTML("afterend",`<p class="fbtext">${esc(v)}</p>`)}); /* P2-6: 실패하면 실제 문장을 펼침 */
+  /* P2-5: 비어 있는 채로 복사하지 않기 */
+  const blank=()=>{if(custom&&!st.name.split("·").pop().trim())return ["#nm","업무 이름을 먼저 적어 주세요. (예: 영농자재 배송 일정 안내)"];
+    if(!st.sit.trim())return ["#sit","상황을 한 줄이라도 적어 주세요. 누구에게 무엇을 하려는지면 됩니다."];return null};
+  const doCopy=async()=>{const b=blank();if(b){ok.classList.add("stale");ok.textContent=b[1];$(b[0]).focus();return "blank"}
+    const txt=pr.dataset.t;const good=await copyText(txt);if(good)copied=txt;ok.classList.remove("stale");
     ok.textContent=good?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.";return good};
   $("#cp").addEventListener("click",doCopy);
   drawFollows();draw();
@@ -619,7 +656,7 @@ function mobileBar(doCopy){
   const bar=$("#mbar");bar.hidden=false;document.body.classList.add("hasbar");
   const v=$("#mView"),c=$("#mCopy");
   v.onclick=()=>{const el=$("#panel");const head=$(".top").offsetHeight;window.scrollTo({top:scrollY+el.getBoundingClientRect().top-head-8,behavior:"auto"})};
-  c.onclick=async()=>{const good=await doCopy();c.textContent=good?"복사했어요":"복사 안 됨";setTimeout(()=>c.textContent="질문 복사",2200)};
+  c.onclick=async()=>{const r=await doCopy();c.textContent=r==="blank"?"먼저 적어 주세요":r?"복사했어요":"복사 안 됨";setTimeout(()=>c.textContent="질문 복사",2200)};
 }
 
 /* --- 안내 --- */
@@ -627,7 +664,7 @@ function viewAbout(){
   setNav("about");
   app.innerHTML=`<div class="wrap page">
   <p class="eyebrow">안내</p><h1>김상무의 AI농협은 이런 도구입니다</h1>
-  <p class="lead">농협 직원이 AI에게 일을 맡길 때 무엇을 어떻게 물어야 할지 덜 고민하도록, 업무별 질문을 만들어 드립니다. 농협의 공식 서비스가 아니라 개인이 만든 교육용 도구입니다.</p>
+  <p class="lead">농협 직원이 AI에게 일을 맡길 때 무엇을 어떻게 물어야 할지 덜 고민하도록, 업무별 질문을 만들어 드립니다. 처음 시작만 앱의 도움을 받고, 그다음은 AI 안에서 자연스럽게 대화를 이어 가시면 됩니다. 농협의 공식 서비스가 아니라 개인이 만든 교육용 도구입니다.</p>
   <div class="about">
    <div class="box"><h3>할 수 있는 것</h3><ul>
      <li>${DEPTS.length}개 부서 묶음, ${TASKS.length}가지 업무의 질문 만들기와 직접 적기</li>
@@ -645,7 +682,7 @@ function viewAbout(){
      <li>이 앱은 AI에 직접 보내지 않습니다. 질문·상황 글은 저장하지 않고, 우리 조합 부서 이름과 최근 업무 3개만 이 기기에 기억합니다.</li>
      <li>AI 답은 사람이 확인한 뒤에 쓰세요.</li></ul></div>
    <div class="box"><h3>알려 드릴 것</h3><ul>
-     <li>소속 조합에서 쓰도록 허용한 AI를 쓰세요.</li>
+     <li>소속 조합에서 쓰도록 허용한 AI를 쓰세요.</li>     <li>자료를 요약하거나 쉽게 바꾸는 업무는 <b>공개해도 되는 원문</b>만 붙여 넣으세요. 원문이 없으면 AI가 원문부터 달라고 합니다.</li>
      <li>부서 묶음은 흔한 예시일 뿐 전국 공통 조직도가 아닙니다.</li>
      <li>실제 직원 사용과 AI의 실제 답 품질은 아직 확인 중입니다. 잘 안 되는 부분은 영상 댓글로 알려 주시면 고치겠습니다.</li></ul></div>
   </div></div>`;
