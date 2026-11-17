@@ -225,6 +225,8 @@ pre.prompt mark.cut{background:#F6EBCB;color:var(--ink);font-weight:800;padding:
 .warn ul{margin:6px 0 0;padding-left:18px}
 .warn li{margin:3px 0}
 .warn b{color:#F2D58A}
+.warn button{margin-left:6px;padding:2px 9px;border:0;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.warn button:hover{background:rgba(255,255,255,.28)}
 .fmtsum{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
 .fmtsum .pick{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--mint);font-size:15px;font-weight:800;color:var(--green)}
 .fmtsum .pick small{font-size:12px;font-weight:700;color:var(--ink3)}
@@ -349,7 +351,7 @@ footer{padding:24px 0 32px;font-size:13px;color:var(--ink3)}
   </nav>
 </div></header>
 <main id="app" tabindex="-1"></main>
-<footer><div class="wrap">AI첫걸음은 김상무가 농협 직원을 위해 만든 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v06</div></footer>
+<footer><div class="wrap">AI첫걸음은 김상무가 농협 직원을 위해 만든 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v08 (2026-11-17)</div></footer>
 <div class="gpop" id="gpop" aria-hidden="true"><span class="mascot"></span><p class="bubble" id="gpopt"></p></div>
 <div class="mbar" id="mbar" hidden><button class="btn line" id="mView" type="button">질문 보기</button><button class="copy" id="mCopy" type="button">질문 복사</button></div>
 <script id="core">
@@ -391,7 +393,7 @@ const TASKS=[
  T("c1","common","회의록 정리","회의,회의록,메모,정리","summary","staff","11월 직원 회의. 연말 행사 준비, 창구 대기 줄이기, 다음 달 교육 일정을 이야기함. 담당과 기한은 일부만 정해짐.","정해지지 않은 담당·기한은 [미정]으로 표시해 주세요."),
  T("c2","common","업무연락·공문 초안","공문,시행문,업무연락,협조,문서","doc","ext","관내 초등학교에 농촌 체험 행사 협조를 요청하는 업무연락. 날짜와 인원은 아직 정하지 않음.","문서번호와 날짜는 비워 두세요."),
  T("c3","common","행사·교육 안내 문자","안내,문자,행사,교육,초대","sms","member","조합원 대상 디지털 금융 교육. 장소는 본점 2층 회의실, 날짜와 시간은 아직 정하지 않음.","정하지 않은 날짜와 시간은 [확인 필요]로 두세요.",{sms:"짧은 문자(90자 안팎) 하나와 긴 문자 하나, 두 가지로 주세요."}),
- T("c4","common","민원·불만 응대","민원,불만,클레임,항의,응대","script","member","고객이 창구 대기 시간이 길다고 불만을 말함. 원인은 점심시간 근무 인원 부족.","변명처럼 들리지 않게 해 주세요. 지킬 수 없는 약속은 넣지 마세요.",{script:"사과 → 사정 설명 → 개선 약속 순서로 말해 주세요.",sms:"사과 → 사정 설명 → 개선 약속 순서로 써 주세요."}),
+ T("c4","common","민원·불만 응대","민원,불만,클레임,항의,응대","script","member","고객이 창구 대기 시간이 길다고 불만을 말함. 원인은 점심시간 근무 인원 부족.","변명처럼 들리지 않게 해 주세요. 정해지지 않은 개선 계획이나 지킬 수 없는 약속은 넣지 마세요.",{script:"사과 → 사정 설명 → 지금 확인할 수 있는 조치와 안내 순서로 말해 주세요.",sms:"사과 → 사정 설명 → 지금 확인할 수 있는 조치와 안내 순서로 써 주세요."}),
  T("c5","common","긴 자료 요약","요약,정리,자료,보고","summary","boss","20쪽짜리 농업 지원사업 안내 자료를 요약해야 함. 자료 내용은 이 질문 아래에 따로 붙여 넣을 예정.","자료에 없는 내용은 덧붙이지 말고, 숫자는 자료에 적힌 그대로만 쓰세요."),
  T("c6","common","인수인계서","인수인계,인계,휴가,부재","table","staff","2주 휴가 전에 매일 하는 일, 주 1회 하는 일, 급한 일이 생겼을 때 처리 순서를 정리해야 함.","개인 연락처는 넣지 말고 [연락처] 자리로 비워 두세요."),
  T("r1","credit","예금·적금 상품 안내","예금,적금,상품,금리,만기,수신","script","member","정기적금 만기가 된 고객에게 재가입을 권하는 상황. 금리 숫자는 아직 확인하지 않음.","금리와 우대 조건은 지어내지 말고 [확인 필요]로 두세요. 원금이 무조건 보장된다고 단정하지 마세요."),
@@ -464,10 +466,13 @@ const PII=[
  ["전화번호",/\+\s*82[\s-]*(?:\(0\)|0)?[\s-]*(?:1[016789]|2|[3-6][1-5]|70)[\s.\-)/]*\d{3,4}[\s.\-/]*\d{4}(?!\d)/g],
  ["휴대폰 번호",/(?<!\d)01[016789]\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
  ["전화번호",/(?<!\d)\(?0(?:2|[3-6][1-5]|70|80|50\d)\)?\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
- ["계좌·카드 번호",/(?<!\d)\d{2,6}(?:-\d{2,6}){2,4}(?!\d)/g,m=>m.replace(/\D/g,"").length>=10&&!isDate(m)], /* 날짜 2026-11-09 같은 것은 통과 */
+ ["계좌·카드 번호",/(?<!\d)\d{2,6}(?:-\d{2,6}){2,4}(?!\d)/g,m=>m.replace(/\D/g,"").length>=10&&!isDate(m)&&!allRound(m)], /* 날짜 2026-11-09 같은 것은 통과 */
  /* v07: '계좌는 0000…', '통장 번호가 …'처럼 조사가 붙어도 잡음 */
  ["계좌·카드 번호",/(?<=(?:계좌|카드|통장)\s*(?:번호)?\s*(?:는|은|가|이|도|를|을)?\s*[:：]?\s*)\d{8,19}(?!\d)/g],
- ["계좌·카드 번호",/(?<![\d.,])\d{2,6}(?: \d{2,6}){2,4}(?![\d.,])/g,m=>{const d=m.replace(/\D/g,"").length;return d>=10&&d<=19&&!isDate(m)}], /* 띄어 쓴 번호. v07: '2026 11 17 14 00' 같은 날짜·시각은 통과 */
+ /* 띄어 쓴 번호. v07: '2026 11 17 14 00' 같은 날짜·시각은 통과.
+    v08(루미 재검토): '재고 1000 2000 3000'처럼 수량을 띄어 쓴 것은 지우지 않음 → 앞에 계좌·카드·통장·번호가 있거나,
+    4자리씩 네 묶음(카드)이거나, 다섯 자리 넘는 묶음이 있을 때(123 456 789012)만 가림. 나머지는 '한 번 더 볼 곳'으로 */
+ ["계좌·카드 번호",/(?<![\d.,])\d{2,6}(?: \d{2,6}){2,4}(?![\d.,])/g,(m,off,s)=>spacedNum(m)&&strongNum(m,s.slice(Math.max(0,off-12),off))],
  /* v07: 띄어쓰기·줄표 없이 이어 쓴 10~19자리 숫자 (금액 '1500000000원'처럼 단위가 붙으면 통과) */
  ["계좌·카드 번호",/(?<![\d.,])\d{10,19}(?![\d.,])(?!\s?(?:원|만|억|천|백|개|명|건|kg|톤|%))/g],
  /* 주소(v03): 오작동을 줄이려고 '시·군·구·읍·면 + 도로명 + 번호', '읍·면 + ○○리 + 번지', '○○번길 번호', '…번지'만 잡는다. 이름 가리기는 보류 */
@@ -478,22 +483,29 @@ const PII=[
 ];
 /* 날짜·시각처럼 읽히는 숫자 묶음: 2026 11 17 / 2026-11-17-14-00 / 2026 11 17 14 00 */
 function isDate(m){return /^(?:19|20)\d{2}[\s-](?:0?[1-9]|1[0-2])[\s-](?:0?[1-9]|[12]\d|3[01])(?:[\s-](?:[01]?\d|2[0-3])(?:[\s-][0-5]\d)?)?$/.test(m.trim())}
-function scrub(text){
-  const found=[],items=[];let t=text||"";
+const allRound=m=>m.split(/[\s-]+/).every(g=>/0$/.test(g)); /* 1000 2000 3000 — 끝이 모두 0인 수량 */
+const spacedNum=m=>{const d=m.replace(/\D/g,"").length;return d>=10&&d<=19&&!isDate(m)&&!allRound(m)};
+const strongNum=(m,before)=>{const g=m.split(" ");
+  return /계좌|카드|통장|번호/.test(before)||(g.length===4&&g.every(x=>x.length===4))||g.some(x=>x.length>=5)};
+/* keep: 사용자가 '번호가 아니에요'로 되살린 글자 — 가리지 않고 kept에 남김 */
+function scrub(text,keep){
+  const found=[],items=[],kept=[];let t=text||"";
   for(const [name,re,ok] of PII){
     t=t.replace(re,(...a)=>{const m=a[0];
       if(ok&&!ok(...a)) return m;
+      if(keep&&keep.includes(m.trim())){if(!kept.some(k=>k.orig===m.trim()))kept.push({name,orig:m.trim()});return m}
       if(!found.includes(name)) found.push(name);
       items.push({name,orig:m.trim()}); return "[지움]";
     });
   }
-  return {text:t,found,items,doubt:doubts(t)};
+  return {text:t,found,items,kept,doubt:doubts(t,keep)};
 }
 /* v07: 가리지는 않았지만 사람이 한 번 더 볼 곳 (이름처럼 보이는 말, 남은 긴 숫자) */
 const SURN="김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노하곽성차주우구민진지엄채원천방공현함변염여추도소석선설마길연위표명기반왕금옥육인맹제모탁국어은편용예봉경사부";
 const NOTNAME=/^(?:조합원?|조합장|고객|직원|회원|담당자?|이사|감사|주민|선생|기사|사장|여러분|모든|전체|신규|기존|해당|우리|각|모두|관계자?|참석자?|대상자?|안내|문의|신청자?|농가|가족|부모|자녀|어르신|사모|원장|소장|지점|본점|지사|조사|부서|과장|차장|부장|계장|대리|주임|팀장|실장|대표|상무|전무|이장|반장|회장|총무|간사|강사|교육생|수강생|출하자|생산자|판매자|구매자|거래처|업체|관리자|운영자|작성자|상대|본인|당사자|보호자|성함|성명|한분|어느|다른|같은|이분|그분|저분|고령|노인|청년|여성|남성|일반|지역|관내|우수|정회원|준회원|원로|단골|방문|민원|상담|예비|임원|선배|후배|동료|손님|은행|공제|조합원께|여신|수신|마트|매장|각각|모든분)$/;
-function doubts(t){
-  const out=[];const add=(k,v)=>{if(!out.some(o=>o.v===v))out.push({k,v})};
+function doubts(t,keep){
+  const out=[];const add=(k,v)=>{if(!out.some(o=>o.v===v)&&!(keep&&keep.includes(v)))out.push({k,v})};
+  for(const m of t.matchAll(/(?<![\d.,])\d{2,6}(?: \d{2,6}){2,4}(?![\d.,])/g))if(spacedNum(m[0]))add("번호일 수도 있는 숫자",m[0]);
   const re=new RegExp(`(?<![가-힣])([${SURN}][가-힣]{1,2})\\s?(?:님|씨|고객님|조합원님|농가주|대표님?|과장님?|계장님?|대리님?|차장님?|팀장님?|부장님?|조합장님?|이장님?|어르신)`,"g"); /* 뒤에 '께·에게' 같은 조사가 붙어도 잡음 */
   for(const m of t.matchAll(re)){if(!NOTNAME.test(m[1]))add("이름일 수도 있는 말",m[0])}
   for(const m of t.matchAll(/(?<![\d.,])\d{6,9}(?![\d.,])(?!\s?(?:원|만|억|천|개|명|건|kg|톤|%|년|월|일|시|분))/g))add("긴 숫자",m[0]);
@@ -527,7 +539,7 @@ taskOf("c5").s="20쪽짜리 농업 지원사업 안내 자료를 상사에게 �
 
 /* ===== v05 질문 만들기 =====
    질문을 다 만든 뒤 전체를 한 번에 검사해 가린다 → 화면 경고와 실제 복사 내용이 항상 같다. */
-function askPrompt(o){return scrub(rawPrompt(o))}
+function askPrompt(o){return scrub(rawPrompt(o),o.keep)}
 function makePrompt(o){return askPrompt(o).text}
 function rawPrompt(o){
   /* o: {task, out, aud, sit, myDept, customName, nh} */
@@ -662,7 +674,7 @@ addEventListener("hashchange",route);
 const SYN={"독촉":["연체"],"연체":["독촉","상환"],"보험":["공제"],"공제":["보험"],"문자":["안내","sms"],"카톡":["문자","안내"],"알림":["안내","문자"],"공지":["안내","공지·안내문"],
   "회의":["회의록"],"회의록":["회의"],"보고":["보고서","요약"],"보고서":["보고","자료"],"공문":["업무연락","시행문"],"점검":["체크리스트","점검표"],"체크":["점검","체크리스트"],
   "매뉴얼":["응대"],"응대":["매뉴얼","민원"],"전단":["행사"],"할인":["행사","전단"],"피싱":["사기","보이스피싱"],"사기":["피싱"],"교육":["설명 자료","연수"],"자료":["설명 자료","요약"],
-  "인계":["인수인계"],"휴가":["인수인계"],"쌀":["벼","수매"],"벼":["수매","rpc"],"소":["한우","가축"],"한우":["소","축산"],"돼지":["방역","가축"],"마트":["하나로마트"],"직매장":["로컬푸드"],
+  "계좌":["통장","예금","스마트뱅킹","조회"],"통장":["계좌","예금"],"인계":["인수인계"],"휴가":["인수인계"],"쌀":["벼","수매"],"벼":["수매","rpc"],"소":["한우","가축"],"한우":["소","축산"],"돼지":["방역","가축"],"마트":["하나로마트"],"직매장":["로컬푸드"],
   "모종":["육묘"],"드론":["방제"],"구제역":["방역"],"예금":["적금","수신"],"적금":["예금"],"대출":["여신"],"민원":["불만","응대"],"불만":["민원","후기"]};
 function findAll(q,loose){
   q=q.trim().toLowerCase();if(!q)return [];
@@ -672,8 +684,9 @@ function findAll(q,loose){
   const hit=(hay,w)=>has(hay,w)||(SYN[w]||[]).some(s=>hay.includes(s));
   const scored=TASKS.map(t=>{const name=t.n.toLowerCase();
     const hay=[t.n,deptOf(t.d).n,OUTS[t.o].n,t.o,...t.k].join(" ").toLowerCase(); /* 결과 모양(안내 문자 등)도 찾는 말에 넣음 */
-    const n=words.filter(w=>hit(hay,w)).length, inName=words.filter(w=>hit(name,w)).length;
-    return {t,n,score:n*10+inName};
+    const ex=(t.s||"").toLowerCase(); /* v08: 예시 상황 글도 찾음 ('계좌' → 스마트뱅킹 예시의 '계좌 조회'). 점수는 낮게 */
+    const n=words.filter(w=>hit(hay,w)||ex.includes(w)).length, inName=words.filter(w=>hit(name,w)).length, inHay=words.filter(w=>hit(hay,w)).length;
+    return {t,n,score:n*10+inHay*3+inName};
   });
   const need=loose?1:words.length;
   return scored.filter(s=>s.n>=need).sort((a,b)=>b.score-a.score).map(s=>s.t);
@@ -684,8 +697,8 @@ function resultsHTML(q){
   const list=findAll(q);
   if(list.length)return `<ul class="results">${list.slice(0,10).map(row).join("")}</ul>`;
   const near=findAll(q,true); /* 꼭 맞는 게 없으면 낱말 하나라도 맞는 업무 */
-  if(near.length)return `<ul class="results"><li class="similar">'${esc(q)}'에 꼭 맞는 업무는 없어요. 비슷한 업무예요.</li>${near.slice(0,6).map(row).join("")}<li class="none"><a href="#/ask/custom">원하는 게 없으면 직접 적어서 만들기</a></li></ul>`;
-  return `<ul class="results"><li class="none">'${esc(q)}'에 맞는 업무가 없어요. <a href="#/ask/custom">직접 적어서 질문 만들기</a></li></ul>`;
+  if(near.length)return `<ul class="results"><li class="similar">'${esc(q)}'에 꼭 맞는 업무는 없어요. 비슷한 업무예요.</li>${near.slice(0,6).map(row).join("")}<li class="none"><a href="#/ask/custom?q=${encodeURIComponent(q.trim())}">원하는 게 없으면 '${esc(q.trim())}'(으)로 직접 만들기</a></li></ul>`;
+  return `<ul class="results"><li class="none">'${esc(q)}'에 맞는 업무가 없어요. <a href="#/ask/custom?q=${encodeURIComponent(q.trim())}">'${esc(q.trim())}'(으)로 직접 질문 만들기</a></li></ul>`;
 }
 function bindSearch(id,box){
   const qi=$(id);if(!qi)return;
@@ -785,8 +798,11 @@ function viewAsk(idq){
   const t=custom?null:taskOf(id);
   if(!custom&&!t){location.hash="#/";return}
   const pre=custom?new URLSearchParams(qs||"").get("d"):null;
+  const qq=custom?(new URLSearchParams(qs||"").get("q")||"").trim():""; /* v08: 검색어를 업무 이름 칸에 그대로 넘김 */
   const myMem=(mem.get().my||{});
-  const st=S.ask[id]||(S.ask[id]={out:t?t.o:"notice",aud:t?t.a:"member",sit:t?t.s:"",my:t&&typeof myMem[t.d]==="string"?myMem[t.d]:"",name:pre&&deptOf(pre)?deptOf(pre).n+" · ":"",nh:t?t.o==="doc":false,src:""});
+  const st=S.ask[id]||(S.ask[id]={out:t?t.o:"notice",aud:t?t.a:"member",sit:t?t.s:"",my:t&&typeof myMem[t.d]==="string"?myMem[t.d]:"",name:pre&&deptOf(pre)?deptOf(pre).n+" · ":"",nh:t?t.o==="doc":false,src:"",keep:[]});
+  if(!st.keep)st.keep=[];
+  if(qq&&!st.name.split("·").pop().trim())st.name=(st.name||"")+qq;
   const needSrc=!!(t&&SRC.has(t.id)), si=srcInfo(t&&t.id), inner=!!(t&&INNER.has(t.id));
   if(t)remember(id);
   const crumb=custom?`<a href="#/">처음</a> › 직접 적기`:`<a href="#/">처음</a> › <a href="#/d/${t.d}">${esc(deptOf(t.d).n)}</a> › ${esc(t.n)}`;
@@ -857,13 +873,16 @@ function viewAsk(idq){
   const drawFollows=()=>{$("#fl").innerHTML=follows(st.out).map(([k,v],i)=>`<li><button type="button" data-i="${i}"><span>${esc(k)}</span><small>복사</small></button></li>`).join("")};
   const draw=()=>{
     if(!pr.isConnected)return; /* 다른 화면으로 옮긴 뒤 늦게 도는 타이머는 무시 */
-    const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name,nh:st.nh,src:st.src});
+    const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name,nh:st.nh,src:st.src,keep:st.keep});
     if(pr.dataset.t!==r.text){pr.dataset.t=r.text;render(r.text);
       if(copied&&copied!==r.text){ok.textContent="질문이 바뀌었어요. 다시 [질문 복사]를 눌러 주세요.";ok.classList.add("stale")}}
     /* v07: 가린 곳과 한 번 더 볼 곳을 하나씩 보여 줌 */
-    const f=r.found,w=$("#pii");w.hidden=!(r.items.length||r.doubt.length);
-    w.innerHTML=(r.items.length?`<b>가린 곳 ${r.items.length}군데</b> — 질문에서 [지움]으로 바꿨어요.<ul>${r.items.map(i=>`<li>${esc(i.name)}: ${esc(short(i.orig))}</li>`).join("")}</ul>`:"")
-      +(r.doubt.length?`<div${r.items.length?' style="margin-top:8px"':""}><b>한 번 더 볼 곳</b> — 가리지 않았어요. 실제 이름·번호면 지워 주세요.<ul>${r.doubt.map(d=>`<li>${esc(d.k)}: ${esc(d.v)}</li>`).join("")}</ul></div>`:"")
+    const f=r.found,w=$("#pii");w.hidden=!(r.items.length||r.doubt.length||r.kept.length);
+    /* v08: 지운 숫자가 실제 번호가 아니면 '번호가 아니에요'로 되살림 (재고 수량 등) */
+    const ub=(v,lab,cls)=>`<button type="button" class="${cls}" data-v="${esc(v)}">${lab}</button>`;
+    w.innerHTML=(r.items.length?`<b>가린 곳 ${r.items.length}군데</b> — 질문에서 [지움]으로 바꿨어요. 수량·금액처럼 번호가 아니면 되살리세요.<ul>${r.items.map(i=>`<li>${esc(i.name)}: ${esc(short(i.orig))} ${ub(i.orig,"번호가 아니에요","unmask")}</li>`).join("")}</ul>`:"")
+      +(r.kept.length?`<div style="margin-top:8px"><b>되살린 것</b> — 실제 번호라면 다시 가려 주세요.<ul>${r.kept.map(k=>`<li>${esc(k.orig)} ${ub(k.orig,"다시 가리기","remask")}</li>`).join("")}</ul></div>`:"")
+      +(r.doubt.length?`<div style="margin-top:8px"><b>한 번 더 볼 곳</b> — 가리지 않았어요. 실제 이름·번호면 지워 주세요.<ul>${r.doubt.map(d=>`<li>${esc(d.k)}: ${esc(d.v)}</li>`).join("")}</ul></div>`:"")
       +(w.hidden?"":`<div style="margin-top:6px">사람 이름은 다 찾지 못해요. 복사하기 전에 질문을 한 번 훑어 주세요.</div>`);
     $("#nhw").hidden=!NH_OUTS.includes(st.out);
     $("#sumOut").innerHTML=`<small>받을 것</small>${esc(OUTS[st.out].n)}${NH_OUTS.includes(st.out)&&st.nh?" · 농협 기호":""}`;
@@ -880,6 +899,9 @@ function viewAsk(idq){
   const chipGroup=(sel,key)=>$(sel).addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st[key]=b.dataset.k;$(sel).querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));if(key==="out")drawFollows();draw()});
   chipGroup("#outs","out");chipGroup("#auds","aud");
   $("#sit").addEventListener("input",e=>{st.sit=e.target.value;draw()});
+  $("#pii").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const v=b.dataset.v;
+    if(b.classList.contains("unmask")){if(!st.keep.includes(v))st.keep.push(v)}else st.keep=st.keep.filter(x=>x!==v);
+    draw();say(b.classList.contains("unmask")?"되살렸어요. <b>실제 번호가 아닌지</b> 한 번만 더 봐 주세요 🔎":"다시 <b>[지움]</b>으로 가렸어요 🙈",true)});
   if($("#src"))$("#src").addEventListener("input",e=>{st.src=e.target.value;draw()});
   if($("#clrSit"))$("#clrSit").onclick=()=>{st.sit="";$("#sit").value="";$("#sit").focus();draw()};
   if($("#exSit"))$("#exSit").onclick=()=>{st.sit=t.s;$("#sit").value=t.s;draw()};
