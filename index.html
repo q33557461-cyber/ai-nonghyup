@@ -120,7 +120,12 @@ nav.tabs a[aria-current]{color:var(--green);background:linear-gradient(180deg,#F
 .stage .guide .bubble{font-size:14px}
 
 .steps3{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:-44px}
-.steps3 div{display:flex;align-items:center;gap:12px;background:#fff;border-radius:var(--r-lg);padding:16px 18px;font-weight:700;font-size:15px;box-shadow:var(--sh2)}
+.steps3 button{display:flex;align-items:center;gap:12px;width:100%;border:0;text-align:left;font:inherit;color:inherit;cursor:pointer;background:#fff;border-radius:var(--r-lg);padding:16px 18px;font-weight:700;font-size:15px;box-shadow:var(--sh2);transition:transform .15s}
+.steps3 button:active{transform:translateY(2px) scale(.99)}
+.steps3 button:focus-visible{outline:3px solid var(--gold,#D8AA43);outline-offset:2px}
+.pickhint{margin:18px 0 0;padding:12px 16px;border-radius:14px;background:#FFF7E3;color:#5b4512;font-size:15px;line-height:1.55}
+@keyframes pickflash{0%,100%{box-shadow:0 0 0 0 rgba(216,170,67,0)}30%{box-shadow:0 0 0 6px rgba(216,170,67,.55)}}
+.flash{border-radius:var(--r-lg);animation:pickflash 1.4s ease-out 2}
 .steps3 .emo{margin-left:auto;font-size:22px}
 .flow{margin:16px 0 0;padding:14px 16px 14px 48px;border-radius:var(--r);background:var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173D27' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H9l-5 4z'/%3E%3Cpath d='M8 10h8M8 13h5'/%3E%3C/svg%3E") no-repeat 16px 15px/22px;font-size:15px;color:var(--ink2)}
 .flow b{color:var(--green)}
@@ -297,7 +302,7 @@ footer{padding:24px 0 32px;font-size:13px;color:var(--ink3)}
   .pv-body .x3{display:none}
   .stage .guide .mascot{width:76px;height:76px}
   .steps3{grid-template-columns:1fr;gap:8px;margin-top:-40px}
-  .steps3 div{padding:12px 14px}
+  .steps3 button{padding:12px 14px}
   .sec{padding-top:30px}
   .sechead h2{font-size:21px}
   .depts{grid-template-columns:1fr 1fr;gap:10px}
@@ -649,14 +654,15 @@ function viewHome(){
   </div></section>
   <div class="wrap">
     <div class="steps3" aria-label="쓰는 순서">
-      <div><span class="num">1</span>업무 고르기${emo("👆")}</div>
-      <div><span class="num">2</span>상황 한두 줄 바꾸기${emo("✏️")}</div>
-      <div><span class="num">3</span>복사해서 AI에 붙여 넣기${emo("📋")}</div>
+      <button type="button" data-step="1"><span class="num">1</span>업무 고르기${emo("👆")}</button>
+      <button type="button" data-step="2"><span class="num">2</span>상황 한두 줄 바꾸기${emo("✏️")}</button>
+      <button type="button" data-step="3"><span class="num">3</span>복사해서 AI에 붙여 넣기${emo("📋")}</button>
     </div>
     <p class="flow"><b>처음 시작만 앱의 도움을 받으세요.</b> 그다음은 AI 안에서 자연스럽게 대화를 이어 가시면 됩니다.</p>
+    <p class="pickhint" id="pickhint" role="status" hidden></p>
     ${rec.length?`<section class="sec" style="padding-top:28px"><div class="sechead"><h2 style="font-size:18px">최근에 쓴 업무</h2><button class="linkbtn" id="memClr" type="button">기록 지우기</button></div>
       <div class="recent">${rec.map(t=>`<a href="#/ask/${t.id}">${esc(t.n)}<small>${esc(deptOf(t.d).n)}</small></a>`).join("")}</div></section>`:""}
-    <section class="sec">
+    <section class="sec" id="pick">
       <div class="sechead"><h2>부서로 고르기</h2><span>조합마다 부서 이름과 겸임 업무는 다를 수 있어요</span></div>
       <div class="depts">${DEPTS.map(d=>`<a class="dept" href="#/d/${d.id}"><span class="ic">${emo(DEMO[d.id]||"📁")}</span><span class="cnt">업무 ${TASKS.filter(t=>t.d===d.id).length}</span><b>${d.n}</b><span>${d.h}</span></a>`).join("")}</div>
       <div class="own"><div>${emo("✍️")}<div><b>목록에 없는 업무인가요?</b><p>업무 이름과 상황만 적으면 같은 틀로 질문을 만들어 드려요.</p></div></div><a class="btn line" href="#/ask/custom">직접 적어서 만들기</a></div>
@@ -665,6 +671,20 @@ function viewHome(){
   </div>`;
   bindSearch("#q","#res");
   if($("#memClr"))$("#memClr").onclick=()=>{mem.clear();viewHome()};
+  /* 세 걸음 카드: 누르면 업무 고르는 곳으로 데려감. 2·3번은 업무를 고른 뒤에 하는 일이라고 알려 줌 */
+  const HINT={1:$("#memClr")?"👇 <b>최근에 쓴 업무</b>를 누르거나, 아래에서 부서를 골라 보세요.":"👇 아래에서 <b>부서</b>를 누르거나, 위 검색 칸에 업무 이름을 적어 보세요.",
+    2:"✏️ 상황은 <b>업무를 고른 뒤</b>에 바꿔요. 먼저 아래에서 업무를 골라 주세요.",
+    3:"📋 <b>[질문 복사]</b>는 업무를 고르면 나와요. 먼저 아래에서 업무를 골라 주세요."};
+  document.querySelectorAll(".steps3 button").forEach(b=>b.onclick=()=>{
+    const n=b.dataset.step, recSec=$("#memClr")&&$("#memClr").closest(".sec");
+    const target=$("#pickhint");
+    const h=$("#pickhint");h.innerHTML=HINT[n];h.hidden=false;
+    const top=target.getBoundingClientRect().top+scrollY-90;
+    window.scrollTo({top,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+    const area=n==="1"&&recSec?recSec.querySelector(".recent"):$(".depts");
+    area.classList.remove("flash");void area.offsetWidth;area.classList.add("flash");
+    say(HINT[n].replace(/^\S+\s/,""));
+  });
 }
 
 /* --- 부서 --- */
