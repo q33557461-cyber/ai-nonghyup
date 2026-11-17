@@ -119,7 +119,7 @@ nav.tabs a[aria-current]{color:var(--green);background:linear-gradient(180deg,#F
 .stage .guide .mascot{width:92px;height:92px;margin-bottom:-6px}
 .stage .guide .bubble{font-size:14px}
 
-.steps3{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:-44px}
+.steps3{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:-44px}
 .steps3 button{display:flex;align-items:center;gap:12px;width:100%;border:0;text-align:left;font:inherit;color:inherit;cursor:pointer;background:#fff;border-radius:var(--r-lg);padding:16px 18px;font-weight:700;font-size:15px;box-shadow:var(--sh2);transition:transform .15s}
 .steps3 button:active{transform:translateY(2px) scale(.99)}
 .steps3 button:focus-visible{outline:3px solid var(--gold,#D8AA43);outline-offset:2px}
@@ -136,7 +136,7 @@ nav.tabs a[aria-current]{color:var(--green);background:linear-gradient(180deg,#F
 .sechead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px}
 .sechead h2{font-size:24px;font-weight:800;letter-spacing:-.025em;margin:0}
 .sechead span{font-size:14px;color:var(--ink3)}
-.depts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.depts{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:12px}
 .dept{position:relative;display:flex;flex-direction:column;gap:3px;text-decoration:none;background:linear-gradient(180deg,#FFFFFF,#FBFBF7);border-radius:var(--r-lg);padding:16px 16px 18px;min-height:150px;box-shadow:var(--sh1),var(--key);transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
 .dept:hover{transform:translateY(-3px);box-shadow:var(--sh2),var(--key)}
 .dept:active{transform:translateY(1px) scale(.985);box-shadow:0 1px 3px rgba(20,45,30,.12),inset 0 1px 0 #fff}
@@ -182,7 +182,7 @@ nav.tabs a[aria-current]{color:var(--green);background:linear-gradient(180deg,#F
 .tasks small{display:block;font-size:14px;color:var(--ink3);font-weight:500;margin-top:2px}
 .tasks svg{margin-left:auto;width:30px;height:30px;padding:7px;border-radius:50%;flex:none;fill:none;stroke:var(--green);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;background:var(--mint)}
 .tasks .dash a{color:var(--green)}
-.allgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px 24px}
+.allgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:28px 24px}
 .allgrid h2{font-size:18px;font-weight:800;margin:0 0 10px;display:flex;align-items:baseline;gap:8px}
 .allgrid h2 a{margin-left:auto;font-size:13px;font-weight:600;color:var(--ink3)}
 
@@ -275,13 +275,13 @@ pre.prompt .h{display:inline-block;font-size:13px;font-weight:800;color:var(--gr
 .checks b{color:var(--ink)}
 
 /* 휴대폰 아래 막대 */
-.mbar{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:30;display:grid;grid-template-columns:1fr 1.6fr;gap:8px;padding:8px;border-radius:22px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--sh3),inset 0 0 0 1px var(--line)}
+.mbar{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:30;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:8px;padding:8px;border-radius:22px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--sh3),inset 0 0 0 1px var(--line)}
 .mbar .btn,.mbar .copy{min-height:52px;border-radius:15px}
 .mbar .copy{font-size:17px}
 body.hasbar{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
 
 /* 안내 */
-.about{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.about{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:12px}
 .box{background:#fff;border-radius:var(--r-lg);padding:20px 22px;box-shadow:var(--sh1)}
 .box h3{font-size:17px;font-weight:800;margin:0 0 8px;display:flex;align-items:center;gap:8px}
 .box ul{margin:0;padding-left:20px;font-size:15px;color:var(--ink2)}
@@ -291,9 +291,9 @@ body.hasbar{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
 footer{padding:24px 0 32px;font-size:13px;color:var(--ink3)}
 
 @media (max-width:860px){
-  .two{grid-template-columns:1fr;gap:0}
+  .two{grid-template-columns:minmax(0,1fr);gap:0}
   pre.prompt{max-height:none}
-  .hero .wrap{grid-template-columns:1fr;gap:26px}
+  .hero .wrap{grid-template-columns:minmax(0,1fr);gap:26px}
   .stage{max-width:520px}
   .cards{min-height:250px}
 }
@@ -321,20 +321,20 @@ footer{padding:24px 0 32px;font-size:13px;color:var(--ink3)}
   .pv-body{font-size:13px}
   .pv-body .x3{display:none}
   .stage .guide .mascot{width:76px;height:76px}
-  .steps3{grid-template-columns:1fr;gap:8px;margin-top:-40px}
+  .steps3{grid-template-columns:minmax(0,1fr);gap:8px;margin-top:-40px}
   .steps3 button{padding:12px 14px}
   .sec{padding-top:30px}
   .sechead h2{font-size:21px}
-  .depts{grid-template-columns:1fr 1fr;gap:10px}
+  .depts{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
   .dept{min-height:140px;padding:14px 14px 16px}
   .dept .ic{width:46px;height:46px;font-size:25px}
   .dept b{font-size:16px}
   .dept span{font-size:13px}
-  .allgrid{grid-template-columns:1fr}
+  .allgrid{grid-template-columns:minmax(0,1fr)}
   .page{padding-top:18px}
   .field{padding:16px}
 }
-@media (max-width:360px){.depts{grid-template-columns:1fr}.badge{display:none}}
+@media (max-width:360px){.depts{grid-template-columns:minmax(0,1fr)}.badge{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -351,7 +351,7 @@ footer{padding:24px 0 32px;font-size:13px;color:var(--ink3)}
   </nav>
 </div></header>
 <main id="app" tabindex="-1"></main>
-<footer><div class="wrap">AI첫걸음은 김상무가 농협 직원을 위해 만든 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v08 (2026-11-17)</div></footer>
+<footer><div class="wrap">AI첫걸음은 김상무가 농협 직원을 위해 만든 개인 교육용 도구입니다. 농협의 공식 서비스가 아닙니다. · v09 (2026-11-17)</div></footer>
 <div class="gpop" id="gpop" aria-hidden="true"><span class="mascot"></span><p class="bubble" id="gpopt"></p></div>
 <div class="mbar" id="mbar" hidden><button class="btn line" id="mView" type="button">질문 보기</button><button class="copy" id="mCopy" type="button">질문 복사</button></div>
 <script id="core">
