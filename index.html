@@ -217,7 +217,26 @@ details.more{background:#fff;border-radius:var(--r-lg);padding:16px 18px;box-sha
 details.more summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--ink2)}
 details.more .in{padding-top:12px}
 
-.card{background:#fff;border-radius:var(--r-xl);box-shadow:var(--sh3);overflow:hidden;position:sticky;top:calc(var(--top) + 16px)}
+/* v07: PC에서 질문 카드가 따라 내려오며 아래 'AI 열기·이어 쓸 말·확인할 것'을 가리던 문제 → 고정하지 않음 */
+.card{background:#fff;border-radius:var(--r-xl);box-shadow:var(--sh3);overflow:hidden}
+.cardhead small.prac{background:var(--gold);color:var(--ink)}
+pre.prompt mark.cut{background:#F6EBCB;color:var(--ink);font-weight:800;padding:0 3px;border-radius:5px;box-shadow:inset 0 0 0 1px #D8AA43}
+.copy.wait{background:linear-gradient(180deg,#F1F2EE,#E2E5DE);color:var(--ink3);box-shadow:inset 0 0 0 1px var(--line2)}
+.warn ul{margin:6px 0 0;padding-left:18px}
+.warn li{margin:3px 0}
+.warn b{color:#F2D58A}
+.fmtsum{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.fmtsum .pick{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--mint);font-size:15px;font-weight:800;color:var(--green)}
+.fmtsum .pick small{font-size:12px;font-weight:700;color:var(--ink3)}
+details.fmt{background:#fff;border-radius:var(--r-lg);padding:18px;margin-bottom:14px;box-shadow:var(--sh1)}
+details.fmt>summary{list-style:none;cursor:pointer}
+details.fmt>summary::-webkit-details-marker{display:none}
+details.fmt .chg{margin-left:auto;font-size:14px;font-weight:700;color:var(--green);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+details.fmt[open] .chg::after{content:" 접기"}
+details.fmt:not([open]) .chg::after{content:" 바꾸기"}
+details.fmt .sub{font-size:15px;font-weight:800;margin:16px 0 10px}
+.scope{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:#FFF7E3;font-size:14px;color:var(--ink2);box-shadow:inset 0 0 0 1px #EBD9A6}
+.results .similar{padding:10px 14px 4px;font-size:13px;font-weight:700;color:var(--ink3)}
 .cardhead{display:flex;align-items:center;gap:10px;color:#fff;padding:13px 16px;background:radial-gradient(120% 160% at 100% 0%,rgba(78,158,107,.5),transparent 60%),linear-gradient(180deg,#1E4A31,#173D27)}
 .cardhead .appicon{width:26px;height:26px;border-radius:8px}
 .cardhead b{font-size:15px;font-weight:800}
@@ -271,7 +290,6 @@ footer{padding:24px 0 32px;font-size:13px;color:var(--ink3)}
 
 @media (max-width:860px){
   .two{grid-template-columns:1fr;gap:0}
-  .card{position:static}
   pre.prompt{max-height:none}
   .hero .wrap{grid-template-columns:1fr;gap:26px}
   .stage{max-width:520px}
@@ -446,24 +464,40 @@ const PII=[
  ["전화번호",/\+\s*82[\s-]*(?:\(0\)|0)?[\s-]*(?:1[016789]|2|[3-6][1-5]|70)[\s.\-)/]*\d{3,4}[\s.\-/]*\d{4}(?!\d)/g],
  ["휴대폰 번호",/(?<!\d)01[016789]\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
  ["전화번호",/(?<!\d)\(?0(?:2|[3-6][1-5]|70|80|50\d)\)?\s*[-.)/]?\s*\d{3,4}\s*[-./]?\s*\d{4}(?!\d)/g],
- ["계좌·카드 번호",/(?<!\d)\d{2,6}(?:-\d{2,6}){2,4}(?!\d)/g,m=>m.replace(/\D/g,"").length>=10], /* 날짜 2026-11-09 같은 것은 통과 */
- ["계좌·카드 번호",/(?<=(?:계좌|카드|통장)(?:번호)?\s*[:：]?\s*)\d{10,16}(?!\d)/g],
- ["계좌·카드 번호",/(?<![\d.,])\d{2,6}(?: \d{2,6}){2,4}(?![\d.,])/g,m=>{const d=m.replace(/\D/g,"").length;return d>=10&&d<=19}], /* 띄어 쓴 번호 */
+ ["계좌·카드 번호",/(?<!\d)\d{2,6}(?:-\d{2,6}){2,4}(?!\d)/g,m=>m.replace(/\D/g,"").length>=10&&!isDate(m)], /* 날짜 2026-11-09 같은 것은 통과 */
+ /* v07: '계좌는 0000…', '통장 번호가 …'처럼 조사가 붙어도 잡음 */
+ ["계좌·카드 번호",/(?<=(?:계좌|카드|통장)\s*(?:번호)?\s*(?:는|은|가|이|도|를|을)?\s*[:：]?\s*)\d{8,19}(?!\d)/g],
+ ["계좌·카드 번호",/(?<![\d.,])\d{2,6}(?: \d{2,6}){2,4}(?![\d.,])/g,m=>{const d=m.replace(/\D/g,"").length;return d>=10&&d<=19&&!isDate(m)}], /* 띄어 쓴 번호. v07: '2026 11 17 14 00' 같은 날짜·시각은 통과 */
+ /* v07: 띄어쓰기·줄표 없이 이어 쓴 10~19자리 숫자 (금액 '1500000000원'처럼 단위가 붙으면 통과) */
+ ["계좌·카드 번호",/(?<![\d.,])\d{10,19}(?![\d.,])(?!\s?(?:원|만|억|천|백|개|명|건|kg|톤|%))/g],
  /* 주소(v03): 오작동을 줄이려고 '시·군·구·읍·면 + 도로명 + 번호', '읍·면 + ○○리 + 번지', '○○번길 번호', '…번지'만 잡는다. 이름 가리기는 보류 */
  ["주소",new RegExp("(?<![가-힣])("+CITY+"|[가-힣]{1,8}(?:군|구|읍|면))\\s+(?:([가-힣]{1,8}(?:구|읍|면|동))\\s+)?([가-힣0-9]{1,12}(?:로|길))\\s?\\d{1,4}(?:-\\d{1,4})?"+ADDR_END,"g"),(m,a,b,r)=>!ADDR_STOP.test(a)&&!IF_END.test(a)&&!(b&&(ADDR_STOP.test(b)||IF_END.test(b)))&&!ROAD_STOP.test(r)],
  ["주소",new RegExp("(?<![가-힣])[가-힣0-9]{1,12}(?:로|길)\\s?\\d{1,4}번?길\\s?\\d{1,4}(?:-\\d{1,4})?(?!\\d)","g")],
  ["주소",new RegExp("(?<![가-힣])([가-힣]{1,8}(?:읍|면))\\s*([가-힣]{1,6}리)\\s*(?:산\\s?)?\\d{1,5}(?:-\\d{1,5})?"+ADDR_END,"g"),(m,a,r)=>!ADDR_STOP.test(a)&&!IF_END.test(a)&&!RI_STOP.test(r)],
  ["주소",new RegExp("(?<![가-힣])[가-힣]{1,8}(?:리|동|가)\\s*(?:산\\s?)?\\d{1,5}(?:-\\d{1,5})?\\s?번지","g")]
 ];
+/* 날짜·시각처럼 읽히는 숫자 묶음: 2026 11 17 / 2026-11-17-14-00 / 2026 11 17 14 00 */
+function isDate(m){return /^(?:19|20)\d{2}[\s-](?:0?[1-9]|1[0-2])[\s-](?:0?[1-9]|[12]\d|3[01])(?:[\s-](?:[01]?\d|2[0-3])(?:[\s-][0-5]\d)?)?$/.test(m.trim())}
 function scrub(text){
-  const found=[];let t=text||"";
+  const found=[],items=[];let t=text||"";
   for(const [name,re,ok] of PII){
     t=t.replace(re,(...a)=>{const m=a[0];
       if(ok&&!ok(...a)) return m;
-      if(!found.includes(name)) found.push(name); return "[지움]";
+      if(!found.includes(name)) found.push(name);
+      items.push({name,orig:m.trim()}); return "[지움]";
     });
   }
-  return {text:t,found};
+  return {text:t,found,items,doubt:doubts(t)};
+}
+/* v07: 가리지는 않았지만 사람이 한 번 더 볼 곳 (이름처럼 보이는 말, 남은 긴 숫자) */
+const SURN="김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노하곽성차주우구민진지엄채원천방공현함변염여추도소석선설마길연위표명기반왕금옥육인맹제모탁국어은편용예봉경사부";
+const NOTNAME=/^(?:조합원?|조합장|고객|직원|회원|담당자?|이사|감사|주민|선생|기사|사장|여러분|모든|전체|신규|기존|해당|우리|각|모두|관계자?|참석자?|대상자?|안내|문의|신청자?|농가|가족|부모|자녀|어르신|사모|원장|소장|지점|본점|지사|조사|부서|과장|차장|부장|계장|대리|주임|팀장|실장|대표|상무|전무|이장|반장|회장|총무|간사|강사|교육생|수강생|출하자|생산자|판매자|구매자|거래처|업체|관리자|운영자|작성자|상대|본인|당사자|보호자|성함|성명|한분|어느|다른|같은|이분|그분|저분|고령|노인|청년|여성|남성|일반|지역|관내|우수|정회원|준회원|원로|단골|방문|민원|상담|예비|임원|선배|후배|동료|손님|은행|공제|조합원께|여신|수신|마트|매장|각각|모든분)$/;
+function doubts(t){
+  const out=[];const add=(k,v)=>{if(!out.some(o=>o.v===v))out.push({k,v})};
+  const re=new RegExp(`(?<![가-힣])([${SURN}][가-힣]{1,2})\\s?(?:님|씨|고객님|조합원님|농가주|대표님?|과장님?|계장님?|대리님?|차장님?|팀장님?|부장님?|조합장님?|이장님?|어르신)`,"g"); /* 뒤에 '께·에게' 같은 조사가 붙어도 잡음 */
+  for(const m of t.matchAll(re)){if(!NOTNAME.test(m[1]))add("이름일 수도 있는 말",m[0])}
+  for(const m of t.matchAll(/(?<![\d.,])\d{6,9}(?![\d.,])(?!\s?(?:원|만|억|천|개|명|건|kg|톤|%|년|월|일|시|분))/g))add("긴 숫자",m[0]);
+  return out;
 }
 
 function deptOf(id){return DEPTS.find(d=>d.id===id)}
@@ -476,7 +510,19 @@ OUTS.script.how="먼저 30초 안에 말할 첫 응대, 그 아래 예상 질문
 taskOf("c2").c="문서번호와 날짜는 비워 두세요. 붙임이 있는지 정해지지 않았으면 붙임은 [확인 필요]로 두세요.";
 taskOf("r3").c+=" 원래 납부일과 새로 정한 기한을 섞지 말고, 합의하지 않은 새 날짜는 만들지 마세요.";
 /* P1-1: 원문을 바꾸거나 요약하는 업무 — 원문이 없으면 완성본 대신 원문부터 요청 */
-const SRC=new Set(["c5","g2","g5","l5"]);
+const SRC=new Set(["c1","c5","g2","g5","l5"]);
+/* v07: 붙여 넣을 글의 이름과 안내 (회의록은 '회의 메모') */
+const SRCI={
+  def:{noun:"원문",lab:"원문 붙여 넣기",muted:"공개해도 되는 글만",ph:"예: 농업기술센터 누리집에 공개된 안내 글. 내부 문서·개인정보는 넣지 마세요.",head:"원문 — 공개해도 되는 내용",
+    empty:"아직 원문을 붙이지 않았습니다. 완성본을 만들지 말고, 개인정보·내부 자료를 뺀 공개해도 되는 원문을 붙여 달라고 먼저 요청해 주세요.",
+    rule:"[원문]에 있는 내용만 쓰고, 원문에 없는 설명·사진·처방·숫자는 덧붙이지 마세요."},
+  c1:{noun:"회의 메모",lab:"회의 메모 붙여 넣기",muted:"이름·숫자는 빼고",ph:"예: 연말 행사 — 12월 셋째 주 예정, 담당 미정 / 창구 대기 — 번호표 안내 보강하기로 / 다음 달 교육 — 날짜 다시 정하기",head:"회의 메모",
+    empty:"아직 회의 메모를 붙이지 않았습니다. 회의 내용을 지어내지 말고, 빈 회의록 틀(일시 · 참석 · 안건 · 결정한 것 · 할 일(담당 · 기한))만 보여 준 다음, 회의 메모를 붙여 달라고 요청해 주세요.",
+    rule:"[회의 메모]에 있는 내용만 쓰고, 메모에 없는 결정·발언·담당·기한은 지어내지 말고 [미정]으로 두세요."}
+};
+const srcInfo=id=>SRCI[id]||SRCI.def;
+/* v07: 내부 자료가 있어야 제대로 되는 업무 — 이 앱에선 틀과 말투까지만, 실제 내용은 조합이 허용한 환경에서 */
+const INNER=new Set(["c1","c6","r2","m1","m2","i2","l4","l5","g5","a1","a2","a4","a5"]);
 taskOf("c5").s="20쪽짜리 농업 지원사업 안내 자료를 상사에게 보고하려고 요약해야 함.";
 
 /* ===== v05 질문 만들기 =====
@@ -504,11 +550,11 @@ function rawPrompt(o){
   if(!rules.some(r=>/연락처\]|\[이름\]/.test(r))) rules.push("사람 이름·전화번호·계좌번호가 들어갈 곳은 [이름], [연락처]처럼 빈자리로 두세요.");
   const work=[dept,name].filter(Boolean).join(" · ")+(my?` (우리 조합에서는 '${my}' 업무)`:"");
   const who=dept?`농협 ${dept.replace(/ 업무$/,"")} 업무를 잘 아는 실무 선배`:"농협 업무를 잘 아는 실무 선배";
-  const needSrc=!!(t&&SRC.has(t.id)), src=(o.src||"").trim();
-  if(needSrc&&src) rules.push("[원문]에 있는 내용만 쓰고, 원문에 없는 설명·사진·처방·숫자는 덧붙이지 마세요.");
+  const needSrc=!!(t&&SRC.has(t.id)), src=(o.src||"").trim(), si=srcInfo(t&&t.id);
+  if(needSrc&&src) rules.push(si.rule);
   const how3=needSrc&&!src?[
-    "아직 원문을 붙이지 않았습니다. 완성본을 만들지 말고, 개인정보·내부 자료를 뺀 공개해도 되는 원문을 붙여 달라고 먼저 요청해 주세요.",
-    `원문을 받으면 그 내용만 써서 ${out.n}${eul(out.n)} 만들고, 원문에 없는 설명·사진·처방은 덧붙이지 마세요.`,
+    si.empty,
+    `${si.noun}${eul(si.noun)} 받으면 그 내용만 써서 ${out.n}${eul(out.n)} 만들고, ${si.noun}에 없는 내용은 덧붙이지 마세요.`,
     "완성한 뒤 맨 아래에 '보내기 전에 사람이 확인할 점' 3가지를 적어 주세요."]:[
     `설명은 빼고 완성한 ${out.n}부터 보여 주세요.`,
     "그 아래에 '보내기 전에 사람이 확인할 점' 3가지를 적어 주세요.",
@@ -521,7 +567,7 @@ ${work}
 
 [상황]
 ${sit}
-${needSrc&&src?`\n[원문 — 공개해도 되는 내용]\n${src}\n`:""}
+${needSrc&&src?`\n[${si.head}]\n${src}\n`:""}
 [만들 것]
 ${out.n}: ${how}
 읽는 사람: ${aud.n} — ${aud.how}
@@ -612,18 +658,34 @@ function route(){
 addEventListener("hashchange",route);
 
 /* --- 검색 --- */
-function findAll(q){
+/* v07: 직원이 흔히 쓰는 다른 말 (왼쪽 말로 찾으면 오른쪽 말도 찾아 봄) */
+const SYN={"독촉":["연체"],"연체":["독촉","상환"],"보험":["공제"],"공제":["보험"],"문자":["안내","sms"],"카톡":["문자","안내"],"알림":["안내","문자"],"공지":["안내","공지·안내문"],
+  "회의":["회의록"],"회의록":["회의"],"보고":["보고서","요약"],"보고서":["보고","자료"],"공문":["업무연락","시행문"],"점검":["체크리스트","점검표"],"체크":["점검","체크리스트"],
+  "매뉴얼":["응대"],"응대":["매뉴얼","민원"],"전단":["행사"],"할인":["행사","전단"],"피싱":["사기","보이스피싱"],"사기":["피싱"],"교육":["설명 자료","연수"],"자료":["설명 자료","요약"],
+  "인계":["인수인계"],"휴가":["인수인계"],"쌀":["벼","수매"],"벼":["수매","rpc"],"소":["한우","가축"],"한우":["소","축산"],"돼지":["방역","가축"],"마트":["하나로마트"],"직매장":["로컬푸드"],
+  "모종":["육묘"],"드론":["방제"],"구제역":["방역"],"예금":["적금","수신"],"적금":["예금"],"대출":["여신"],"민원":["불만","응대"],"불만":["민원","후기"]};
+function findAll(q,loose){
   q=q.trim().toLowerCase();if(!q)return [];
-  const words=q.split(/\s+/);
+  const words=q.split(/[\s,·]+/).filter(Boolean);
   const has=(hay,w)=>hay.includes(w)||(w.length>2&&/[문서일별표]$/.test(w)&&hay.includes(w.slice(0,-1)))
     ||(w.length>=4&&[...Array(w.length-3)].some((_,i)=>has(hay,w.slice(0,i+2))&&has(hay,w.slice(i+2)))); /* 붙여 쓴 말은 두 낱말로 나눠 봄 */
-  return TASKS.filter(t=>{const hay=[t.n,deptOf(t.d).n,...t.k].join(" ").toLowerCase();return words.every(w=>has(hay,w))});
+  const hit=(hay,w)=>has(hay,w)||(SYN[w]||[]).some(s=>hay.includes(s));
+  const scored=TASKS.map(t=>{const name=t.n.toLowerCase();
+    const hay=[t.n,deptOf(t.d).n,OUTS[t.o].n,t.o,...t.k].join(" ").toLowerCase(); /* 결과 모양(안내 문자 등)도 찾는 말에 넣음 */
+    const n=words.filter(w=>hit(hay,w)).length, inName=words.filter(w=>hit(name,w)).length;
+    return {t,n,score:n*10+inName};
+  });
+  const need=loose?1:words.length;
+  return scored.filter(s=>s.n>=need).sort((a,b)=>b.score-a.score).map(s=>s.t);
 }
 function resultsHTML(q){
   if(!q.trim())return "";
+  const row=t=>`<li><a href="#/ask/${t.id}"><b>${esc(t.n)}</b><small>${esc(deptOf(t.d).n)}</small></a></li>`;
   const list=findAll(q);
-  if(!list.length)return `<ul class="results"><li class="none">'${esc(q)}'에 맞는 업무가 없어요. <a href="#/ask/custom">직접 적어서 질문 만들기</a></li></ul>`;
-  return `<ul class="results">${list.slice(0,10).map(t=>`<li><a href="#/ask/${t.id}"><b>${esc(t.n)}</b><small>${esc(deptOf(t.d).n)}</small></a></li>`).join("")}</ul>`;
+  if(list.length)return `<ul class="results">${list.slice(0,10).map(row).join("")}</ul>`;
+  const near=findAll(q,true); /* 꼭 맞는 게 없으면 낱말 하나라도 맞는 업무 */
+  if(near.length)return `<ul class="results"><li class="similar">'${esc(q)}'에 꼭 맞는 업무는 없어요. 비슷한 업무예요.</li>${near.slice(0,6).map(row).join("")}<li class="none"><a href="#/ask/custom">원하는 게 없으면 직접 적어서 만들기</a></li></ul>`;
+  return `<ul class="results"><li class="none">'${esc(q)}'에 맞는 업무가 없어요. <a href="#/ask/custom">직접 적어서 질문 만들기</a></li></ul>`;
 }
 function bindSearch(id,box){
   const qi=$(id);if(!qi)return;
@@ -725,14 +787,14 @@ function viewAsk(idq){
   const pre=custom?new URLSearchParams(qs||"").get("d"):null;
   const myMem=(mem.get().my||{});
   const st=S.ask[id]||(S.ask[id]={out:t?t.o:"notice",aud:t?t.a:"member",sit:t?t.s:"",my:t&&typeof myMem[t.d]==="string"?myMem[t.d]:"",name:pre&&deptOf(pre)?deptOf(pre).n+" · ":"",nh:t?t.o==="doc":false,src:""});
-  const needSrc=!!(t&&SRC.has(t.id));
+  const needSrc=!!(t&&SRC.has(t.id)), si=srcInfo(t&&t.id), inner=!!(t&&INNER.has(t.id));
   if(t)remember(id);
   const crumb=custom?`<a href="#/">처음</a> › 직접 적기`:`<a href="#/">처음</a> › <a href="#/d/${t.d}">${esc(deptOf(t.d).n)}</a> › ${esc(t.n)}`;
   let n=0;const N=()=>`<span class="num">${++n}</span>`;
   app.innerHTML=`<div class="wrap page">
   <div class="crumb">${crumb}</div>
   <h1>${custom?emo("✍️")+"내 업무로 질문 만들기":esc(t.n)}</h1>
-  <p class="lead">${custom?"업무 이름과 상황을 적으면 오른쪽에 질문이 만들어집니다.":needSrc?"상황을 내 일로 바꾸고, <b>공개해도 되는 원문</b>을 붙인 뒤 [질문 복사]를 누르세요.":"질문은 이미 만들어져 있어요. <b>상황만 내 일로 바꾸고</b> [질문 복사]를 누르세요."}</p>
+  <p class="lead">${custom?"업무 이름과 상황을 적으면 오른쪽에 질문이 만들어집니다.":needSrc?`상황을 내 일로 바꾸고, <b>${t.id==="c1"?"회의 메모":"공개해도 되는 원문"}</b>을 붙인 뒤 [질문 복사]를 누르세요.`:"질문은 이미 만들어져 있어요. <b>상황만 내 일로 바꾸고</b> [질문 복사]를 누르세요."}</p>
   ${guide("")}
   <div class="two">
     <div>
@@ -743,15 +805,20 @@ function viewAsk(idq){
         ${custom?"":`<div class="minor"><button class="linkbtn" id="clrSit" type="button">예시 지우기</button><button class="linkbtn" id="exSit" type="button">예시 다시 넣기</button></div>`}
         <div class="warn" id="pii" role="status" hidden></div>
         <p class="safe"><b>실제 이름·번호·내부 자료는 쓰지 마세요.</b> 이름은 자동으로 가려지지 않아요.</p>
-        <p class="hint">${custom?"":"지금 적힌 글은 예시예요. "}정하지 않은 날짜·금액은 그냥 비워 두면 AI가 [확인 필요]로 표시합니다.</p></div>
-      ${needSrc?`<div class="field"><label class="lab" for="src">${N()}원문 붙여 넣기 <span class="muted">공개해도 되는 글만</span></label>
-        <textarea id="src" placeholder="예: 농업기술센터 누리집에 공개된 안내 글. 내부 문서·개인정보는 넣지 마세요.">${esc(st.src)}</textarea>
-        <p class="hint">비워 두면 AI가 완성본을 지어내지 않고 <b>원문부터 달라고</b> 합니다. 그때 같은 대화창에 원문을 붙여 넣으세요.</p></div>`:""}
-      <div class="field"><div class="lab">${N()}무엇을 받을까요?${emo("📄")}</div>
+        <p class="hint">${custom?"":"처음 적힌 글은 예시예요. "}정하지 않은 날짜·금액은 그냥 비워 두면 AI가 [확인 필요]로 표시합니다.</p>
+        <p class="hint">적은 글은 저장되지 않아요. <b>새로 고침하거나 앱을 닫으면 지워집니다.</b></p>
+        ${inner?`<p class="scope">📁 이 업무는 <b>조합 안의 자료</b>가 있어야 제대로 됩니다. 이 앱에서는 틀과 말투까지만 만들고, 실제 숫자·이름·내부 문서는 <b>조합이 허용한 AI</b>에서만 다뤄 주세요.</p>`:""}</div>
+      ${needSrc?`<div class="field"><label class="lab" for="src">${N()}${si.lab} <span class="muted">${si.muted}</span></label>
+        <textarea id="src" placeholder="${esc(si.ph)}">${esc(st.src)}</textarea>
+        <p class="hint">${t.id==="c1"?"비워 두면 AI가 회의 내용을 지어내지 않고 <b>빈 회의록 틀만</b> 보여 준 뒤 메모를 달라고 합니다. 그때 같은 대화창에 메모를 붙여 넣으세요.":"비워 두면 AI가 완성본을 지어내지 않고 <b>원문부터 달라고</b> 합니다. 그때 같은 대화창에 원문을 붙여 넣으세요."}</p></div>`:""}
+      <details class="fmt" id="fmt"${custom?" open":""}><summary><div class="lab" style="margin-bottom:10px">${N()}받을 모양과 읽는 사람${emo("📄")}</div>
+        <div class="fmtsum"><span class="pick" id="sumOut"></span><span class="pick" id="sumAud"></span><span class="chg">형식·대상</span></div></summary>
+        <p class="hint" style="margin-top:12px">업무에 맞게 골라 두었어요. 바꿀 때만 누르세요.</p>
+        <div class="sub">무엇을 받을까요?</div>
         <div class="chips" id="outs">${Object.entries(OUTS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.out===k}">${v.n}</button>`).join("")}</div>
-        <label class="toggle" id="nhw"${NH_OUTS.includes(st.out)?"":" hidden"}><input type="checkbox" id="nh"${st.nh?" checked":""}><div><b>농협 문서 기호로 쓰게 하기</b><span>1. → □ → ○ → ※, 절차는 ① ② ③</span></div></label></div>
-      <div class="field"><div class="lab">${N()}누가 읽나요?${emo("👀")}</div>
-        <div class="chips" id="auds">${Object.entries(AUDS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.aud===k}">${v.n}</button>`).join("")}</div></div>
+        <label class="toggle" id="nhw"${NH_OUTS.includes(st.out)?"":" hidden"}><input type="checkbox" id="nh"${st.nh?" checked":""}><div><b>농협 문서 기호로 쓰게 하기</b><span>1. → □ → ○ → ※, 절차는 ① ② ③</span></div></label>
+        <div class="sub">누가 읽나요?</div>
+        <div class="chips" id="auds">${Object.entries(AUDS).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${st.aud===k}">${v.n}</button>`).join("")}</div></details>
       ${custom?"":`<details class="more"><summary>우리 조합에서는 부서 이름이 달라요 (선택)</summary><div class="in">
         <input class="t" id="my" value="${esc(st.my)}" placeholder="예: 경제과 자재계"><p class="hint">이 기기에만 기억해요.</p></div></details>`}
     </div>
@@ -777,21 +844,37 @@ function viewAsk(idq){
   const guideMsg=found=>{
     if(custom&&!st.name.split("·").pop().trim())return "먼저 <b>무슨 업무인지</b> 적어 주세요 ✏️";
     if(!st.sit.trim())return "상황을 <b>한 줄만</b> 적어 주세요 🙂 누구에게 무엇을 할지면 돼요.";
-    if(found&&found.length)return "번호처럼 보이는 건 제가 <b>[지움]</b>으로 가렸어요 🙈 이름은 직접 빼 주세요.";
-    if(copied&&copied===pr.dataset.t)return "복사 완료! 🎉 이제 <b>AI 앱을 열고 붙여 넣으세요.</b> 그다음은 AI와 대화하시면 돼요.";
-    if(t&&st.sit===t.s)return needSrc?"예시 상황을 <b>내 일로 바꾸고</b>, 공개해도 되는 원문이 있으면 붙여 주세요 📄":"지금 적힌 건 예시예요. <b>상황만 내 일로 바꿔</b> 보세요 ✏️";
+    if(found&&found.length)return "번호처럼 보이는 건 제가 <b>[지움]</b>으로 가렸어요 🙈 가린 곳을 확인하고, 이름은 직접 빼 주세요.";
+    if(copied&&copied===pr.dataset.t)return practice()?"연습용 질문을 복사했어요 🙂 실제로 쓰실 땐 <b>상황을 내 일로</b> 바꿔 주세요.":"복사 완료! 🎉 이제 <b>AI 앱을 열고 붙여 넣으세요.</b> 그다음은 AI와 대화하시면 돼요.";
+    if(t&&st.sit===t.s)return needSrc?`예시 상황을 <b>내 일로 바꾸고</b>, ${t.id==="c1"?"회의 메모를":"공개해도 되는 원문이 있으면"} 붙여 주세요 📄`:"지금 적힌 건 예시예요. <b>상황만 내 일로 바꿔</b> 보세요 ✏️";
     return "좋아요! 👍 이제 <b>[질문 복사]</b>를 눌러 주세요.";
   };
   let ready=false;
-  const render=txt=>{pr.innerHTML=esc(txt).replace(/^(\[[^\]\n]+\])$/gm,'<span class="h">$1</span>');$("#len").textContent=txt.length.toLocaleString()+"자"};
+  /* 예시를 그대로 둔 채면 '연습용 질문' */
+  const practice=()=>!!(t&&st.sit.trim()===t.s.trim());
+  const render=txt=>{pr.innerHTML=esc(txt).replace(/^(\[[^\]\n]+\])$/gm,'<span class="h">$1</span>').replace(/\[지움\]/g,'<mark class="cut">[지움]</mark>')};
+  const short=s=>s.length>14?s.slice(0,6)+"…"+s.slice(-4):s;
   const drawFollows=()=>{$("#fl").innerHTML=follows(st.out).map(([k,v],i)=>`<li><button type="button" data-i="${i}"><span>${esc(k)}</span><small>복사</small></button></li>`).join("")};
   const draw=()=>{
+    if(!pr.isConnected)return; /* 다른 화면으로 옮긴 뒤 늦게 도는 타이머는 무시 */
     const r=askPrompt({task:t,out:st.out,aud:st.aud,sit:st.sit,myDept:st.my,customName:st.name,nh:st.nh,src:st.src});
     if(pr.dataset.t!==r.text){pr.dataset.t=r.text;render(r.text);
       if(copied&&copied!==r.text){ok.textContent="질문이 바뀌었어요. 다시 [질문 복사]를 눌러 주세요.";ok.classList.add("stale")}}
-    const f=r.found;const w=$("#pii");w.hidden=!f.length;
-    if(f.length)w.textContent=`${f.join(", ")}로 보이는 것을 질문에서 [지움]으로 바꿨어요. 사람 이름은 가려지지 않으니 직접 빼 주세요.`;
+    /* v07: 가린 곳과 한 번 더 볼 곳을 하나씩 보여 줌 */
+    const f=r.found,w=$("#pii");w.hidden=!(r.items.length||r.doubt.length);
+    w.innerHTML=(r.items.length?`<b>가린 곳 ${r.items.length}군데</b> — 질문에서 [지움]으로 바꿨어요.<ul>${r.items.map(i=>`<li>${esc(i.name)}: ${esc(short(i.orig))}</li>`).join("")}</ul>`:"")
+      +(r.doubt.length?`<div${r.items.length?' style="margin-top:8px"':""}><b>한 번 더 볼 곳</b> — 가리지 않았어요. 실제 이름·번호면 지워 주세요.<ul>${r.doubt.map(d=>`<li>${esc(d.k)}: ${esc(d.v)}</li>`).join("")}</ul></div>`:"")
+      +(w.hidden?"":`<div style="margin-top:6px">사람 이름은 다 찾지 못해요. 복사하기 전에 질문을 한 번 훑어 주세요.</div>`);
     $("#nhw").hidden=!NH_OUTS.includes(st.out);
+    $("#sumOut").innerHTML=`<small>받을 것</small>${esc(OUTS[st.out].n)}${NH_OUTS.includes(st.out)&&st.nh?" · 농협 기호":""}`;
+    $("#sumAud").innerHTML=`<small>읽는 사람</small>${esc(AUDS[st.aud].n)}`;
+    /* 빈 상황·예시 그대로·내 상황을 버튼과 머리말에 보여 줌 */
+    const cp=$("#cp"),empty=!!blank(),pra=practice();
+    if(!empty&&ok.dataset.blank){ok.textContent="";ok.classList.remove("stale");delete ok.dataset.blank}
+    if(!cp.classList.contains("copied"))cp.innerHTML=empty?ICON.copy+"상황을 적으면 복사돼요":ICON.copy+(pra?"연습용 질문 복사":"질문 복사");
+    cp.classList.toggle("wait",empty);cp.setAttribute("aria-disabled",empty);
+    const len=$("#len");len.textContent=pra?"연습용 — 예시 상황":r.text.length.toLocaleString()+"자";len.classList.toggle("prac",pra);
+    const mc=$("#mCopy");if(mc&&!mc._t){mc.textContent=empty?"상황 먼저":pra?"연습용 복사":"질문 복사";mc.classList.toggle("wait",empty)}
     say(guideMsg(f),ready);
   };
   const chipGroup=(sel,key)=>$(sel).addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st[key]=b.dataset.k;$(sel).querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));if(key==="out")drawFollows();draw()});
@@ -812,21 +895,21 @@ function viewAsk(idq){
   /* P2-5: 비어 있는 채로 복사하지 않기 */
   const blank=()=>{if(custom&&!st.name.split("·").pop().trim())return ["#nm","업무 이름을 먼저 적어 주세요. (예: 영농자재 배송 일정 안내)"];
     if(!st.sit.trim())return ["#sit","상황을 한 줄이라도 적어 주세요. 누구에게 무엇을 하려는지면 됩니다."];return null};
-  const doCopy=async()=>{const b=blank();if(b){ok.classList.add("stale");ok.textContent=b[1];$(b[0]).focus();say(guideMsg(),true);return "blank"}
+  const doCopy=async()=>{const b=blank();if(b){ok.classList.add("stale");ok.textContent=b[1];ok.dataset.blank="1";$(b[0]).focus();say(guideMsg(),true);return "blank"}
     const txt=pr.dataset.t;const good=await copyText(txt);if(good)copied=txt;ok.classList.remove("stale");
-    ok.textContent=good?"복사했어요. 이제 AI 대화창에 붙여 넣으세요.":"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.";
-    if(good){const cp=$("#cp");cp.classList.add("copied");cp.innerHTML=ICON.check+"복사했어요";clearTimeout(cp._t);cp._t=setTimeout(()=>{cp.classList.remove("copied");cp.innerHTML=ICON.copy+"질문 복사"},1800)}
+    ok.textContent=!good?"복사가 안 됐어요. 질문을 길게 눌러 직접 복사해 주세요.":practice()?"복사했어요. 예시 그대로라 연습용 질문이에요. 실제로 쓰실 땐 상황을 내 일로 바꿔 주세요.":"복사했어요. 이제 AI 대화창에 붙여 넣으세요.";
+    if(good){const cp=$("#cp");cp.classList.add("copied");cp.innerHTML=ICON.check+"복사했어요";clearTimeout(cp._t);cp._t=setTimeout(()=>{cp.classList.remove("copied");draw()},1800)}
     say(good?guideMsg():"복사가 안 됐어요 😥 질문을 <b>길게 눌러</b> 직접 복사해 주세요.",true);return good};
   $("#cp").addEventListener("click",doCopy);
+  mobileBar(doCopy,draw);
   drawFollows();draw();ready=true;
-  mobileBar(doCopy);
 }
-function mobileBar(doCopy){
+function mobileBar(doCopy,draw){
   const bar=$("#mbar");bar.hidden=false;document.body.classList.add("hasbar");
-  const v=$("#mView"),c=$("#mCopy");
+  const v=$("#mView"),c=$("#mCopy");c._t=0;c.classList.remove("copied","wait");
   v.onclick=()=>{const el=$("#panel");const head=$(".top").offsetHeight;window.scrollTo({top:scrollY+el.getBoundingClientRect().top-head-8,behavior:"auto"})};
-  c.onclick=async()=>{const r=await doCopy();c.textContent=r==="blank"?"먼저 적어 주세요":r?"복사했어요":"복사 안 됨";c.classList.toggle("copied",r===true);
-    clearTimeout(c._t);c._t=setTimeout(()=>{c.textContent="질문 복사";c.classList.remove("copied")},2200)};
+  c.onclick=async()=>{const r=await doCopy();clearTimeout(c._t);c.textContent=r==="blank"?"먼저 적어 주세요":r?"복사했어요":"복사 안 됨";c.classList.toggle("copied",r===true);
+    c._t=setTimeout(()=>{c._t=0;c.classList.remove("copied");draw()},2200)};
 }
 
 /* --- 안내 --- */
@@ -849,16 +932,17 @@ function viewAbout(){
      <li><b>답하는 방법</b> — 완성본 먼저, 확인할 점 3가지</li></ul></div>
    <div class="box"><h3>${emo("🔒")}안전하게 쓰기</h3><ul>
      <li>실제 고객·조합원 이름, 전화번호, 계좌, 내부 숫자, 업무 파일은 넣지 마세요.</li>
-     <li>완성된 질문에서 전화·주민등록·계좌번호, 이메일, 주소로 보이는 것은 [지움]으로 바꿉니다. 모든 형태를 찾지는 못하고 <b>사람 이름은 찾지 못합니다.</b></li>
+     <li>완성된 질문에서 전화·주민등록·계좌번호, 이메일, 주소로 보이는 것은 [지움]으로 바꾸고, 가린 곳과 한 번 더 볼 곳(이름처럼 보이는 말 등)을 질문 만들기 화면에 보여 드립니다. 모든 형태를 찾지는 못하고 <b>사람 이름은 다 찾지 못합니다.</b></li>
      <li>이 앱은 AI에 직접 보내지 않습니다. 질문·상황 글은 저장하지 않고, 우리 조합 부서 이름과 최근 업무 3개만 이 기기에 기억합니다.</li>
      <li>AI 답은 사람이 확인한 뒤에 쓰세요.</li></ul></div>
    <div class="box"><h3>${emo("📢")}알려 드릴 것</h3><ul>
-     <li>소속 조합에서 쓰도록 허용한 AI를 쓰세요.</li>     <li>자료를 요약하거나 쉽게 바꾸는 업무는 <b>공개해도 되는 원문</b>만 붙여 넣으세요. 원문이 없으면 AI가 원문부터 달라고 합니다.</li>
+     <li>소속 조합에서 쓰도록 허용한 AI를 쓰세요.</li>
+     <li><b>공개 자료로 바로 되는 일</b>: 비료·사료·교육 안내 문자, 마트 행사 문구, 응대 말씀, 공개된 영농 자료 풀기.<br><b>조합 안의 자료가 있어야 되는 일</b>: 회의록, 인수인계, 보고서·사업계획, 감사·점검, 상담 기록. 이런 일은 이 앱에서 틀과 말투까지만 만들고, 실제 숫자·이름·내부 문서는 조합이 허용한 AI에서만 다뤄 주세요.</li>     <li>자료를 요약하거나 쉽게 바꾸는 업무는 <b>공개해도 되는 원문</b>만 붙여 넣으세요. 원문이 없으면 AI가 원문부터 달라고 합니다.</li>
      <li>부서 묶음은 흔한 예시일 뿐 전국 공통 조직도가 아닙니다.</li>
      <li>실제 직원 사용과 AI의 실제 답 품질은 아직 확인 중입니다. 잘 안 되는 부분은 영상 댓글로 알려 주시면 고치겠습니다.</li></ul></div>
   </div></div>`;
 }
 
-window.__AI={DEPTS,TASKS,OUTS,AUDS,makePrompt,askPrompt,scrub,findAll,follows};
+window.__AI={DEPTS,TASKS,OUTS,AUDS,makePrompt,askPrompt,scrub,findAll,follows,doubts,isDate,SRC,INNER};
 route();
 </script>
